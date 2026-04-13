@@ -1,0 +1,10 @@
+task_name,zs_passed,zs_rank,fb_passed,fb_rank,fb_iterations,improved
+adder_8bit,True,1.0,True,1.0,1,False
+and_gate,True,1.0,True,1.0,1,False
+edge_detect,True,1.0,True,1.0,1,False
+lfsr_5bit,True,1.0,True,1.0,1,False
+mux2to1,True,1.0,True,1.0,1,False
+population_count,True,1.0,True,1.0,1,False
+priority_encoder_8,True,1.0,True,1.0,1,False
+sample_task,True,1.0,True,1.0,1,False
+signed_add_overflow,True,1.0,True,1.0,1,False

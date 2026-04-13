@@ -1,0 +1,194 @@
+{
+  "timestamp": "20260410_221357",
+  "model_name": "claude-haiku-4-5-20251001",
+  "temperature": 0.7,
+  "mode": "both",
+  "feedback_k": 3,
+  "feedback_max_iterations": 5,
+  "total_problems": 20,
+  "results": [
+    {
+      "task_name": "Prob001_zero",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob007_wire",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob014_andgate",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob024_hadd",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 0,
+      "improved": false
+    },
+    {
+      "task_name": "Prob027_fadd",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 0,
+      "improved": false
+    },
+    {
+      "task_name": "Prob031_dff",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 0,
+      "improved": false
+    },
+    {
+      "task_name": "Prob035_count1to10",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 0,
+      "improved": false
+    },
+    {
+      "task_name": "Prob041_dff8r",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 0,
+      "improved": false
+    },
+    {
+      "task_name": "Prob025_reduction",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": true
+    },
+    {
+      "task_name": "Prob022_mux2to1",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob050_kmap1",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob054_edgedetect",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob068_countbcd",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob082_lfsr32",
+      "zs_passed": false,
+      "zs_rank": 0.000235,
+      "fb_passed": false,
+      "fb_rank": 0.000235,
+      "fb_iterations": 5,
+      "improved": false
+    },
+    {
+      "task_name": "Prob085_shift4",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob030_popcount255",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    },
+    {
+      "task_name": "Prob109_fsm1",
+      "zs_passed": false,
+      "zs_rank": 0.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 2,
+      "improved": true
+    },
+    {
+      "task_name": "Prob127_lemmings1",
+      "zs_passed": false,
+      "zs_rank": 0.6375545851528385,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 2,
+      "improved": true
+    },
+    {
+      "task_name": "Prob140_fsm_hdlc",
+      "zs_passed": false,
+      "zs_rank": 0.9250936329588015,
+      "fb_passed": false,
+      "fb_rank": 0.9637952559300874,
+      "fb_iterations": 5,
+      "improved": false
+    },
+    {
+      "task_name": "Prob144_conwaylife",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    }
+  ],
+  "zero_shot_pass": 11,
+  "feedback_pass": 13,
+  "improved_count": 3
+}

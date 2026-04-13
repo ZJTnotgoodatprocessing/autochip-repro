@@ -1,0 +1,1 @@
+Create a module named top_module that implements a 3-bit population count (also known as a bit counter). The module has a 3-bit input `in` and a 2-bit output `out`. The output should be the number of 1s in the input. For example: in=3'b101 -> out=2'd2, in=3'b111 -> out=2'd3.

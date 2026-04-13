@@ -1,0 +1,23 @@
+{
+  "timestamp": "20260410_201203",
+  "model_name": "claude-opus-4-6",
+  "temperature": 0.7,
+  "mode": "both",
+  "feedback_k": 2,
+  "feedback_max_iterations": 3,
+  "total_problems": 1,
+  "results": [
+    {
+      "task_name": "Prob050_kmap1",
+      "zs_passed": true,
+      "zs_rank": 1.0,
+      "fb_passed": true,
+      "fb_rank": 1.0,
+      "fb_iterations": 1,
+      "improved": false
+    }
+  ],
+  "zero_shot_pass": 1,
+  "feedback_pass": 1,
+  "improved_count": 0
+}

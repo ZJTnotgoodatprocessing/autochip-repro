@@ -1,0 +1,1 @@
+Create a module named top_module that connects its input wire `in` directly to its output wire `out` (a simple wire connection).

@@ -1,0 +1,22 @@
+You are an expert Verilog designer. Your previous implementation of the module described below has errors. Fix the code based on the feedback provided.
+
+## Task Description
+{description}
+
+## Module Interface
+{module_header}
+
+## Your Previous Implementation
+```verilog
+{previous_code}
+```
+
+## Feedback
+{feedback}
+
+## Instructions
+- Fix the errors described in the feedback.
+- Return ONLY the corrected Verilog module, no explanations.
+- Ensure the module name and port list match the interface above exactly.
+
+Your corrected implementation:

@@ -1,0 +1,1 @@
+Create a module named top_module that implements a 2-to-1 multiplexer. The module has two 1-bit data inputs `a` and `b`, a 1-bit select input `sel`, and a 1-bit output `out`. When sel=0, output a; when sel=1, output b.

@@ -1,0 +1,1 @@
+Create a module named top_module that implements a 2-input AND gate. The module has two inputs `a` and `b`, and one output `out`. The output should be the bitwise AND of the two inputs.

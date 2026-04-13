@@ -1,0 +1,6 @@
+task_name,zs_passed,zs_rank,zs_api_error,zs_api_error_type,fb_passed,fb_rank,fb_iterations,fb_api_error,fb_api_error_type,improved
+Prob024_hadd,False,-2.0,False,,False,-2.0,5,False,,False
+Prob027_fadd,False,-2.0,False,,False,-2.0,5,False,,False
+Prob031_dff,False,-2.0,False,,False,-2.0,5,False,,False
+Prob035_count1to10,False,-2.0,False,,False,-2.0,5,False,,False
+Prob041_dff8r,False,-2.0,False,,False,-2.0,4,True,http_403,False

@@ -1,0 +1,83 @@
+{
+  "timestamp": "20260411_174904",
+  "model_name": "claude-opus-4-6",
+  "temperature": 0.7,
+  "mode": "both",
+  "feedback_k": 3,
+  "feedback_max_iterations": 5,
+  "total_problems": 5,
+  "results": [
+    {
+      "task_name": "Prob024_hadd",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "zs_api_error": false,
+      "zs_api_error_type": null,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 5,
+      "fb_api_error": false,
+      "fb_api_error_type": null,
+      "improved": false
+    },
+    {
+      "task_name": "Prob027_fadd",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "zs_api_error": false,
+      "zs_api_error_type": null,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 5,
+      "fb_api_error": false,
+      "fb_api_error_type": null,
+      "improved": false
+    },
+    {
+      "task_name": "Prob031_dff",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "zs_api_error": false,
+      "zs_api_error_type": null,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 5,
+      "fb_api_error": false,
+      "fb_api_error_type": null,
+      "improved": false
+    },
+    {
+      "task_name": "Prob035_count1to10",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "zs_api_error": false,
+      "zs_api_error_type": null,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 5,
+      "fb_api_error": false,
+      "fb_api_error_type": null,
+      "improved": false
+    },
+    {
+      "task_name": "Prob041_dff8r",
+      "zs_passed": false,
+      "zs_rank": -2.0,
+      "zs_api_error": false,
+      "zs_api_error_type": null,
+      "fb_passed": false,
+      "fb_rank": -2.0,
+      "fb_iterations": 4,
+      "fb_api_error": true,
+      "fb_api_error_type": "http_403",
+      "improved": false
+    }
+  ],
+  "zero_shot_valid_runs": 5,
+  "zero_shot_api_errors": 0,
+  "zero_shot_pass": 0,
+  "feedback_valid_runs": 4,
+  "feedback_api_errors": 1,
+  "feedback_pass": 0,
+  "improved_count": 0
+}
