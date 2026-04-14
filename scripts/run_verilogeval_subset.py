@@ -15,7 +15,6 @@ import csv
 import json
 import os
 import sys
-from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -26,6 +25,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 from src.llm.client import get_model_name
 from src.runner.verilogeval_loader import load_verilogeval_task, list_problems
 from src.feedback.loop_runner import run_feedback_loop
+from src.utils.artifacts import build_run_metadata, create_run_dir, make_run_id, timestamp_now
 
 # ── 20-problem subset ────────────────────────────────────────────────────────
 
@@ -59,12 +59,61 @@ SUBSET_20 = [
 ]
 
 
+def _serialize_feedback_result(result) -> dict:
+    """Serialize full feedback-loop result for detailed batch artifacts."""
+    iterations = []
+    for ir in result.iterations:
+        candidates = []
+        for c in ir.candidates:
+            candidates.append({
+                "candidate_index": c.candidate_index,
+                "prompt": c.prompt,
+                "raw_response": c.raw_response,
+                "extracted_verilog": c.extracted_verilog,
+                "compile_stdout": c.compile_result.stdout if c.compile_result else "",
+                "compile_stderr": c.compile_result.stderr if c.compile_result else "",
+                "compile_ok": c.compile_result.success if c.compile_result else False,
+                "sim_stdout": c.sim_result.stdout if c.sim_result else "",
+                "sim_stderr": c.sim_result.stderr if c.sim_result else "",
+                "sim_passed": c.sim_result.passed if c.sim_result else False,
+                "sim_mismatches": c.sim_result.mismatches if c.sim_result else None,
+                "sim_total_samples": c.sim_result.total_samples if c.sim_result else None,
+                "rank": c.rank,
+                "api_error": c.api_error,
+                "api_error_type": c.api_error_type,
+                "api_error_message": c.api_error_message,
+            })
+        iterations.append({
+            "iteration": ir.iteration,
+            "candidates": candidates,
+            "best_candidate_index": ir.best_candidate_index,
+            "best_rank": ir.best_rank,
+            "passed": ir.passed,
+        })
+
+    return {
+        "task_name": result.task_name,
+        "model_name": result.model_name,
+        "temperature": result.temperature,
+        "k": result.k,
+        "max_iterations": result.max_iterations,
+        "total_iterations": result.total_iterations,
+        "best_verilog": result.best_verilog,
+        "best_rank": result.best_rank,
+        "passed": result.passed,
+        "api_error": result.api_error,
+        "api_error_type": result.api_error_type,
+        "api_error_message": result.api_error_message,
+        "iterations": iterations,
+    }
+
+
 def _run_one(task, k, max_iterations, temperature):
-    """Run feedback loop and return summary dict with API error info."""
+    """Run feedback loop and return both summary and detailed dicts."""
     result = run_feedback_loop(
         task, k=k, max_iterations=max_iterations, temperature=temperature,
     )
-    return {
+    summary = {
         "task_name": result.task_name,
         "k": k,
         "max_iterations": max_iterations,
@@ -75,14 +124,17 @@ def _run_one(task, k, max_iterations, temperature):
         "api_error_type": result.api_error_type,
         "api_error_message": result.api_error_message,
     }
+    detailed = _serialize_feedback_result(result)
+    return summary, detailed
 
 
 def _load_previous_results(json_path: str) -> tuple[dict, list[str], dict]:
     """Load a previous run's JSON and return (row_dict_by_name, api_error_problem_ids, full_data)."""
     data = json.loads(Path(json_path).read_text(encoding="utf-8"))
+    summary = data.get("summary", data)
     row_by_name = {}
     api_errors = []
-    for r in data.get("results", []):
+    for r in summary.get("results", []):
         name = r["task_name"]
         row_by_name[name] = r
         if r.get("zs_api_error") or r.get("fb_api_error"):
@@ -141,8 +193,10 @@ def main():
         sys.exit(1)
 
     project_root = Path(__file__).resolve().parent.parent
-    out_dir = project_root / "outputs"
-    out_dir.mkdir(exist_ok=True)
+
+    timestamp = timestamp_now()
+    run_id = make_run_id(f"verilogeval_{args.mode}", timestamp)
+    run_dir = create_run_dir("verilogeval", run_id)
 
     print("=" * 70)
     print("VerilogEval-Human Subset Experiment")
@@ -157,6 +211,7 @@ def main():
     print()
 
     rows = []
+    detailed_results = []
 
     for i, pid in enumerate(problem_ids, 1):
         task = load_verilogeval_task(pid)
@@ -168,7 +223,7 @@ def main():
         # ── Zero-shot ────────────────────────────────────────────────────
         if args.mode in ("zero-shot", "both"):
             print("  Zero-shot...", end=" ", flush=True)
-            zs = _run_one(task, k=1, max_iterations=1, temperature=args.temperature)
+            zs, zs_detail = _run_one(task, k=1, max_iterations=1, temperature=args.temperature)
             if zs["api_error"]:
                 print(f"API_ERR({zs['api_error_type']})")
             elif zs["passed"]:
@@ -179,8 +234,8 @@ def main():
         # ── Feedback ─────────────────────────────────────────────────────
         if args.mode in ("feedback", "both"):
             print(f"  Feedback(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
-            fb = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
-                          temperature=args.temperature)
+            fb, fb_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+                                     temperature=args.temperature)
             if fb["api_error"]:
                 print(f"API_ERR({fb['api_error_type']})")
             elif fb["passed"]:
@@ -190,21 +245,26 @@ def main():
 
         # ── Build row ────────────────────────────────────────────────────
         row = {"task_name": pid}
+        detail_row = {"task_name": pid}
         if zs:
             row["zs_passed"] = zs["passed"]
             row["zs_rank"] = zs["best_rank"]
             row["zs_api_error"] = zs["api_error"]
             row["zs_api_error_type"] = zs.get("api_error_type")
+            detail_row["zero_shot"] = zs_detail
         if fb:
             row["fb_passed"] = fb["passed"]
             row["fb_rank"] = fb["best_rank"]
             row["fb_iterations"] = fb["total_iterations"]
             row["fb_api_error"] = fb["api_error"]
             row["fb_api_error_type"] = fb.get("api_error_type")
+            detail_row["feedback"] = fb_detail
         if zs and fb:
             row["improved"] = (not zs["passed"] and not zs["api_error"]) and fb["passed"]
+            detail_row["improved"] = row["improved"]
 
         rows.append(row)
+        detailed_results.append(detail_row)
         print()
 
     # ── Merge with previous results if retrying ──────────────────────────
@@ -214,13 +274,32 @@ def main():
         retried_names = {r["task_name"] for r in rows}
         retry_map = {r["task_name"]: r for r in rows}
         prev_data = json.loads(Path(args.retry_from).read_text(encoding="utf-8"))
-        for prev_r in prev_data.get("results", []):
+        prev_summary = prev_data.get("summary", prev_data)
+        for prev_r in prev_summary.get("results", []):
             name = prev_r["task_name"]
             if name in retried_names:
                 merged.append(retry_map[name])
             else:
                 merged.append(prev_r)
         rows = merged
+
+        prev_detail_path = Path(args.retry_from).with_name("details.json")
+        prev_detailed_results = []
+        if prev_detail_path.exists():
+            prev_detailed_results = json.loads(prev_detail_path.read_text(encoding="utf-8")).get("results", [])
+        detailed_map = {r["task_name"]: r for r in detailed_results}
+        merged_details = []
+        for prev_detail in prev_detailed_results:
+            name = prev_detail["task_name"]
+            if name in detailed_map:
+                merged_details.append(detailed_map[name])
+            else:
+                merged_details.append(prev_detail)
+        prev_detail_names = {r["task_name"] for r in prev_detailed_results}
+        for detail in detailed_results:
+            if detail["task_name"] not in prev_detail_names:
+                merged_details.append(detail)
+        detailed_results = merged_details or detailed_results
         print(f"(Merged {len(retried_names)} retried result(s) into {len(rows)} total)\n")
 
     # ── Summary table ────────────────────────────────────────────────────
@@ -299,7 +378,6 @@ def main():
             print(f"No valid runs. API errors: {api_err}")
 
     # ── Save results ─────────────────────────────────────────────────────
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     # Compute stats
     total = len(rows)
@@ -307,43 +385,66 @@ def main():
     fb_api = sum(1 for r in rows if r.get("fb_api_error"))
 
     summary = {
-        "timestamp": timestamp,
-        "model_name": model_name,
-        "temperature": args.temperature,
-        "mode": args.mode,
-        "feedback_k": args.feedback_k if args.mode != "zero-shot" else None,
-        "feedback_max_iterations": args.feedback_iterations if args.mode != "zero-shot" else None,
-        "total_problems": total,
-        "results": rows,
+        "metadata": build_run_metadata(
+            run_id=run_id,
+            script_path="scripts/run_verilogeval_subset.py",
+            model_name=model_name,
+            timestamp=timestamp,
+            run_kind="verilogeval_subset",
+            parameters={
+                "mode": args.mode,
+                "temperature": args.temperature,
+                "feedback_k": args.feedback_k if args.mode != "zero-shot" else None,
+                "feedback_iterations": args.feedback_iterations if args.mode != "zero-shot" else None,
+                "retry_from": args.retry_from,
+            },
+            source_inputs={
+                "problem_ids": problem_ids,
+                "retry_from": str(Path(args.retry_from).resolve()) if args.retry_from else None,
+            },
+        ),
+        "summary": {
+            "total_problems": total,
+            "results": rows,
+        },
     }
 
     if args.mode in ("both", "zero-shot"):
         zs_valid = total - zs_api
         zs_pass = sum(1 for r in rows if r.get("zs_passed") and not r.get("zs_api_error"))
-        summary["zero_shot_valid_runs"] = zs_valid
-        summary["zero_shot_api_errors"] = zs_api
-        summary["zero_shot_pass"] = zs_pass
+        summary["summary"]["zero_shot_valid_runs"] = zs_valid
+        summary["summary"]["zero_shot_api_errors"] = zs_api
+        summary["summary"]["zero_shot_pass"] = zs_pass
     if args.mode in ("both", "feedback"):
         fb_valid = total - fb_api
         fb_pass = sum(1 for r in rows if r.get("fb_passed") and not r.get("fb_api_error"))
-        summary["feedback_valid_runs"] = fb_valid
-        summary["feedback_api_errors"] = fb_api
-        summary["feedback_pass"] = fb_pass
+        summary["summary"]["feedback_valid_runs"] = fb_valid
+        summary["summary"]["feedback_api_errors"] = fb_api
+        summary["summary"]["feedback_pass"] = fb_pass
     if args.mode == "both":
-        summary["improved_count"] = sum(1 for r in rows if r.get("improved"))
+        summary["summary"]["improved_count"] = sum(1 for r in rows if r.get("improved"))
 
-    json_file = out_dir / f"verilogeval_{args.mode}_{timestamp}.json"
-    json_file.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"\n[JSON] {json_file}")
+    detailed = {
+        "metadata": summary["metadata"],
+        "results": detailed_results,
+    }
 
-    csv_file = out_dir / f"verilogeval_{args.mode}_{timestamp}.csv"
+    summary_json_file = run_dir / "summary.json"
+    summary_json_file.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"\n[JSON] {summary_json_file}")
+
+    detailed_json_file = run_dir / "details.json"
+    detailed_json_file.write_text(json.dumps(detailed, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"[DETAIL] {detailed_json_file}")
+
+    summary_csv_file = run_dir / "summary.csv"
     if rows:
         all_keys = list(dict.fromkeys(k for r in rows for k in r.keys()))
-        with open(csv_file, "w", newline="", encoding="utf-8") as f:
+        with open(summary_csv_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=all_keys)
             writer.writeheader()
             writer.writerows(rows)
-        print(f"[CSV]  {csv_file}")
+        print(f"[CSV]  {summary_csv_file}")
 
 
 if __name__ == "__main__":

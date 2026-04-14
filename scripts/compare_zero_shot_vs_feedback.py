@@ -11,7 +11,6 @@ import csv
 import json
 import os
 import sys
-from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -22,6 +21,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 from src.runner.task import load_task
 from src.llm.client import get_model_name
 from src.feedback.loop_runner import run_feedback_loop
+from src.utils.artifacts import build_run_metadata, create_run_dir, make_run_id, timestamp_now
 
 
 def discover_tasks(data_dir: Path, names: list[str] | None = None) -> list[Path]:
@@ -33,10 +33,59 @@ def discover_tasks(data_dir: Path, names: list[str] | None = None) -> list[Path]
     return tasks
 
 
-def run_experiment(task, k: int, max_iterations: int, temperature: float):
-    """Run feedback loop and return summary dict."""
-    result = run_feedback_loop(task, k=k, max_iterations=max_iterations, temperature=temperature)
+def _serialize_feedback_result(result) -> dict:
+    """Serialize full feedback-loop result for detailed comparison artifacts."""
+    iterations = []
+    for ir in result.iterations:
+        candidates = []
+        for c in ir.candidates:
+            candidates.append({
+                "candidate_index": c.candidate_index,
+                "prompt": c.prompt,
+                "raw_response": c.raw_response,
+                "extracted_verilog": c.extracted_verilog,
+                "compile_stdout": c.compile_result.stdout if c.compile_result else "",
+                "compile_stderr": c.compile_result.stderr if c.compile_result else "",
+                "compile_ok": c.compile_result.success if c.compile_result else False,
+                "sim_stdout": c.sim_result.stdout if c.sim_result else "",
+                "sim_stderr": c.sim_result.stderr if c.sim_result else "",
+                "sim_passed": c.sim_result.passed if c.sim_result else False,
+                "sim_mismatches": c.sim_result.mismatches if c.sim_result else None,
+                "sim_total_samples": c.sim_result.total_samples if c.sim_result else None,
+                "rank": c.rank,
+                "api_error": c.api_error,
+                "api_error_type": c.api_error_type,
+                "api_error_message": c.api_error_message,
+            })
+        iterations.append({
+            "iteration": ir.iteration,
+            "candidates": candidates,
+            "best_candidate_index": ir.best_candidate_index,
+            "best_rank": ir.best_rank,
+            "passed": ir.passed,
+        })
+
     return {
+        "task_name": result.task_name,
+        "model_name": result.model_name,
+        "temperature": result.temperature,
+        "k": result.k,
+        "max_iterations": result.max_iterations,
+        "total_iterations": result.total_iterations,
+        "best_verilog": result.best_verilog,
+        "best_rank": result.best_rank,
+        "passed": result.passed,
+        "api_error": result.api_error,
+        "api_error_type": result.api_error_type,
+        "api_error_message": result.api_error_message,
+        "iterations": iterations,
+    }
+
+
+def run_experiment(task, k: int, max_iterations: int, temperature: float):
+    """Run feedback loop and return summary + detailed results."""
+    result = run_feedback_loop(task, k=k, max_iterations=max_iterations, temperature=temperature)
+    summary = {
         "task_name": result.task_name,
         "k": k,
         "max_iterations": max_iterations,
@@ -47,6 +96,8 @@ def run_experiment(task, k: int, max_iterations: int, temperature: float):
         "api_error": result.api_error,
         "api_error_type": result.api_error_type,
     }
+    detailed = _serialize_feedback_result(result)
+    return summary, detailed
 
 
 def main():
@@ -64,8 +115,10 @@ def main():
 
     project_root = Path(__file__).resolve().parent.parent
     data_dir = (project_root / args.data_dir).resolve()
-    out_dir = project_root / "outputs"
-    out_dir.mkdir(exist_ok=True)
+
+    timestamp = timestamp_now()
+    run_id = make_run_id("comparison", timestamp)
+    run_dir = create_run_dir("comparison", run_id)
 
     model_name = get_model_name()
     task_dirs = discover_tasks(data_dir, args.tasks)
@@ -83,13 +136,14 @@ def main():
     print()
 
     rows = []
+    detailed_results = []
     for i, td in enumerate(task_dirs, 1):
         task = load_task(td)
         print(f"[{i}/{len(task_dirs)}] {task.name}")
 
         # Zero-shot: k=1, max_iterations=1
         print(f"  Zero-shot...", end=" ", flush=True)
-        zs = run_experiment(task, k=1, max_iterations=1, temperature=args.temperature)
+        zs, zs_detail = run_experiment(task, k=1, max_iterations=1, temperature=args.temperature)
         if zs["api_error"]:
             zs_status = f"API_ERR({zs['api_error_type']})"
         elif zs["passed"]:
@@ -100,7 +154,7 @@ def main():
 
         # Feedback loop
         print(f"  Feedback(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
-        fb = run_experiment(task, k=args.feedback_k, max_iterations=args.feedback_iterations, temperature=args.temperature)
+        fb, fb_detail = run_experiment(task, k=args.feedback_k, max_iterations=args.feedback_iterations, temperature=args.temperature)
         if fb["api_error"]:
             fb_status = f"API_ERR({fb['api_error_type']})"
         elif fb["passed"]:
@@ -119,6 +173,12 @@ def main():
             "fb_rank": fb["best_rank"],
             "fb_iterations": fb["total_iterations"],
             "fb_api_error": fb["api_error"],
+            "improved": improved,
+        })
+        detailed_results.append({
+            "task_name": task.name,
+            "zero_shot": zs_detail,
+            "feedback": fb_detail,
             "improved": improved,
         })
         print()
@@ -169,35 +229,56 @@ def main():
     print(f"Improved by feedback: {improved_count} task(s)")
 
     # ── Save JSON ────────────────────────────────────────────────────────
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     summary = {
-        "timestamp": timestamp,
-        "model_name": model_name,
-        "temperature": args.temperature,
-        "feedback_k": args.feedback_k,
-        "feedback_max_iterations": args.feedback_iterations,
-        "total_tasks": total,
-        "zero_shot_valid_runs": zs_valid,
-        "zero_shot_api_errors": zs_api,
-        "zero_shot_pass": zs_pass,
-        "feedback_valid_runs": fb_valid,
-        "feedback_api_errors": fb_api,
-        "feedback_pass": fb_pass,
-        "improved_count": improved_count,
-        "results": rows,
+        "metadata": build_run_metadata(
+            run_id=run_id,
+            script_path="scripts/compare_zero_shot_vs_feedback.py",
+            model_name=model_name,
+            timestamp=timestamp,
+            run_kind="comparison",
+            parameters={
+                "data_dir": args.data_dir,
+                "tasks": args.tasks,
+                "temperature": args.temperature,
+                "feedback_k": args.feedback_k,
+                "feedback_iterations": args.feedback_iterations,
+            },
+            source_inputs={
+                "task_dirs": [str(p.resolve()) for p in task_dirs],
+            },
+        ),
+        "summary": {
+            "total_tasks": total,
+            "zero_shot_valid_runs": zs_valid,
+            "zero_shot_api_errors": zs_api,
+            "zero_shot_pass": zs_pass,
+            "feedback_valid_runs": fb_valid,
+            "feedback_api_errors": fb_api,
+            "feedback_pass": fb_pass,
+            "improved_count": improved_count,
+            "results": rows,
+        },
     }
-    json_file = out_dir / f"comparison_{timestamp}.json"
-    json_file.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"\n[JSON] {json_file}")
+    summary_json_file = run_dir / "summary.json"
+    summary_json_file.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"\n[JSON] {summary_json_file}")
+
+    detailed = {
+        "metadata": summary["metadata"],
+        "results": detailed_results,
+    }
+    detailed_json_file = run_dir / "details.json"
+    detailed_json_file.write_text(json.dumps(detailed, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"[DETAIL] {detailed_json_file}")
 
     # ── Save CSV ─────────────────────────────────────────────────────────
-    csv_file = out_dir / f"comparison_{timestamp}.csv"
+    summary_csv_file = run_dir / "summary.csv"
     all_keys = list(dict.fromkeys(k for r in rows for k in r.keys()))
-    with open(csv_file, "w", newline="", encoding="utf-8") as f:
+    with open(summary_csv_file, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=all_keys)
         writer.writeheader()
         writer.writerows(rows)
-    print(f"[CSV]  {csv_file}")
+    print(f"[CSV]  {summary_csv_file}")
 
 
 if __name__ == "__main__":

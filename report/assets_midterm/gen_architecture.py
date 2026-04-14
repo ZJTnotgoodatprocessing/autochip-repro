@@ -4,14 +4,19 @@
 任务输入 → 提示词构建 → LLM 生成 → Verilog 提取 → 编译 → 仿真 → 评分 → 反馈 → 再生成
 """
 
-import matplotlib
-matplotlib.use("Agg")
+import sys
+from pathlib import Path
+
+PROJECT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT))
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+from matplotlib.patches import FancyBboxPatch
 
-plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "DejaVu Sans"]
-plt.rcParams["axes.unicode_minus"] = False
+from report.assets_midterm.plot_utils import configure_matplotlib_fonts, save_figure
+
+configure_matplotlib_fonts()
 
 fig, ax = plt.subplots(figsize=(12, 7.5))
 ax.set_xlim(0, 12)
@@ -127,8 +132,4 @@ ax.legend(handles=legend_items, loc="upper right", fontsize=7, framealpha=0.9)
 ax.set_title("系统总体架构图", fontsize=14, fontweight="bold", pad=15)
 
 plt.tight_layout()
-plt.savefig("report/figures/fig_system_architecture.png", dpi=200, bbox_inches="tight",
-            facecolor="white", edgecolor="none")
-plt.savefig("report/figures/fig_system_architecture.svg", bbox_inches="tight",
-            facecolor="white", edgecolor="none")
-print("Saved: report/figures/fig_system_architecture.png/.svg")
+save_figure(fig, "report/figures/fig_system_architecture")

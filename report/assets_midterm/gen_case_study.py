@@ -7,13 +7,18 @@
 - Prob082_lfsr32: zero-shot rank=0.02% → feedback iter5 rank=0.02%
 """
 
-import matplotlib
-matplotlib.use("Agg")
+import sys
+from pathlib import Path
+
+PROJECT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT))
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "DejaVu Sans"]
-plt.rcParams["axes.unicode_minus"] = False
+from report.assets_midterm.plot_utils import configure_matplotlib_fonts, save_figure
+
+configure_matplotlib_fonts()
 
 fig, axes = plt.subplots(2, 2, figsize=(10, 7))
 
@@ -81,8 +86,4 @@ for ax, case in zip(axes.flat, cases):
 
 fig.suptitle("四道关键题目反馈修复过程", fontsize=13, fontweight="bold", y=1.02)
 plt.tight_layout()
-plt.savefig("report/figures/fig_case_study_repair.png", dpi=200, bbox_inches="tight",
-            facecolor="white", edgecolor="none")
-plt.savefig("report/figures/fig_case_study_repair.svg", bbox_inches="tight",
-            facecolor="white", edgecolor="none")
-print("Saved: report/figures/fig_case_study_repair.png/.svg")
+save_figure(fig, "report/figures/fig_case_study_repair")

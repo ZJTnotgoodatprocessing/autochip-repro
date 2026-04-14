@@ -5,8 +5,13 @@ Usage:
     python scripts/generate_midterm_report.py
 """
 
+import argparse
 import json
+import sys
 from pathlib import Path
+
+PROJECT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT))
 
 from docx import Document
 from docx.shared import Pt, Cm, Inches
@@ -14,12 +19,12 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 
-PROJECT = Path(__file__).resolve().parent.parent
-CONTENT_JSON = PROJECT / "scripts" / "report_content.json"
-DATA_JSON = PROJECT / "outputs" / "verilogeval_both_20260412_173450.json"
-BAR_CHART = PROJECT / "outputs" / "reports" / "haiku_pass_rate_bar.png"
-RANK_CHART = PROJECT / "outputs" / "reports" / "haiku_per_problem_rank.png"
-OUTPUT = PROJECT / "notes" / "midterm.docx"
+from src.utils.artifacts import find_latest_file
+
+DEFAULT_CONTENT_JSON = PROJECT / "scripts" / "report_content.json"
+DEFAULT_BAR_CHART = PROJECT / "outputs" / "reports" / "charts" / "haiku_pass_rate_bar.png"
+DEFAULT_RANK_CHART = PROJECT / "outputs" / "reports" / "charts" / "haiku_per_problem_rank.png"
+DEFAULT_OUTPUT = PROJECT / "outputs" / "reports" / "docx" / "midterm.docx"
 
 FONT_BODY = "SimSun"
 FONT_HEADING = "SimHei"
@@ -112,8 +117,33 @@ DIFFICULTY = {
 
 
 def main():
-    C = json.loads(CONTENT_JSON.read_text(encoding="utf-8"))
-    data = json.loads(DATA_JSON.read_text(encoding="utf-8"))
+    parser = argparse.ArgumentParser(description="Generate midterm thesis report as Word .docx")
+    parser.add_argument("--content-json", type=str, default=str(DEFAULT_CONTENT_JSON), help="Path to report content JSON")
+    parser.add_argument("--data-json", type=str, default=None, help="Path to experiment summary JSON (default: latest run)")
+    parser.add_argument("--bar-chart", type=str, default=str(DEFAULT_BAR_CHART), help="Path to pass-rate chart PNG")
+    parser.add_argument("--rank-chart", type=str, default=str(DEFAULT_RANK_CHART), help="Path to rank chart PNG")
+    parser.add_argument("--output", type=str, default=str(DEFAULT_OUTPUT), help="Output .docx path")
+    args = parser.parse_args()
+
+    content_json = Path(args.content_json).resolve()
+    data_json = Path(args.data_json).resolve() if args.data_json else find_latest_file(
+        [
+            "outputs/runs/verilogeval/*/summary.json",
+            "outputs/verilogeval_both_*.json",
+        ],
+        PROJECT,
+    )
+    if data_json is None:
+        raise FileNotFoundError("No experiment summary JSON found")
+
+    bar_chart = Path(args.bar_chart).resolve()
+    rank_chart = Path(args.rank_chart).resolve()
+    output = Path(args.output).resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    C = json.loads(content_json.read_text(encoding="utf-8"))
+    raw_data = json.loads(data_json.read_text(encoding="utf-8"))
+    data = raw_data.get("summary", raw_data)
     results = data["results"]
 
     doc = Document()
@@ -207,7 +237,7 @@ def main():
     add_para(doc, C["s4_1"][2])
 
     # Figure 1
-    add_image(doc, BAR_CHART, Inches(4.5))
+    add_image(doc, bar_chart, Inches(4.5))
     add_caption(doc, L["cap_fig1"])
 
     add_heading(doc, H["HEADING_S4_2"], level=2)
@@ -240,7 +270,7 @@ def main():
     add_para(doc, C["s4_2"][2])
 
     # Figure 2
-    add_image(doc, RANK_CHART, Inches(6.0))
+    add_image(doc, rank_chart, Inches(6.0))
     add_caption(doc, L["cap_fig2"])
 
     # 4.3 Case analysis
@@ -288,8 +318,8 @@ def main():
         add_para(doc, t)
 
     # Save
-    doc.save(str(OUTPUT))
-    print("Report saved to: {}".format(OUTPUT))
+    doc.save(str(output))
+    print("Report saved to: {}".format(output))
 
     total_chars = sum(len(p.text) for p in doc.paragraphs)
     print("Approximate character count: {}".format(total_chars))

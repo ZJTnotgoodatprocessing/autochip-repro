@@ -5,13 +5,18 @@ D: VerilogEval-Human 20 题子集构成表
 E: 实验设置汇总表
 """
 
-import matplotlib
-matplotlib.use("Agg")
+import sys
+from pathlib import Path
+
+PROJECT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT))
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "DejaVu Sans"]
-plt.rcParams["axes.unicode_minus"] = False
+from report.assets_midterm.plot_utils import configure_matplotlib_fonts, save_figure
+
+configure_matplotlib_fonts()
 
 
 def render_table(data, col_widths, title, filename, col_colors=None, figsize=None):
@@ -55,12 +60,8 @@ def render_table(data, col_widths, title, filename, col_colors=None, figsize=Non
                     cell.set_text_props(color=col_colors[j][text])
 
     plt.tight_layout()
-    plt.savefig(f"report/figures/{filename}.png", dpi=200, bbox_inches="tight",
-                facecolor="white", edgecolor="none")
-    plt.savefig(f"report/figures/{filename}.svg", bbox_inches="tight",
-                facecolor="white", edgecolor="none")
+    save_figure(fig, f"report/figures/{filename}")
     plt.close()
-    print(f"Saved: report/figures/{filename}.png/.svg")
 
 
 # ============================================================

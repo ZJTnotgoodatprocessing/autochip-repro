@@ -10,7 +10,6 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -21,6 +20,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 from src.runner.task import load_task
 from src.feedback.loop_runner import run_feedback_loop, IterationRecord
 from src.llm.client import get_model_name
+from src.utils.artifacts import build_run_metadata, create_run_dir, make_run_id, timestamp_now
 
 
 def _log_iteration(record: IterationRecord) -> None:
@@ -136,19 +136,37 @@ def main():
         print(result.best_verilog)
 
     # Save output
-    out_dir = Path(__file__).resolve().parent.parent / "outputs"
-    out_dir.mkdir(exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_file = out_dir / f"feedback_{task.name}_{timestamp}.json"
+    timestamp = timestamp_now()
+    run_id = make_run_id(f"feedback_{task.name}", timestamp)
+    run_dir = create_run_dir("feedback", run_id)
 
-    data = _serialize_result(result)
-    data["timestamp"] = timestamp
+    data = {
+        "metadata": build_run_metadata(
+            run_id=run_id,
+            script_path="scripts/run_feedback_loop.py",
+            model_name=result.model_name,
+            timestamp=timestamp,
+            run_kind="single_task_feedback",
+            parameters={
+                "task": args.task,
+                "k": args.k,
+                "max_iterations": args.max_iterations,
+                "temperature": args.temperature,
+            },
+            source_inputs={
+                "task_dir": str(Path(args.task).resolve()),
+                "testbench_path": str(task.testbench_path),
+            },
+        ),
+        "result": _serialize_result(result),
+    }
 
-    out_file.write_text(
+    result_file = run_dir / "result.json"
+    result_file.write_text(
         json.dumps(data, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
-    print(f"\n[Saved] {out_file}")
+    print(f"\n[Saved] {result_file}")
 
 
 if __name__ == "__main__":

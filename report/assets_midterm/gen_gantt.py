@@ -3,14 +3,19 @@
 基于 notes/current_status.md 中已记录的真实时间线。
 """
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+import sys
+from pathlib import Path
 from datetime import datetime
 
-plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "DejaVu Sans"]
-plt.rcParams["axes.unicode_minus"] = False
+PROJECT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT))
+
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
+from report.assets_midterm.plot_utils import configure_matplotlib_fonts, save_figure
+
+configure_matplotlib_fonts()
 
 # 真实项目阶段（基于 git log 和 notes 记录）
 stages = [
@@ -73,8 +78,4 @@ ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 
 plt.tight_layout()
-plt.savefig("report/figures/fig_project_gantt.png", dpi=200, bbox_inches="tight",
-            facecolor="white", edgecolor="none")
-plt.savefig("report/figures/fig_project_gantt.svg", bbox_inches="tight",
-            facecolor="white", edgecolor="none")
-print("Saved: report/figures/fig_project_gantt.png/.svg")
+save_figure(fig, "report/figures/fig_project_gantt")
