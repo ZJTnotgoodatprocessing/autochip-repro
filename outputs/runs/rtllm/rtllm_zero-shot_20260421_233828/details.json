@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "run_id": "rtllm_zero-shot_20260421_233828",
+    "timestamp": "20260421_233828",
+    "script": "scripts/run_rtllm_subset.py",
+    "run_kind": "rtllm_subset",
+    "argv": [
+      "scripts/run_rtllm_subset.py",
+      "--subset",
+      "core5",
+      "--limit",
+      "2",
+      "--mode",
+      "zero-shot",
+      "--model",
+      "claude-sonnet-4-5-20250929"
+    ],
+    "model_name": "claude-sonnet-4-5-20250929",
+    "parameters": {
+      "mode": "zero-shot",
+      "subset": "core5",
+      "temperature": 0.7,
+      "feedback_k": null,
+      "feedback_iterations": null
+    },
+    "source_inputs": {
+      "problem_names": [
+        "adder_8bit",
+        "multi_booth_8bit"
+      ],
+      "benchmark": "RTLLM-2.0"
+    },
+    "git": {
+      "commit": "55c7c2ba401ecacf8cd541204c667cb041c09498",
+      "branch": "main",
+      "dirty": true
+    },
+    "runtime": {
+      "python_version": "3.12.4 (tags/v3.12.4:8e8a4ba, Jun  6 2024, 19:30:16) [MSC v.1940 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26200-SP0"
+    }
+  },
+  "results": [
+    {
+      "task_name": "adder_8bit",
+      "category": "Arithmetic/Adder",
+      "zero_shot": {
+        "task_name": "adder_8bit",
+        "model_name": "claude-sonnet-4-5-20250929",
+        "temperature": 0.7,
+        "k": 1,
+        "max_iterations": 1,
+        "total_iterations": 1,
+        "best_verilog": "module adder_8bit(\n    input [7:0] a,\n    input [7:0] b,\n    input cin,\n    output [7:0] sum,\n    output cout\n);\n\n    wire c0, c1, c2, c3, c4, c5, c6;\n\n    full_adder fa0 (.a(a[0]), .b(b[0]), .cin(cin), .sum(sum[0]), .cout(c0));\n    full_adder fa1 (.a(a[1]), .b(b[1]), .cin(c0),  .sum(sum[1]), .cout(c1));\n    full_adder fa2 (.a(a[2]), .b(b[2]), .cin(c1),  .sum(sum[2]), .cout(c2));\n    full_adder fa3 (.a(a[3]), .b(b[3]), .cin(c2),  .sum(sum[3]), .cout(c3));\n    full_adder fa4 (.a(a[4]), .b(b[4]), .cin(c3),  .sum(sum[4]), .cout(c4));\n    full_adder fa5 (.a(a[5]), .b(b[5]), .cin(c4),  .sum(sum[5]), .cout(c5));\n    full_adder fa6 (.a(a[6]), .b(b[6]), .cin(c5),  .sum(sum[6]), .cout(c6));\n    full_adder fa7 (.a(a[7]), .b(b[7]), .cin(c6),  .sum(sum[7]), .cout(cout));\n\nendmodule",
+        "best_rank": -1.0,
+        "passed": false,
+        "api_error": false,
+        "api_error_type": null,
+        "api_error_message": null,
+        "iterations": [
+          {
+            "iteration": 1,
+            "candidates": [
+              {
+                "candidate_index": 0,
+                "prompt": "Generate a Verilog module that satisfies the following description.\nReturn ONLY the Verilog code, no explanations.\n\nDescription:\nPlease act as a professional verilog designer.\n\nImplement a module of an 8-bit adder with multiple bit-level adders in combinational logic. \n\nModule name:  \n    adder_8bit               \nInput ports:\n    a[7:0]: 8-bit input operand A.\n    b[7:0]: 8-bit input operand B.\n    cin: Carry-in input.\nOutput ports:\n    sum[7:0]: 8-bit output representing the sum of A and B.\n    cout: Carry-out output.\n\nImplementation:\nThe module utilizes a series of bit-level adders (full adders) to perform the addition operation.\n\nGive me the complete code.\n \n\nModule interface:\nmodule adder_8bit(\n    input [7:0] b,\n    input cin,\n    output [7:0] sum,\n    output cout\n);\n\nYour implementation:",
+                "raw_response": "```verilog\nmodule adder_8bit(\n    input [7:0] a,\n    input [7:0] b,\n    input cin,\n    output [7:0] sum,\n    output cout\n);\n\n    wire c0, c1, c2, c3, c4, c5, c6;\n\n    full_adder fa0 (.a(a[0]), .b(b[0]), .cin(cin), .sum(sum[0]), .cout(c0));\n    full_adder fa1 (.a(a[1]), .b(b[1]), .cin(c0),  .sum(sum[1]), .cout(c1));\n    full_adder fa2 (.a(a[2]), .b(b[2]), .cin(c1),  .sum(sum[2]), .cout(c2));\n    full_adder fa3 (.a(a[3]), .b(b[3]), .cin(c2),  .sum(sum[3]), .cout(c3));\n    full_adder fa4 (.a(a[4]), .b(b[4]), .cin(c3),  .sum(sum[4]), .cout(c4));\n    full_adder fa5 (.a(a[5]), .b(b[5]), .cin(c4),  .sum(sum[5]), .cout(c5));\n    full_adder fa6 (.a(a[6]), .b(b[6]), .cin(c5),  .sum(sum[6]), .cout(c6));\n    full_adder fa7 (.a(a[7]), .b(b[7]), .cin(c6),  .sum(sum[7]), .cout(cout));\n\nendmodule\n\nmodule full_adder(\n    input a,\n    input b,\n    input cin,\n    output sum,\n    output cout\n);\n\n    assign sum = a ^ b ^ cin;\n    assign cout = (a & b) | (b & cin) | (a & cin);\n\nendmodule\n```",
+                "extracted_verilog": "module adder_8bit(\n    input [7:0] a,\n    input [7:0] b,\n    input cin,\n    output [7:0] sum,\n    output cout\n);\n\n    wire c0, c1, c2, c3, c4, c5, c6;\n\n    full_adder fa0 (.a(a[0]), .b(b[0]), .cin(cin), .sum(sum[0]), .cout(c0));\n    full_adder fa1 (.a(a[1]), .b(b[1]), .cin(c0),  .sum(sum[1]), .cout(c1));\n    full_adder fa2 (.a(a[2]), .b(b[2]), .cin(c1),  .sum(sum[2]), .cout(c2));\n    full_adder fa3 (.a(a[3]), .b(b[3]), .cin(c2),  .sum(sum[3]), .cout(c3));\n    full_adder fa4 (.a(a[4]), .b(b[4]), .cin(c3),  .sum(sum[4]), .cout(c4));\n    full_adder fa5 (.a(a[5]), .b(b[5]), .cin(c4),  .sum(sum[5]), .cout(c5));\n    full_adder fa6 (.a(a[6]), .b(b[6]), .cin(c5),  .sum(sum[6]), .cout(c6));\n    full_adder fa7 (.a(a[7]), .b(b[7]), .cin(c6),  .sum(sum[7]), .cout(cout));\n\nendmodule",
+                "compile_stdout": "",
+                "compile_stderr": "C:\\Users\\17819\\AppData\\Local\\Temp\\autochip_kooe4nl0\\design.v:11: error: Unknown module type: full_adder\nC:\\Users\\17819\\AppData\\Local\\Temp\\autochip_kooe4nl0\\design.v:12: error: Unknown module type: full_adder\nC:\\Users\\17819\\AppData\\Local\\Temp\\autochip_kooe4nl0\\design.v:13: error: Unknown module type: full_adder\nC:\\Users\\17819\\AppData\\Local\\Temp\\autochip_kooe4nl0\\design.v:14: error: Unknown module type: full_adder\nC:\\Users\\17819\\AppData\\Local\\Temp\\autochip_kooe4nl0\\design.v:15: error: Unknown module type: full_adder\nC:\\Users\\17819\\AppData\\Local\\Temp\\autochip_kooe4nl0\\design.v:16: error: Unknown module type: full_adder\nC:\\Users\\17819\\AppData\\Local\\Temp\\autochip_kooe4nl0\\design.v:17: error: Unknown module type: full_adder\nC:\\Users\\17819\\AppData\\Local\\Temp\\autochip_kooe4nl0\\design.v:18: error: Unknown module type: full_adder\n9 error(s) during elaboration.\n*** These modules were missing:\n        full_adder referenced 8 times.\n***",
+                "compile_ok": false,
+                "sim_stdout": "",
+                "sim_stderr": "",
+                "sim_passed": false,
+                "sim_mismatches": null,
+                "sim_total_samples": null,
+                "rank": -1.0,
+                "api_error": false,
+                "api_error_type": null,
+                "api_error_message": null
+              }
+            ],
+            "best_candidate_index": 0,
+            "best_rank": -1.0,
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "task_name": "multi_booth_8bit",
+      "category": "Arithmetic/Multiplier",
+      "zero_shot": {
+        "task_name": "multi_booth_8bit",
+        "model_name": "claude-sonnet-4-5-20250929",
+        "temperature": 0.7,
+        "k": 1,
+        "max_iterations": 1,
+        "total_iterations": 1,
+        "best_verilog": "module multi_booth_8bit(\n    input clk,\n    input reset,\n    input [7:0] a,\n    input [7:0] b,\n    output reg [15:0] p,\n    output reg rdy\n);\n\n    reg [15:0] multiplier;\n    reg [15:0] multiplicand;\n    reg [4:0] ctr;\n\n    always @(posedge clk or posedge reset) begin\n        if (reset) begin\n            multiplier <= {{8{a[7]}}, a};\n            multiplicand <= {{8{b[7]}}, b};\n            p <= 16'b0;\n            ctr <= 5'b0;\n            rdy <= 1'b0;\n        end\n        else begin\n            if (ctr < 16) begin\n                if (multiplier[ctr]) begin\n                    p <= p + multiplicand;\n                end\n                multiplicand <= multiplicand << 1;\n                ctr <= ctr + 1;\n            end\n            else begin\n                rdy <= 1'b1;\n            end\n        end\n    end\n\nendmodule",
+        "best_rank": 1.0,
+        "passed": true,
+        "api_error": false,
+        "api_error_type": null,
+        "api_error_message": null,
+        "iterations": [
+          {
+            "iteration": 1,
+            "candidates": [
+              {
+                "candidate_index": 0,
+                "prompt": "Generate a Verilog module that satisfies the following description.\nReturn ONLY the Verilog code, no explanations.\n\nDescription:\nPlease act as a professional verilog designer.\n\nImplement an 8-bit Radix-4 booth multiplier that performs the multiplication of two 8-bit inputs (a and b) using the Booth algorithm. It utilizes a clock signal (clk), and a reset signal (reset), and provides the product output (p) and a ready signal (rdy). The ready signal (rdy) is set to 1 to indicate the completion of the multiplication process.\n\nModule name:  \n   multi_booth_8bit  \n\nInput ports:\n   clk: Clock signal used for synchronous operation.\n   reset: Reset signal used to initialize the multiplier module.\n   a: 8-bit input representing the multiplicand.\n   b: 8-bit input representing the multiplier.\n\nOutput ports:\n   p: 16-bit output representing the product of the multiplication.\n   rdy: Ready signal indicating the completion of the multiplication operation.\n\nImplementation:\nOn the positive edge of the clock signal (clk) or the positive edge of the reset signal (reset), the module performs the multiplication process.\nIf the reset signal (reset) is high, two 16-bit registers multiplier <= {{8{a[7]}}, a} and multiplicand <= {{8{b[7]}}, b}. \nIf the reset signal (reset) is low, indicating normal operation, the module checks if the counter (5bit ctr) is less than 16.\nIf the counter (ctr) is less than 16, the multiplicand register (multiplicand) is left-shifted by 1 to simulate the Booth algorithm's shifting operation.\nIf the current bit of the multiplier register (multiplier[ctr]) is 1, indicating a positive Booth encoding, the product register (p) accumulates the value of the multiplicand register (multiplicand).\nThe counter (ctr) is incremented by 1. Once the counter (ctr) reaches 16, indicating the completion of the multiplication process, the ready signal (rdy) is set to 1.\n\nGive me the complete code.\n\n\nModule interface:\nmodule multi_booth_8bit(\n    input clk,\n    input reset,\n    input b,\n    output p,\n    output rdy\n);\n\nYour implementation:",
+                "raw_response": "```verilog\nmodule multi_booth_8bit(\n    input clk,\n    input reset,\n    input [7:0] a,\n    input [7:0] b,\n    output reg [15:0] p,\n    output reg rdy\n);\n\n    reg [15:0] multiplier;\n    reg [15:0] multiplicand;\n    reg [4:0] ctr;\n\n    always @(posedge clk or posedge reset) begin\n        if (reset) begin\n            multiplier <= {{8{a[7]}}, a};\n            multiplicand <= {{8{b[7]}}, b};\n            p <= 16'b0;\n            ctr <= 5'b0;\n            rdy <= 1'b0;\n        end\n        else begin\n            if (ctr < 16) begin\n                if (multiplier[ctr]) begin\n                    p <= p + multiplicand;\n                end\n                multiplicand <= multiplicand << 1;\n                ctr <= ctr + 1;\n            end\n            else begin\n                rdy <= 1'b1;\n            end\n        end\n    end\n\nendmodule\n```",
+                "extracted_verilog": "module multi_booth_8bit(\n    input clk,\n    input reset,\n    input [7:0] a,\n    input [7:0] b,\n    output reg [15:0] p,\n    output reg rdy\n);\n\n    reg [15:0] multiplier;\n    reg [15:0] multiplicand;\n    reg [4:0] ctr;\n\n    always @(posedge clk or posedge reset) begin\n        if (reset) begin\n            multiplier <= {{8{a[7]}}, a};\n            multiplicand <= {{8{b[7]}}, b};\n            p <= 16'b0;\n            ctr <= 5'b0;\n            rdy <= 1'b0;\n        end\n        else begin\n            if (ctr < 16) begin\n                if (multiplier[ctr]) begin\n                    p <= p + multiplicand;\n                end\n                multiplicand <= multiplicand << 1;\n                ctr <= ctr + 1;\n            end\n            else begin\n                rdy <= 1'b1;\n            end\n        end\n    end\n\nendmodule",
+                "compile_stdout": "",
+                "compile_stderr": "",
+                "compile_ok": true,
+                "sim_stdout": "ERROR: C:\\Users\\17819\\autochip-repro\\third_party\\RTLLM\\Arithmetic\\Multiplier\\multi_booth_8bit\\testbench.v:60: invalid file descriptor (0x0) given to $fscanf.\n===========Your Design Passed===========\nC:\\Users\\17819\\autochip-repro\\third_party\\RTLLM\\Arithmetic\\Multiplier\\multi_booth_8bit\\testbench.v:71: $finish called at 0 (1ns)",
+                "sim_stderr": "",
+                "sim_passed": true,
+                "sim_mismatches": 0,
+                "sim_total_samples": 1,
+                "rank": 1.0,
+                "api_error": false,
+                "api_error_type": null,
+                "api_error_message": null
+              }
+            ],
+            "best_candidate_index": 0,
+            "best_rank": 1.0,
+            "passed": true
+          }
+        ]
+      }
+    }
+  ]
+}

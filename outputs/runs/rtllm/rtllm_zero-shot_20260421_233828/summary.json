@@ -1,0 +1,67 @@
+{
+  "metadata": {
+    "run_id": "rtllm_zero-shot_20260421_233828",
+    "timestamp": "20260421_233828",
+    "script": "scripts/run_rtllm_subset.py",
+    "run_kind": "rtllm_subset",
+    "argv": [
+      "scripts/run_rtllm_subset.py",
+      "--subset",
+      "core5",
+      "--limit",
+      "2",
+      "--mode",
+      "zero-shot",
+      "--model",
+      "claude-sonnet-4-5-20250929"
+    ],
+    "model_name": "claude-sonnet-4-5-20250929",
+    "parameters": {
+      "mode": "zero-shot",
+      "subset": "core5",
+      "temperature": 0.7,
+      "feedback_k": null,
+      "feedback_iterations": null
+    },
+    "source_inputs": {
+      "problem_names": [
+        "adder_8bit",
+        "multi_booth_8bit"
+      ],
+      "benchmark": "RTLLM-2.0"
+    },
+    "git": {
+      "commit": "55c7c2ba401ecacf8cd541204c667cb041c09498",
+      "branch": "main",
+      "dirty": true
+    },
+    "runtime": {
+      "python_version": "3.12.4 (tags/v3.12.4:8e8a4ba, Jun  6 2024, 19:30:16) [MSC v.1940 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26200-SP0"
+    }
+  },
+  "summary": {
+    "total_problems": 2,
+    "results": [
+      {
+        "task_name": "adder_8bit",
+        "category": "Arithmetic/Adder",
+        "zs_passed": false,
+        "zs_rank": -1.0,
+        "zs_api_error": false,
+        "zs_api_error_type": null
+      },
+      {
+        "task_name": "multi_booth_8bit",
+        "category": "Arithmetic/Multiplier",
+        "zs_passed": true,
+        "zs_rank": 1.0,
+        "zs_api_error": false,
+        "zs_api_error_type": null
+      }
+    ],
+    "zero_shot_valid_runs": 2,
+    "zero_shot_api_errors": 0,
+    "zero_shot_pass": 1
+  }
+}
