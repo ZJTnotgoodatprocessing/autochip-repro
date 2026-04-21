@@ -56,5 +56,5 @@
 python scripts/run_rtllm_subset.py --subset core5
 
 # 指定模型
-python scripts/run_rtllm_subset.py --subset core5 --model gpt-4o
+python scripts/run_rtllm_subset.py --subset core5 --model gpt-5.4
 ```

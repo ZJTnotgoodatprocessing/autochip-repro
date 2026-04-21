@@ -18,9 +18,13 @@ Usage:
     python scripts/run_rtllm_subset.py --subset core5 --limit 2
 
 Common model names (via unified relay, no key/base_url change needed):
-    claude-haiku-4-5-20251001      (Haiku 3.5 — current default)
+    claude-haiku-4-5-20251001      (Haiku 4.5 — current default)
     claude-sonnet-4-5-20250929     (Sonnet 4.5)
-    gpt-5.2                        (GPT-5.2)
+    claude-sonnet-4-6              (Sonnet 4.6)
+    claude-opus-4-6                (Opus 4.6)
+    gpt-5.4                        (GPT-5.4)
+    gemini-2.5-pro                 (Gemini 2.5 Pro)
+    deepseek-v3.2                  (DeepSeek V3.2)
 """
 
 import argparse
@@ -246,9 +250,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Common model names (unified relay — just change the name, no key change needed):
-  claude-haiku-4-5-20251001      Haiku 3.5 (default)
+  claude-haiku-4-5-20251001      Haiku 4.5 (default)
   claude-sonnet-4-5-20250929     Sonnet 4.5
-  gpt-5.2                        GPT-5.2
+  claude-sonnet-4-6              Sonnet 4.6
+  claude-opus-4-6                Opus 4.6
+  gpt-5.4                        GPT-5.4
+  gemini-2.5-pro                 Gemini 2.5 Pro
+  deepseek-v3.2                  DeepSeek V3.2
         """,
     )
     parser.add_argument("--model", type=str, default=None,

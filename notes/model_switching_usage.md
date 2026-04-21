@@ -1,6 +1,7 @@
 # 如何切换模型：项目标准用法
 
 > 创建日期：2026-04-21
+> 最后更新：2026-04-22
 > 适用范围：所有实验脚本（run_rtllm_subset.py, run_verilogeval_subset.py 等）
 
 ---
@@ -13,7 +14,8 @@ python scripts/run_rtllm_subset.py --subset core5
 
 # 切换到其他模型 —— 只需改 --model，不需要改 key 或 base_url
 python scripts/run_rtllm_subset.py --subset core5 --model claude-sonnet-4-5-20250929
-python scripts/run_rtllm_subset.py --subset core5 --model gpt-5.2
+python scripts/run_rtllm_subset.py --subset core5 --model gpt-5.4
+python scripts/run_rtllm_subset.py --subset core5 --model gemini-2.5-pro
 ```
 
 **原理**：`--model` 参数在脚本内部会设置 `os.environ["ANTHROPIC_MODEL"]`，从而覆盖 `.env` 中的默认值。所有下游模块（`src/llm/client.py`）读取 `ANTHROPIC_MODEL` env var 来决定 model 名。
@@ -42,19 +44,55 @@ ANTHROPIC_BASE_URL=https://...  # relay 统一入口
 ANTHROPIC_MODEL=claude-haiku-4-5-20251001  # 默认模型
 ```
 
-理论上，只需通过 `--model` 传入不同模型名称即可切换模型，**无需更换 key 或 base_url**。
+只需通过 `--model` 传入不同模型名称即可切换模型，**无需更换 key 或 base_url**。
 
-### 当前已验证可用的模型
+---
 
-| 模型名 | 状态 | 验证结果 | 验证时间 |
-|--------|------|---------|--------|
-| `claude-haiku-4-5-20251001` | ✅ 可用 | RTLLM CORE_5: ZS 60%, FB 80% | 2026-04-21 |
-| `claude-sonnet-4-5-20250929` | ✅ 可用 | RTLLM smoke: 1/2 PASS (multi_booth_8bit) | 2026-04-21 |
-| `gpt-5.2` | ✅ 可用 | RTLLM smoke: 2/2 PASS (adder_8bit + multi_booth_8bit) | 2026-04-21 |
+## Relay 可用模型目录（权威列表）
 
-> **注意**：relay 的模型命名可能与官方模型名不同。当前确认的名称：
-> - Sonnet → `claude-sonnet-4-5-20250929`（不是 `claude-sonnet-4-20250514`）
-> - GPT → `gpt-5.2`（不是 `gpt-4o`）
+> **重要**：以下模型名称由用户在 relay 平台上确认提供，是唯一正确的名称。
+> 不要自行编造或猜测模型名称——relay 的命名可能与官方命名不同。
+
+### Anthropic 系列
+
+| Relay 模型名 | 对应模型 | 实验验证 |
+|-------------|---------|---------|
+| `claude-haiku-4-5-20251001` | Claude Haiku 4.5 | ✅ RTLLM CORE_5: ZS 60%, FB 80% |
+| `claude-sonnet-4-5-20250929` | Claude Sonnet 4.5 | ✅ RTLLM smoke: 1/2 PASS |
+| `claude-sonnet-4-6` | Claude Sonnet 4.6 | 未验证 |
+| `claude-opus-4-6` | Claude Opus 4.6 | 未验证 |
+
+### OpenAI 系列
+
+| Relay 模型名 | 对应模型 | 实验验证 |
+|-------------|---------|---------|
+| `gpt-5.4` | GPT-5.4 | 未验证 |
+
+### Google 系列
+
+| Relay 模型名 | 对应模型 | 实验验证 |
+|-------------|---------|---------|
+| `gemini-2.5-pro` | Gemini 2.5 Pro | 未验证 |
+| `gemini-3-flash-preview` | Gemini 3 Flash (Preview) | 未验证 |
+| `gemini-3-pro-preview` | Gemini 3 Pro (Preview) | 未验证 |
+| `gemini-3.1-pro-preview` | Gemini 3.1 Pro (Preview) | 未验证 |
+
+### 其他模型
+
+| Relay 模型名 | 对应模型 | 实验验证 |
+|-------------|---------|---------|
+| `deepseek-v3.2` | DeepSeek V3.2 | 未验证 |
+| `kimi-k2.5` | Kimi K2.5 (Moonshot) | 未验证 |
+| `glm5` | GLM-5 (智谱) | 未验证 |
+
+### 已知过期/不可用的模型名
+
+以下名称在 relay 上返回 `model_not_found`，**不要使用**：
+
+- ~~`gpt-4o`~~ → 应使用 `gpt-5.4`
+- ~~`gpt-5.2`~~ → 已被 `gpt-5.4` 取代（注意：之前 smoke 用的是 `gpt-5.2`，未来应使用最新名称）
+- ~~`claude-sonnet-4-20250514`~~ → 应使用 `claude-sonnet-4-5-20250929` 或 `claude-sonnet-4-6`
+- ~~`claude-3-5-sonnet-20241022`~~ → 过旧命名
 
 ---
 
@@ -69,12 +107,19 @@ ANTHROPIC_MODEL=claude-haiku-4-5-20251001  # 默认模型
 
 ---
 
-## 后续强模型实验的准备步骤
+## 后续实验推荐模型选择
 
-1. **确认 relay 可用模型列表**：联系第三方 relay 提供商，查询当前 group 下可用的模型
-2. **开通所需模型**：如果有 group 限制，申请为 GPT-4o / Sonnet 等开通 channel
-3. **验证连通性**：用以下命令快速验证：
-   ```bash
-   python scripts/run_rtllm_subset.py --problems adder_8bit --mode zero-shot --model <model_name>
-   ```
-4. **执行正式实验**：确认可用后，跑完整 CORE_5 或更大子集
+### 后中期实验矩阵推荐
+
+| 实验角色 | 推荐模型 | 理由 |
+|---------|---------|------|
+| **默认基线** | `claude-haiku-4-5-20251001` | 已有完整 VerilogEval + RTLLM 基线数据 |
+| **强模型主力** | `claude-sonnet-4-5-20250929` 或 `claude-opus-4-6` | Anthropic 系强推理模型 |
+| **跨厂商对照** | `gpt-5.4` | OpenAI 最新模型 |
+| **多样性扩展** | `gemini-2.5-pro` / `deepseek-v3.2` | 验证框架泛化能力 |
+
+### 快速验证连通性
+
+```bash
+python scripts/run_rtllm_subset.py --problems adder_8bit --mode zero-shot --model <model_name>
+```
