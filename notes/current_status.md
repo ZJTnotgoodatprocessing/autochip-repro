@@ -4,57 +4,66 @@
 基于大语言模型与 EDA 工具反馈的 RTL 代码自动生成与自修复研究
 
 ## 研究主线
-以 AutoChip 为主要参考对象，复现并分析其“生成—编译/仿真—反馈—修复”的 RTL 自动生成闭环机制，构建可运行原型系统，并在公开 benchmark 上验证 feedback loop 的作用。
+以 AutoChip 为主要参考对象，复现并分析其"生成—编译/仿真—反馈—修复"的 RTL 自动生成闭环机制，构建可运行原型系统，并在公开 benchmark 上验证 feedback loop 的作用。
 
 ## 当前阶段定位
-当前项目已经完成核心系统搭建，已从“原型实现阶段”进入“实验分析与论文材料整理阶段”。
+**后中期阶段**（2026-04-21 更新）。中期答辩已完成，项目重心从"中期材料完善"转向"扩展实验推进、结果沉淀、论文正文准备和最终答辩素材积累"。
 
 ## 已完成工作
 1. 完成 AutoChip 相关文献调研，并确定以 AutoChip 为主复现对象。
-2. 完成 AutoChip 风格原型系统搭建。
+2. 完成 AutoChip 风格原型系统搭建（src/ 全部核心模块）。
 3. 完成单任务与小批量任务运行验证。
 4. 完成 succinct feedback loop 实现。
-5. 完成 VerilogEval-Human 子集接入。
-6. 完成 Haiku 主实验。
+5. 完成 VerilogEval-Human 子集接入（20 题）。
+6. 完成 Haiku 主实验（20 题，zero-shot vs feedback，0 API 错误）。
 7. 完成实验总结、图表与关键案例分析。
-8. 已开始整理中期报告与中期答辩材料。
+8. 完成中期报告定稿。
+9. 完成中期答辩 PPT 与口头汇报。
+10. 完成中期答辩。
 
 ## 当前主实验基线
 - model: claude-haiku-4-5-20251001
 - benchmark: VerilogEval-Human subset (20 problems)
 - zero-shot: 16/20 (80%)
 - feedback: 18/20 (90%)
-- improved by feedback: 2 tasks
+- improved by feedback: 2 tasks (Prob109_fsm1, Prob127_lemmings1)
 - API errors: 0
+- 权威结果来源: `outputs/verilogeval_both_20260412_173450.json`
 
 ## 当前关键案例
 - Prob109_fsm1：zero-shot 失败，feedback 第 2 轮修复成功
 - Prob127_lemmings1：zero-shot 失败，feedback 第 2 轮修复成功
-- Prob140_fsm_hdlc：feedback 有提升但未完全通过
+- Prob140_fsm_hdlc：feedback 有提升但未完全通过（92.5% → 97.1%）
 - Prob082_lfsr32：feedback 无效，反映领域知识缺失问题
 
 ## 当前阶段结论
 1. feedback loop 对部分 FSM / 控制逻辑类任务有效。
-2. 对“接近正确但存在局部逻辑错误”的代码，feedback 修复效果较好。
+2. 对"接近正确但存在局部逻辑错误"的代码，feedback 修复效果较好。
 3. 对需要精确领域知识或复杂协议边界条件的问题，feedback 能力有限。
 4. 当前结果已可作为中期报告和后续论文实验部分的阶段性支撑。
 
-## 当前最优先任务
-1. 完成中期报告定稿
-2. 完成中期答辩 PPT 和口头汇报稿
-3. 整理主实验结果表、图和案例分析
-4. 明确中期之后的后续实验计划
+## 当前最优先任务（后中期阶段）
+1. 设计并执行"更强模型 + 更难 benchmark"验证 AutoChip 有效性的扩展实验
+2. 在 20 题上进行 Haiku 重复实验，验证结果稳定性
+3. 深化错误类型分析和案例分析
+4. 逐步完成论文正文撰写
 
-## 中期之后准备继续做的事
-1. 扩大实验样本规模，或补充重复实验验证稳定性
-2. 深化错误类型分析
-3. 优化 feedback prompt
-4. 视时间做少量补充对比或消融实验
-5. 逐步完成论文正文撰写
+## 后续研究重点
+### A 层：低风险、快速沉淀
+- Haiku 重复实验（证明结果稳定性）
+- 错误类型细化分析
+- k 值消融实验
+
+### B 层：更有研究价值的方向（导师建议）
+- 更强模型实验：zero-shot 已很强时，feedback loop 是否仍有价值
+- 更难 benchmark 子集：在 Hard 题上 feedback 的修复效率
+- 强模型 + 难 benchmark 交叉实验：AutoChip 的价值边界
+- 反馈策略消融：区分反馈价值 vs 多次重试价值
 
 ## 注意事项
 - 不要重新初始化项目
 - 不要覆盖已有 outputs/ 和 notes/
 - 优先复用现有 scripts、src 和已有实验结果
-- 区分“已完成”“正在进行”“后续计划”
-- 后续工作重点是实验分析与论文整理，而不是重新搭系统
+- 区分"已完成""正在进行""后续计划"
+- 后续工作重点是扩展实验与论文整理，不再围绕中期报告
+- 新实验结果使用 `outputs/runs/{category}/{run_id}/` 格式保存

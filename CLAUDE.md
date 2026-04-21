@@ -27,23 +27,29 @@ VerilogEval-Human subset (20 problems)
 3. 对 LFSR 抽头类问题和复杂协议边界条件问题作用有限
 4. 当前系统已具备中期报告所需的阶段性成果
 
+## Current Stage
+Post-midterm (midterm defense completed 2026-04-14)
+
 ## Current Priorities
-1. 完成中期报告与中期答辩材料
-2. 整理实验图表与关键案例
-3. 继续做错误类型分析
-4. 视时间补充小规模实验或轻量改进
+1. Design and execute expansion experiments with stronger models + harder benchmarks
+2. Run repeat experiments on 20-problem subset for result stability
+3. Deepen error type analysis and case study materials
+4. Progressively write thesis body text
+5. Accumulate final defense materials
 
 ## Working Rules
-- 不要从头开始重建项目
-- 不要覆盖已有实验输出
-- 不要删除 notes/ 和 outputs/ 中已有结果
-- 先读取项目现状再继续开发
-- 优先复用现有脚本和模块
-- 修改代码时保持 run_single_task.py、run_feedback_loop.py、run_verilogeval_subset.py 等主流程稳定
+- Do not rebuild the project from scratch
+- Do not overwrite existing experiment outputs
+- Do not delete existing notes/ and outputs/ results
+- Read project state before continuing development
+- Reuse existing scripts and modules
+- Keep run_single_task.py, run_feedback_loop.py, run_verilogeval_subset.py stable
+- Save new experiment results to outputs/runs/{category}/{run_id}/
 
 ## Important Files
 - notes/current_status.md
 - notes/haiku_main_experiment_summary.md
+- outputs/verilogeval_both_20260412_173450.json  (authoritative main experiment result)
 - outputs/reports/haiku_pass_rate_bar.png
 - outputs/reports/haiku_per_problem_rank.png
 - scripts/run_verilogeval_subset.py
@@ -53,15 +59,16 @@ VerilogEval-Human subset (20 problems)
 - src/llm/
 
 ## What To Avoid
-- 不要把未完成的内容写成已完成
-- 不要夸大实验结论
-- 不要把中期报告写成开题报告
-- 不要在没有必要时大幅扩展研究范围
-- 不要优先做高风险、大工程量的新方向
+- Do not write incomplete work as completed
+- Do not exaggerate experimental conclusions
+- Do not continue modifying midterm report
+- Do not expand research scope without necessity
+- Do not prioritize high-risk, large-effort new directions
+- Do not fabricate experimental data or intermediate traces
 
 ## Preferred Next-Step Style
-继续工作时，优先先做：
-1. 读取当前项目状态
-2. 总结已完成进度
-3. 明确下一步最重要的 2~3 项任务
-4. 再开始修改代码或整理文档
+When continuing work, prioritize:
+1. Read current project state
+2. Summarize completed progress
+3. Identify the 2-3 most important next tasks
+4. Then start modifying code or organizing documents
