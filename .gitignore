@@ -28,3 +28,8 @@ Thumbs.db
 # Temp files
 *.tmp
 *.bak
+
+# RTLLM benchmark — exclude example LLM outputs and images
+third_party/RTLLM/_chatgpt35/
+third_party/RTLLM/_chatgpt4/
+third_party/RTLLM/_pic/

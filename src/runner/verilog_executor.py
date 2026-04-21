@@ -89,5 +89,23 @@ def simulate(compiled_path: Path) -> SimResult:
             stderr=stderr,
         )
 
-    # If we can't parse mismatch info, check return code at least
+    # Parse RTLLM-style output:
+    #   "===========Your Design Passed==========="
+    #   "===========Test completed with 3 /100 failures==========="
+    #   "===========Error==========="
+    if "Your Design Passed" in stdout:
+        return SimResult(passed=True, total_samples=1, mismatches=0,
+                         stdout=stdout, stderr=stderr)
+
+    m_rtllm = re.search(r"Test completed with (\d+)\s*/\s*(\d+) failures", stdout)
+    if m_rtllm:
+        failures = int(m_rtllm.group(1))
+        total = int(m_rtllm.group(2))
+        return SimResult(passed=(failures == 0), total_samples=total,
+                         mismatches=failures, stdout=stdout, stderr=stderr)
+
+    if "===========Error===========" in stdout:
+        return SimResult(passed=False, stdout=stdout, stderr=stderr)
+
+    # If we can't parse any known format, check return code at least
     return SimResult(passed=(proc.returncode == 0), stdout=stdout, stderr=stderr)
