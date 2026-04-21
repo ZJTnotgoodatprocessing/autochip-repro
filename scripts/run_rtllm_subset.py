@@ -56,6 +56,20 @@ SUBSETS = {
         "LIFObuffer",         # Memory/LIFO — Medium, stack structure
         "traffic_light",      # Miscellaneous — Medium-Hard, FSM + timing
     ],
+    "study12": [
+        "float_multi",        # Arithmetic/Other — Very Hard, IEEE 754
+        "multi_booth_8bit",   # Arithmetic/Multiplier — Hard, Booth encoding
+        "multi_pipe_8bit",    # Arithmetic/Multiplier — Hard, pipelined
+        "div_16bit",          # Arithmetic/Divider — Hard, iterative division
+        "adder_bcd",          # Arithmetic/Adder — Medium, BCD encoding
+        "fsm",                # Control/FSM — Medium, Mealy sequence detector
+        "sequence_detector",  # Control/FSM — Medium, sequence detection
+        "JC_counter",         # Control/Counter — Medium, Johnson counter
+        "LIFObuffer",         # Memory/LIFO — Medium, stack
+        "LFSR",               # Memory/Shifter — Medium, shift register
+        "traffic_light",      # Miscellaneous — Hard, FSM + timing
+        "freq_divbyfrac",     # Miscellaneous — Hard, fractional divider
+    ],
 }
 
 
@@ -280,7 +294,7 @@ Common model names (unified relay — just change the name, no key change needed
 
     # ── Model switching: --model overrides env var ────────────────────────
     if args.model:
-        os.environ["ANTHROPIC_MODEL"] = args.model
+        os.environ["LLM_MODEL"] = args.model
 
     model_name = get_model_name()
 

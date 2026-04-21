@@ -21,8 +21,13 @@ class APIError(Exception):
 
 
 def get_model_name() -> str:
-    """Return the active model name (env var > default constant)."""
-    return os.environ.get("ANTHROPIC_MODEL", DEFAULT_MODEL)
+    """Return the active model name.
+
+    Priority: LLM_MODEL > ANTHROPIC_MODEL > default constant.
+    LLM_MODEL is the preferred provider-agnostic name.
+    ANTHROPIC_MODEL is kept for backward compatibility.
+    """
+    return os.environ.get("LLM_MODEL") or os.environ.get("ANTHROPIC_MODEL", DEFAULT_MODEL)
 
 
 def _get_client() -> anthropic.Anthropic:
