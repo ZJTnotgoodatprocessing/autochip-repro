@@ -9,7 +9,7 @@ import time
 from src.llm.base import LLMProvider
 from src.llm.client import APIError
 
-DEFAULT_MODEL = "gpt-4o"
+DEFAULT_MODEL = "gpt-5.4"
 
 _MAX_RETRIES = 3
 _BACKOFF_SECONDS = [2, 5, 10]
@@ -21,7 +21,7 @@ class OpenAIProvider(LLMProvider):
     Environment variables:
         OPENAI_API_KEY: API key (required)
         OPENAI_BASE_URL: Base URL override for compatible endpoints (optional)
-        OPENAI_MODEL: Default model name (optional, defaults to gpt-4o)
+        OPENAI_MODEL: Default model name (optional, defaults to gpt-5.4)
     """
 
     def __init__(self):

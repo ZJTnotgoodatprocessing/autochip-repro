@@ -71,13 +71,17 @@ CVDP 虽然是最权威的新 benchmark（783 题、NVlabs 出品），但：
 
 ### 分层模型矩阵
 
-| 梯队 | 模型 | Provider | 角色 | 特点 |
-|------|------|----------|------|------|
-| **T1 主验证** | GPT-4o | OpenAI | 主实验强模型 | 当前最强通用模型之一，代码生成能力极强 |
-| **T1 主验证** | Claude Sonnet 3.5/4 | Anthropic | 主实验强模型 | 强推理能力，体系内可直接使用 |
-| **T2 对照** | Claude Haiku 3.5 | Anthropic | 已有基线 | 已有 VerilogEval 20题实验数据作对照 |
-| **T2 对照** | GPT-4o-mini | OpenAI | 轻量级对照 | 成本低，可做大量对比实验 |
-| **T3 可选** | DeepSeek-V3/Coder | DeepSeek | 开源对照 | 中国开源模型代表，代码能力强 |
+> **执行状态更新（2026-04-22）**：已通过统一 relay 完成 3 模型正式实验。
+> 实际使用的 relay 模型名：`claude-haiku-4-5-20251001`、`claude-sonnet-4-6`、`gpt-5.4`。
+> 完整权威模型名列表见 `notes/model_switching_usage.md`。
+
+| 梯队 | 模型 | Relay 名称 | 角色 | 状态 |
+|------|------|------------|------|------|
+| **T1 已完成** | GPT-5.4 | `gpt-5.4` | 主实验强模型 | ✅ STUDY_12: ZS 50%, FB 83% |
+| **T1 已完成** | Claude Sonnet 4.6 | `claude-sonnet-4-6` | 主实验强模型 | ✅ STUDY_12: ZS 42%, FB 58% |
+| **T2 已完成** | Claude Haiku 4.5 | `claude-haiku-4-5-20251001` | 基线模型 | ✅ VerilogEval + STUDY_12 |
+| **T3 可选** | Gemini 2.5 Pro | `gemini-2.5-pro` | 跨厂商对照 | 未验证 |
+| **T3 可选** | DeepSeek V3.2 | `deepseek-v3.2` | 开源对照 | 未验证 |
 
 ### 核心实验问题
 
@@ -97,15 +101,15 @@ CVDP 虽然是最权威的新 benchmark（783 题、NVlabs 出品），但：
 
 ### 推荐实验矩阵
 
-| 实验 | 模型 | Benchmark | 模式 | 优先级 |
-|------|------|-----------|------|--------|
-| E1 | Claude Haiku 3.5 | RTLLM-2.0 (50题) | zero-shot + feedback | ★★★★ |
-| E2 | GPT-4o | RTLLM-2.0 (50题) | zero-shot + feedback | ★★★★★ |
-| E3 | Claude Sonnet | RTLLM-2.0 (50题) | zero-shot + feedback | ★★★★ |
-| E4 | GPT-4o | VerilogEval-20 | zero-shot + feedback | ★★★ |
-| E5 | Haiku 重复实验 | VerilogEval-20 | zero-shot + feedback (×3) | ★★★ |
+> **执行状态更新（2026-04-22）**：E1-E3 已在 STUDY_12 子集上完成。
 
-E2 和 E1 优先执行，可形成 **"强模型 vs 弱模型 × 难 benchmark"** 的完整对比。
+| 实验 | 模型 | Benchmark | 模式 | 状态 |
+|------|------|-----------|------|------|
+| E1 | `claude-haiku-4-5-20251001` | RTLLM STUDY_12 | ZS + FB | ✅ 完成 |
+| E2 | `gpt-5.4` | RTLLM STUDY_12 | ZS + FB | ✅ 完成 |
+| E3 | `claude-sonnet-4-6` | RTLLM STUDY_12 | ZS + FB | ✅ 完成 |
+| E4 | `gemini-2.5-pro` / `deepseek-v3.2` | RTLLM STUDY_12 | ZS + FB | 可选扩展 |
+| E5 | Haiku 重复实验 | VerilogEval-20 | ZS + FB (×3) | 可选扩展 |
 
 ---
 

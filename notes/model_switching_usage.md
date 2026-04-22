@@ -10,15 +10,15 @@
 
 ```bash
 # 使用默认模型（Haiku）
-python scripts/run_rtllm_subset.py --subset core5
+python scripts/run_rtllm_subset.py --subset study12
 
 # 切换到其他模型 —— 只需改 --model，不需要改 key 或 base_url
-python scripts/run_rtllm_subset.py --subset core5 --model claude-sonnet-4-5-20250929
-python scripts/run_rtllm_subset.py --subset core5 --model gpt-5.4
-python scripts/run_rtllm_subset.py --subset core5 --model gemini-2.5-pro
+python scripts/run_rtllm_subset.py --subset study12 --model claude-sonnet-4-6
+python scripts/run_rtllm_subset.py --subset study12 --model gpt-5.4
+python scripts/run_rtllm_subset.py --subset study12 --model gemini-2.5-pro
 ```
 
-**原理**：`--model` 参数在脚本内部会设置 `os.environ["ANTHROPIC_MODEL"]`，从而覆盖 `.env` 中的默认值。所有下游模块（`src/llm/client.py`）读取 `ANTHROPIC_MODEL` env var 来决定 model 名。
+**原理**：`--model` 参数在脚本内部设置 `os.environ["LLM_MODEL"]`，优先级高于 `.env` 中的 `ANTHROPIC_MODEL`。完整优先级链：`LLM_MODEL` > `ANTHROPIC_MODEL` > 代码默认值。
 
 ---
 
@@ -57,16 +57,16 @@ ANTHROPIC_MODEL=claude-haiku-4-5-20251001  # 默认模型
 
 | Relay 模型名 | 对应模型 | 实验验证 |
 |-------------|---------|---------|
-| `claude-haiku-4-5-20251001` | Claude Haiku 4.5 | ✅ RTLLM CORE_5: ZS 60%, FB 80% |
+| `claude-haiku-4-5-20251001` | Claude Haiku 4.5 | ✅ RTLLM STUDY_12: ZS 42%, FB 50% |
 | `claude-sonnet-4-5-20250929` | Claude Sonnet 4.5 | ✅ RTLLM smoke: 1/2 PASS |
-| `claude-sonnet-4-6` | Claude Sonnet 4.6 | 未验证 |
+| `claude-sonnet-4-6` | Claude Sonnet 4.6 | ✅ RTLLM STUDY_12: ZS 42%, FB 58% |
 | `claude-opus-4-6` | Claude Opus 4.6 | 未验证 |
 
 ### OpenAI 系列
 
 | Relay 模型名 | 对应模型 | 实验验证 |
 |-------------|---------|---------|
-| `gpt-5.4` | GPT-5.4 | 未验证 |
+| `gpt-5.4` | GPT-5.4 | ✅ RTLLM STUDY_12: ZS 50%, FB 83% |
 
 ### Google 系列
 
@@ -90,8 +90,8 @@ ANTHROPIC_MODEL=claude-haiku-4-5-20251001  # 默认模型
 以下名称在 relay 上返回 `model_not_found`，**不要使用**：
 
 - ~~`gpt-4o`~~ → 应使用 `gpt-5.4`
-- ~~`gpt-5.2`~~ → 已被 `gpt-5.4` 取代（注意：之前 smoke 用的是 `gpt-5.2`，未来应使用最新名称）
-- ~~`claude-sonnet-4-20250514`~~ → 应使用 `claude-sonnet-4-5-20250929` 或 `claude-sonnet-4-6`
+- ~~`gpt-5.2`~~ → 已被 `gpt-5.4` 取代
+- ~~`claude-sonnet-4-20250514`~~ → 应使用 `claude-sonnet-4-6`
 - ~~`claude-3-5-sonnet-20241022`~~ → 过旧命名
 
 ---
@@ -102,21 +102,26 @@ ANTHROPIC_MODEL=claude-haiku-4-5-20251001  # 默认模型
 |------|---------------|
 | `scripts/run_rtllm_subset.py` | ✅ |
 | `scripts/run_verilogeval_subset.py` | ✅ |
-| `scripts/run_single_task.py` | 待确认 |
-| `scripts/run_small_batch.py` | 待确认 |
 
 ---
 
 ## 后续实验推荐模型选择
 
-### 后中期实验矩阵推荐
+### 已完成正式实验矩阵
+
+| 模型 | RTLLM STUDY_12 ZS | RTLLM STUDY_12 FB | 改善题数 |
+|------|-------------------|-------------------|---------|
+| `claude-haiku-4-5-20251001` | 42% | 50% | 2 |
+| `claude-sonnet-4-6` | 42% | 58% | 2 |
+| `gpt-5.4` | 50% | 83% | 4 |
+
+### 扩展实验推荐
 
 | 实验角色 | 推荐模型 | 理由 |
 |---------|---------|------|
-| **默认基线** | `claude-haiku-4-5-20251001` | 已有完整 VerilogEval + RTLLM 基线数据 |
-| **强模型主力** | `claude-sonnet-4-5-20250929` 或 `claude-opus-4-6` | Anthropic 系强推理模型 |
-| **跨厂商对照** | `gpt-5.4` | OpenAI 最新模型 |
-| **多样性扩展** | `gemini-2.5-pro` / `deepseek-v3.2` | 验证框架泛化能力 |
+| **默认基线** | `claude-haiku-4-5-20251001` | 已有 VerilogEval + RTLLM 完整基线 |
+| **跨厂商扩展** | `gemini-2.5-pro` / `deepseek-v3.2` | 验证框架跨厂商泛化能力 |
+| **最强模型** | `claude-opus-4-6` | Anthropic 旗舰，预期更强 |
 
 ### 快速验证连通性
 

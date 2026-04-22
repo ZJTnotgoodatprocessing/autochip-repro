@@ -5,8 +5,8 @@ Usage:
     python scripts/run_rtllm_subset.py --subset core5
 
     # Run with a specific model (via unified relay — just change model name)
-    python scripts/run_rtllm_subset.py --subset core5 --model gpt-4o
-    python scripts/run_rtllm_subset.py --subset core5 --model claude-sonnet-4-20250514
+    python scripts/run_rtllm_subset.py --subset core5 --model gpt-5.4
+    python scripts/run_rtllm_subset.py --subset core5 --model claude-sonnet-4-6
 
     # Run only zero-shot
     python scripts/run_rtllm_subset.py --subset core5 --mode zero-shot

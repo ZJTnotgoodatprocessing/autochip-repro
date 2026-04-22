@@ -7,7 +7,7 @@
 以 AutoChip 为主要参考对象，复现并分析其"生成—编译/仿真—反馈—修复"的 RTL 自动生成闭环机制，构建可运行原型系统，并在公开 benchmark 上验证 feedback loop 的作用。
 
 ## 当前阶段定位
-**后中期阶段**（2026-04-21 更新）。中期答辩已完成，项目重心从"中期材料完善"转向"扩展实验推进、结果沉淀、论文正文准备和最终答辩素材积累"。
+**后中期阶段**（2026-04-22 更新）。RTLLM STUDY_12 正式实验矩阵已完成，进入结果资产化与论文撰写阶段。
 
 ## 已完成工作
 1. 完成 AutoChip 相关文献调研，并确定以 AutoChip 为主复现对象。
@@ -17,18 +17,27 @@
 5. 完成 VerilogEval-Human 子集接入（20 题）。
 6. 完成 Haiku 主实验（20 题，zero-shot vs feedback，0 API 错误）。
 7. 完成实验总结、图表与关键案例分析。
-8. 完成中期报告定稿。
-9. 完成中期答辩 PPT 与口头汇报。
-10. 完成中期答辩。
+8. 完成中期报告定稿与中期答辩。
+9. **完成 RTLLM 2.0 接入**：50 题兼容性审计（41/50 可用），rtllm_loader 实现。
+10. **完成 RTLLM STUDY_12 正式实验矩阵**：3 模型 × 2 条件，0 API 错误。
+11. **完成正式结果分析**：图表资产化、典型案例分析、可靠性说明。
+12. **完成 LLM_MODEL 变量清理**：支持 provider-agnostic 模型切换。
 
 ## 当前主实验基线
+
+### VerilogEval-Human（Haiku 基线）
 - model: claude-haiku-4-5-20251001
 - benchmark: VerilogEval-Human subset (20 problems)
-- zero-shot: 16/20 (80%)
-- feedback: 18/20 (90%)
-- improved by feedback: 2 tasks (Prob109_fsm1, Prob127_lemmings1)
-- API errors: 0
+- zero-shot: 16/20 (80%), feedback: 18/20 (90%), improved: 2
 - 权威结果来源: `outputs/verilogeval_both_20260412_173450.json`
+
+### RTLLM STUDY_12 正式实验矩阵（论文核心数据）
+| 模型 | Zero-shot | Feedback | 改善题数 |
+|------|-----------|----------|----------|
+| claude-haiku-4-5-20251001 | 5/12 (42%) | 6/12 (50%) | 2 |
+| claude-sonnet-4-6 | 5/12 (42%) | 7/12 (58%) | 2 |
+| gpt-5.4 | 6/12 (50%) | 10/12 (83%) | 4 |
+- 权威结果来源: `outputs/runs/rtllm/rtllm_both_20260422_*/`
 
 ## 当前关键案例
 - Prob109_fsm1：zero-shot 失败，feedback 第 2 轮修复成功
@@ -43,10 +52,11 @@
 4. 当前结果已可作为中期报告和后续论文实验部分的阶段性支撑。
 
 ## 当前最优先任务（后中期阶段）
-1. 设计并执行"更强模型 + 更难 benchmark"验证 AutoChip 有效性的扩展实验
-2. 在 20 题上进行 Haiku 重复实验，验证结果稳定性
-3. 深化错误类型分析和案例分析
-4. 逐步完成论文正文撰写
+1. ✅ ~~设计并执行"更强模型 + 更难 benchmark"验证 AutoChip 有效性的扩展实验~~ → 已完成（STUDY_12）
+2. 论文正文撰写：将 RTLLM STUDY_12 结果整理为实验章节
+3. 可选扩展：更多模型（gemini-2.5-pro / deepseek-v3.2）对照实验
+4. 可选扩展：Haiku 重复实验验证结果稳定性
+5. 最终答辩 PPT 准备
 
 ## 后续研究重点
 ### A 层：低风险、快速沉淀
