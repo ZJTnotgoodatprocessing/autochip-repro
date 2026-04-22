@@ -115,9 +115,15 @@ def run_feedback_loop(
     k: int = 3,
     max_iterations: int = 5,
     temperature: float = 0.7,
+    no_feedback: bool = False,
     on_iteration: callable = None,
 ) -> FeedbackLoopResult:
     """Run the AutoChip feedback loop on a single task.
+
+    Args:
+        no_feedback: If True, run in "retry-only" mode — all iterations use the
+            initial prompt without any error feedback. This is the ablation
+            condition for separating "multiple attempts" from "feedback value".
 
     API errors (after retry exhaustion) are captured in the result rather
     than raised. If ALL candidates in an iteration fail due to API errors,
@@ -137,12 +143,16 @@ def run_feedback_loop(
     global_best_comp: CompileResult | None = None
     global_best_sim: SimResult | None = None
 
+    initial_prompt = build_initial_prompt(task.description, task.module_header)
+
     for iteration_num in range(1, max_iterations + 1):
         iter_record = IterationRecord(iteration=iteration_num)
 
         # ── build prompt ─────────────────────────────────────────────────
-        if iteration_num == 1:
-            prompt = build_initial_prompt(task.description, task.module_header)
+        if iteration_num == 1 or no_feedback:
+            # Round 1 always uses initial prompt.
+            # In retry-only mode, ALL rounds use initial prompt (no error info).
+            prompt = initial_prompt
         else:
             prompt = build_feedback_prompt(
                 description=task.description,

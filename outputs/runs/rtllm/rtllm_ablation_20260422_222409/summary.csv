@@ -1,0 +1,13 @@
+task_name,category,zs_passed,zs_rank,zs_api_error,zs_api_error_type,ro_passed,ro_rank,ro_iterations,ro_api_error,ro_api_error_type,fb_passed,fb_rank,fb_iterations,fb_api_error,fb_api_error_type,improved
+float_multi,Arithmetic/Other,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,,False
+multi_booth_8bit,Arithmetic/Multiplier,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,,False
+multi_pipe_8bit,Arithmetic/Multiplier,False,0.0,False,,True,1.0,1,False,,True,1.0,1,False,,True
+div_16bit,Arithmetic/Divider,False,0.0,False,,True,1.0,3,False,,True,1.0,1,False,,True
+adder_bcd,Arithmetic/Adder,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,,False
+fsm,Control/Finite State Machine,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,,False
+sequence_detector,Control/Finite State Machine,False,-1.0,False,,False,-1.0,5,False,,True,1.0,2,False,,True
+JC_counter,Control/Counter,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,,False
+LIFObuffer,Memory/LIFO,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,,False
+LFSR,Memory/Shifter,False,-1.0,False,,False,-1.0,5,False,,False,-1.0,5,False,,False
+traffic_light,Miscellaneous/Others,False,0.0,False,,False,0.0,5,False,,True,1.0,3,False,,True
+freq_divbyfrac,Miscellaneous/Frequency divider,False,0.0,False,,False,0.0,5,False,,False,0.0,5,False,,False

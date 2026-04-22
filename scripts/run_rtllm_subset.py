@@ -227,10 +227,11 @@ def _serialize_feedback_result(result) -> dict:
     }
 
 
-def _run_one(task, k, max_iterations, temperature):
+def _run_one(task, k, max_iterations, temperature, no_feedback=False):
     """Run feedback loop and return both summary and detailed dicts."""
     result = run_feedback_loop(
         task, k=k, max_iterations=max_iterations, temperature=temperature,
+        no_feedback=no_feedback,
     )
     summary = {
         "task_name": result.task_name,
@@ -281,8 +282,9 @@ Common model names (unified relay — just change the name, no key change needed
                         help="Predefined subset to run (default: core5)")
     parser.add_argument("--problems", nargs="*",
                         help="Override with specific RTLLM problem names")
-    parser.add_argument("--mode", choices=["zero-shot", "feedback", "both"], default="both",
-                        help="Experiment mode (default: both)")
+    parser.add_argument("--mode", choices=["zero-shot", "feedback", "retry-only", "both", "ablation"],
+                        default="both",
+                        help="Experiment mode. 'ablation' runs ZS + retry-only + feedback.")
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--feedback-k", type=int, default=3,
                         help="Number of candidates per feedback iteration (default: 3)")
@@ -344,9 +346,10 @@ Common model names (unified relay — just change the name, no key change needed
 
         zs = None
         fb = None
+        ro = None  # retry-only
 
         # ── Zero-shot ────────────────────────────────────────────────────
-        if args.mode in ("zero-shot", "both"):
+        if args.mode in ("zero-shot", "both", "ablation"):
             print("  Zero-shot...", end=" ", flush=True)
             zs, zs_detail = _run_one(task, k=1, max_iterations=1, temperature=args.temperature)
             if zs["api_error"]:
@@ -356,8 +359,20 @@ Common model names (unified relay — just change the name, no key change needed
             else:
                 print(f"FAIL({zs['best_rank']:.2f})")
 
+        # ── Retry-only (no feedback, same budget) ─────────────────────────
+        if args.mode in ("retry-only", "ablation"):
+            print(f"  Retry-only(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
+            ro, ro_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+                                     temperature=args.temperature, no_feedback=True)
+            if ro["api_error"]:
+                print(f"API_ERR({ro['api_error_type']})")
+            elif ro["passed"]:
+                print(f"PASS(iter={ro['total_iterations']})")
+            else:
+                print(f"FAIL({ro['best_rank']:.2f})")
+
         # ── Feedback ─────────────────────────────────────────────────────
-        if args.mode in ("feedback", "both"):
+        if args.mode in ("feedback", "both", "ablation"):
             print(f"  Feedback(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
             fb, fb_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
                                      temperature=args.temperature)
@@ -377,6 +392,13 @@ Common model names (unified relay — just change the name, no key change needed
             row["zs_api_error"] = zs["api_error"]
             row["zs_api_error_type"] = zs.get("api_error_type")
             detail_row["zero_shot"] = zs_detail
+        if ro:
+            row["ro_passed"] = ro["passed"]
+            row["ro_rank"] = ro["best_rank"]
+            row["ro_iterations"] = ro["total_iterations"]
+            row["ro_api_error"] = ro["api_error"]
+            row["ro_api_error_type"] = ro.get("api_error_type")
+            detail_row["retry_only"] = ro_detail
         if fb:
             row["fb_passed"] = fb["passed"]
             row["fb_rank"] = fb["best_rank"]
