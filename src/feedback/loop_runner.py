@@ -23,7 +23,7 @@ from src.runner.verilog_executor import (
     simulate as verilog_simulate,
 )
 from src.ranking.ranker import rank as compute_rank
-from src.feedback.prompt_builder import build_initial_prompt, build_feedback_prompt
+from src.feedback.prompt_builder import build_initial_prompt, build_feedback_prompt, FeedbackMode
 
 
 # ── data structures ──────────────────────────────────────────────────────────
@@ -116,6 +116,7 @@ def run_feedback_loop(
     max_iterations: int = 5,
     temperature: float = 0.7,
     no_feedback: bool = False,
+    feedback_mode: FeedbackMode = FeedbackMode.SUCCINCT,
     on_iteration: callable = None,
 ) -> FeedbackLoopResult:
     """Run the AutoChip feedback loop on a single task.
@@ -160,6 +161,7 @@ def run_feedback_loop(
                 previous_code=global_best_verilog or "(no valid code generated)",
                 compile_result=global_best_comp,
                 sim_result=global_best_sim,
+                feedback_mode=feedback_mode,
             )
 
         # ── generate k candidates ────────────────────────────────────────

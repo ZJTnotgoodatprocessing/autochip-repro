@@ -44,6 +44,7 @@ from src.llm.client import get_model_name
 from src.runner.rtllm_loader import discover_all, load_by_name, RTLLMProblem
 from src.runner.task import Task
 from src.feedback.loop_runner import run_feedback_loop
+from src.feedback.prompt_builder import FeedbackMode
 from src.utils.artifacts import build_run_metadata, create_run_dir, make_run_id, timestamp_now
 
 # ── Predefined subsets ───────────────────────────────────────────────────────
@@ -227,11 +228,12 @@ def _serialize_feedback_result(result) -> dict:
     }
 
 
-def _run_one(task, k, max_iterations, temperature, no_feedback=False):
+def _run_one(task, k, max_iterations, temperature, no_feedback=False,
+             feedback_mode=FeedbackMode.SUCCINCT):
     """Run feedback loop and return both summary and detailed dicts."""
     result = run_feedback_loop(
         task, k=k, max_iterations=max_iterations, temperature=temperature,
-        no_feedback=no_feedback,
+        no_feedback=no_feedback, feedback_mode=feedback_mode,
     )
     summary = {
         "task_name": result.task_name,
@@ -282,9 +284,13 @@ Common model names (unified relay — just change the name, no key change needed
                         help="Predefined subset to run (default: core5)")
     parser.add_argument("--problems", nargs="*",
                         help="Override with specific RTLLM problem names")
-    parser.add_argument("--mode", choices=["zero-shot", "feedback", "retry-only", "both", "ablation"],
+    parser.add_argument("--mode", choices=["zero-shot", "feedback", "retry-only", "both", "ablation", "granularity"],
                         default="both",
-                        help="Experiment mode. 'ablation' runs ZS + retry-only + feedback.")
+                        help="Experiment mode. 'ablation' runs ZS + retry-only + feedback. "
+                             "'granularity' runs all feedback levels (L0-L4).")
+    parser.add_argument("--feedback-mode", type=str, default="succinct",
+                        choices=["compile_only", "succinct", "rich"],
+                        help="Feedback granularity level for 'feedback' mode (default: succinct)")
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--feedback-k", type=int, default=3,
                         help="Number of candidates per feedback iteration (default: 3)")
@@ -293,6 +299,7 @@ Common model names (unified relay — just change the name, no key change needed
     parser.add_argument("--limit", type=int, default=None,
                         help="Limit number of problems to run (for quick smoke tests)")
     args = parser.parse_args()
+    fb_mode = FeedbackMode(args.feedback_mode)
 
     # ── Model switching: --model overrides env var ────────────────────────
     if args.model:
@@ -375,13 +382,75 @@ Common model names (unified relay — just change the name, no key change needed
         if args.mode in ("feedback", "both", "ablation"):
             print(f"  Feedback(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
             fb, fb_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
-                                     temperature=args.temperature)
+                                     temperature=args.temperature, feedback_mode=fb_mode)
             if fb["api_error"]:
                 print(f"API_ERR({fb['api_error_type']})")
             elif fb["passed"]:
                 print(f"PASS(iter={fb['total_iterations']})")
             else:
                 print(f"FAIL({fb['best_rank']:.2f})")
+
+        # ── Granularity mode: run all 5 levels ──────────────────────────
+        gran_results = {}  # key: level name, value: (summary, detail)
+        if args.mode == "granularity":
+            # Level 0: Zero-shot (already done above if mode==granularity via the ablation block)
+            if zs is None:
+                print("  L0:Zero-shot...", end=" ", flush=True)
+                zs, zs_detail = _run_one(task, k=1, max_iterations=1, temperature=args.temperature)
+                if zs["api_error"]:
+                    print(f"API_ERR({zs['api_error_type']})")
+                elif zs["passed"]:
+                    print("PASS")
+                else:
+                    print(f"FAIL({zs['best_rank']:.2f})")
+
+            # Level 1: Retry-only
+            if ro is None:
+                print(f"  L1:Retry-only(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
+                ro, ro_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+                                         temperature=args.temperature, no_feedback=True)
+                if ro["api_error"]:
+                    print(f"API_ERR({ro['api_error_type']})")
+                elif ro["passed"]:
+                    print(f"PASS(iter={ro['total_iterations']})")
+                else:
+                    print(f"FAIL({ro['best_rank']:.2f})")
+
+            # Level 2: Compile-only feedback
+            print(f"  L2:Compile-only(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
+            co, co_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+                                     temperature=args.temperature, feedback_mode=FeedbackMode.COMPILE_ONLY)
+            if co["api_error"]:
+                print(f"API_ERR({co['api_error_type']})")
+            elif co["passed"]:
+                print(f"PASS(iter={co['total_iterations']})")
+            else:
+                print(f"FAIL({co['best_rank']:.2f})")
+            gran_results["compile_only"] = (co, co_detail)
+
+            # Level 3: Succinct feedback (current default)
+            print(f"  L3:Succinct(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
+            su, su_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+                                     temperature=args.temperature, feedback_mode=FeedbackMode.SUCCINCT)
+            if su["api_error"]:
+                print(f"API_ERR({su['api_error_type']})")
+            elif su["passed"]:
+                print(f"PASS(iter={su['total_iterations']})")
+            else:
+                print(f"FAIL({su['best_rank']:.2f})")
+            gran_results["succinct"] = (su, su_detail)
+
+            # Level 4: Rich feedback
+            print(f"  L4:Rich(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
+            ri, ri_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+                                     temperature=args.temperature, feedback_mode=FeedbackMode.RICH)
+            if ri["api_error"]:
+                print(f"API_ERR({ri['api_error_type']})")
+            elif ri["passed"]:
+                print(f"PASS(iter={ri['total_iterations']})")
+            else:
+                print(f"FAIL({ri['best_rank']:.2f})")
+            gran_results["rich"] = (ri, ri_detail)
 
         # ── Build row ────────────────────────────────────────────────────
         row = {"task_name": prob.name, "category": prob.category}
@@ -409,6 +478,17 @@ Common model names (unified relay — just change the name, no key change needed
         if zs and fb:
             row["improved"] = (not zs["passed"] and not zs["api_error"]) and fb["passed"]
             detail_row["improved"] = row["improved"]
+
+        # Granularity-specific fields
+        for level_key in ("compile_only", "succinct", "rich"):
+            if level_key in gran_results:
+                gsum, gdet = gran_results[level_key]
+                pfx = level_key[:2]  # co, su, ri
+                row[f"{pfx}_passed"] = gsum["passed"]
+                row[f"{pfx}_rank"] = gsum["best_rank"]
+                row[f"{pfx}_iterations"] = gsum["total_iterations"]
+                row[f"{pfx}_api_error"] = gsum["api_error"]
+                detail_row[level_key] = gdet
 
         rows.append(row)
         detailed_results.append(detail_row)
@@ -446,6 +526,27 @@ Common model names (unified relay — just change the name, no key change needed
         print(f"Feedback:   {fb_pass}/{fb_valid} pass ({fb_pass/fb_valid*100:.0f}%)" if fb_valid else "Feedback:   no valid runs")
         print(f"API errors: {zs_api} zero-shot, {fb_api} feedback")
         print(f"Improved by feedback: {improved} task(s)")
+
+    elif args.mode == "granularity":
+        # Five-level summary table
+        hdr = f"{'Problem':<25} {'L0:ZS':>7} {'L1:RO':>7} {'L2:CO':>7} {'L3:SU':>7} {'L4:RI':>7}"
+        print(hdr)
+        print("-" * len(hdr))
+        for r in rows:
+            def _gs(pfx):
+                if r.get(f"{pfx}_api_error"):
+                    return "ERR"
+                return "PASS" if r.get(f"{pfx}_passed") else "FAIL"
+            print(f"{r['task_name']:<25} {_gs('zs'):>7} {_gs('ro'):>7} {_gs('co'):>7} {_gs('su'):>7} {_gs('ri'):>7}")
+        print("-" * len(hdr))
+        total = len(rows)
+        for pfx, label in [("zs", "L0:Zero-shot"), ("ro", "L1:Retry-only"),
+                            ("co", "L2:Compile-only"), ("su", "L3:Succinct"), ("ri", "L4:Rich")]:
+            passed = sum(1 for r in rows if r.get(f"{pfx}_passed"))
+            api_err = sum(1 for r in rows if r.get(f"{pfx}_api_error"))
+            valid = total - api_err
+            if valid:
+                print(f"  {label:<20s}: {passed}/{valid} ({passed/valid*100:.0f}%), API errors: {api_err}")
 
     elif args.mode == "zero-shot":
         print(f"{'Problem':<28} {'Category':<25} {'Result':>10} {'Rank':>8}")
@@ -503,6 +604,7 @@ Common model names (unified relay — just change the name, no key change needed
                 "temperature": args.temperature,
                 "feedback_k": args.feedback_k if args.mode != "zero-shot" else None,
                 "feedback_iterations": args.feedback_iterations if args.mode != "zero-shot" else None,
+                "feedback_mode": args.feedback_mode if args.mode not in ("zero-shot", "retry-only") else None,
             },
             source_inputs={
                 "problem_names": problem_names,

@@ -1,0 +1,13 @@
+task_name,category,zs_passed,zs_rank,zs_api_error,zs_api_error_type,ro_passed,ro_rank,ro_iterations,ro_api_error,ro_api_error_type,co_passed,co_rank,co_iterations,co_api_error,su_passed,su_rank,su_iterations,su_api_error,ri_passed,ri_rank,ri_iterations,ri_api_error
+float_multi,Arithmetic/Other,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,True,1.0,1,False,True,1.0,1,False
+multi_booth_8bit,Arithmetic/Multiplier,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,True,1.0,1,False,True,1.0,1,False
+multi_pipe_8bit,Arithmetic/Multiplier,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,True,1.0,1,False,True,1.0,1,False
+div_16bit,Arithmetic/Divider,False,0.0,False,,True,1.0,1,False,,True,1.0,1,False,False,0.0,5,False,False,0.0,5,False
+adder_bcd,Arithmetic/Adder,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,True,1.0,1,False,True,1.0,1,False
+fsm,Control/Finite State Machine,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,True,1.0,1,False,True,1.0,1,False
+sequence_detector,Control/Finite State Machine,False,-1.0,False,,False,-1.0,5,False,,True,1.0,2,False,True,1.0,2,False,True,1.0,3,False
+JC_counter,Control/Counter,True,1.0,False,,True,1.0,1,False,,True,1.0,1,False,True,1.0,1,False,True,1.0,1,False
+LIFObuffer,Memory/LIFO,False,0.0,False,,False,0.0,5,False,,False,0.0,5,False,False,0.0,5,False,False,0.0,5,False
+LFSR,Memory/Shifter,False,-1.0,False,,False,-1.0,5,False,,True,1.0,2,False,False,-1.0,5,False,False,-1.0,5,False
+traffic_light,Miscellaneous/Others,False,0.0,False,,True,1.0,1,False,,False,0.0,5,False,True,1.0,1,False,True,1.0,1,False
+freq_divbyfrac,Miscellaneous/Frequency divider,False,0.0,False,,False,0.0,5,False,,False,0.0,5,False,False,0.0,5,False,False,0.0,5,False
