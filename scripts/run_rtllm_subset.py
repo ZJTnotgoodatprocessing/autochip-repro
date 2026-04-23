@@ -43,7 +43,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 from src.llm.client import get_model_name
 from src.runner.rtllm_loader import discover_all, load_by_name, RTLLMProblem
 from src.runner.task import Task
-from src.feedback.loop_runner import run_feedback_loop
+from src.feedback.loop_runner import run_feedback_loop, run_multiturn_feedback_loop
 from src.feedback.prompt_builder import FeedbackMode
 from src.utils.artifacts import build_run_metadata, create_run_dir, make_run_id, timestamp_now
 
@@ -70,6 +70,14 @@ SUBSETS = {
         "LFSR",               # Memory/Shifter — Medium, shift register
         "traffic_light",      # Miscellaneous — Hard, FSM + timing
         "freq_divbyfrac",     # Miscellaneous — Hard, fractional divider
+    ],
+    "multiturn6": [
+        "div_16bit",          # Sonnet L3/L4 regression
+        "sequence_detector",  # GPT L4 information overload
+        "LFSR",               # Sonnet only compile-only works
+        "traffic_light",      # Multi-iteration convergence
+        "freq_divbyfrac",     # Ceiling problem — both models fail
+        "fsm",                # Sanity check baseline
     ],
 }
 
@@ -250,6 +258,28 @@ def _run_one(task, k, max_iterations, temperature, no_feedback=False,
     return summary, detailed
 
 
+def _run_one_multiturn(task, k, max_iterations, temperature,
+                       feedback_mode=FeedbackMode.SUCCINCT):
+    """Run multi-turn feedback loop and return summary + detailed dicts."""
+    result = run_multiturn_feedback_loop(
+        task, k=k, max_iterations=max_iterations, temperature=temperature,
+        feedback_mode=feedback_mode,
+    )
+    summary = {
+        "task_name": result.task_name,
+        "k": k,
+        "max_iterations": max_iterations,
+        "total_iterations": result.total_iterations,
+        "best_rank": result.best_rank,
+        "passed": result.passed,
+        "api_error": result.api_error,
+        "api_error_type": result.api_error_type,
+        "api_error_message": result.api_error_message,
+    }
+    detailed = _serialize_feedback_result(result)
+    return summary, detailed
+
+
 def _status_str(d: dict, prefix: str) -> str:
     """Format a result dict entry for display."""
     if d.get(f"{prefix}_api_error"):
@@ -284,10 +314,10 @@ Common model names (unified relay — just change the name, no key change needed
                         help="Predefined subset to run (default: core5)")
     parser.add_argument("--problems", nargs="*",
                         help="Override with specific RTLLM problem names")
-    parser.add_argument("--mode", choices=["zero-shot", "feedback", "retry-only", "both", "ablation", "granularity"],
+    parser.add_argument("--mode", choices=["zero-shot", "feedback", "retry-only", "both", "ablation", "granularity", "multiturn"],
                         default="both",
-                        help="Experiment mode. 'ablation' runs ZS + retry-only + feedback. "
-                             "'granularity' runs all feedback levels (L0-L4).")
+                        help="Experiment mode. 'ablation' runs ZS+RO+FB. "
+                             "'granularity' runs L0-L4. 'multiturn' runs ST vs MT vs CO.")
     parser.add_argument("--feedback-mode", type=str, default="succinct",
                         choices=["compile_only", "succinct", "rich"],
                         help="Feedback granularity level for 'feedback' mode (default: succinct)")
@@ -452,6 +482,46 @@ Common model names (unified relay — just change the name, no key change needed
                 print(f"FAIL({ri['best_rank']:.2f})")
             gran_results["rich"] = (ri, ri_detail)
 
+        # ── Multi-turn mode: ST(L3) vs MT(L3) vs CO(L2) ────────────────
+        mt_results = {}  # key: condition name, value: (summary, detail)
+        if args.mode == "multiturn":
+            # Condition A: Single-turn L3 Succinct (current default)
+            print(f"  A:ST-Succinct(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
+            st, st_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+                                     temperature=args.temperature, feedback_mode=FeedbackMode.SUCCINCT)
+            if st["api_error"]:
+                print(f"API_ERR({st['api_error_type']})")
+            elif st["passed"]:
+                print(f"PASS(iter={st['total_iterations']})")
+            else:
+                print(f"FAIL({st['best_rank']:.2f})")
+            mt_results["st_succinct"] = (st, st_detail)
+
+            # Condition B: Multi-turn L3 Succinct
+            # Multi-turn uses k=1 per turn (sequential refinement)
+            print(f"  B:MT-Succinct(k=1,iter={args.feedback_iterations})...", end=" ", flush=True)
+            mt, mt_detail = _run_one_multiturn(task, k=1, max_iterations=args.feedback_iterations,
+                                               temperature=args.temperature, feedback_mode=FeedbackMode.SUCCINCT)
+            if mt["api_error"]:
+                print(f"API_ERR({mt['api_error_type']})")
+            elif mt["passed"]:
+                print(f"PASS(iter={mt['total_iterations']})")
+            else:
+                print(f"FAIL({mt['best_rank']:.2f})")
+            mt_results["mt_succinct"] = (mt, mt_detail)
+
+            # Condition C: Single-turn L2 Compile-only (for mechanism analysis)
+            print(f"  C:ST-CompileOnly(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
+            co, co_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+                                     temperature=args.temperature, feedback_mode=FeedbackMode.COMPILE_ONLY)
+            if co["api_error"]:
+                print(f"API_ERR({co['api_error_type']})")
+            elif co["passed"]:
+                print(f"PASS(iter={co['total_iterations']})")
+            else:
+                print(f"FAIL({co['best_rank']:.2f})")
+            mt_results["st_compile_only"] = (co, co_detail)
+
         # ── Build row ────────────────────────────────────────────────────
         row = {"task_name": prob.name, "category": prob.category}
         detail_row = {"task_name": prob.name, "category": prob.category}
@@ -490,13 +560,43 @@ Common model names (unified relay — just change the name, no key change needed
                 row[f"{pfx}_api_error"] = gsum["api_error"]
                 detail_row[level_key] = gdet
 
+        # Multi-turn specific fields
+        for cond_key, pfx in [("st_succinct", "st"), ("mt_succinct", "mt"), ("st_compile_only", "co")]:
+            if cond_key in mt_results:
+                ms, md = mt_results[cond_key]
+                row[f"{pfx}_passed"] = ms["passed"]
+                row[f"{pfx}_rank"] = ms["best_rank"]
+                row[f"{pfx}_iterations"] = ms["total_iterations"]
+                row[f"{pfx}_api_error"] = ms["api_error"]
+                detail_row[cond_key] = md
+
         rows.append(row)
         detailed_results.append(detail_row)
         print()
 
     # ── Summary table ────────────────────────────────────────────────────
     print()
-    if args.mode == "both":
+
+    if args.mode == "multiturn":
+        hdr = f"{'Problem':<25} {'A:ST-L3':>9} {'B:MT-L3':>9} {'C:ST-L2':>9}"
+        print(hdr)
+        print("-" * len(hdr))
+        for r in rows:
+            def _ms(pfx):
+                if r.get(f"{pfx}_api_error"):
+                    return "ERR"
+                return "PASS" if r.get(f"{pfx}_passed") else "FAIL"
+            print(f"{r['task_name']:<25} {_ms('st'):>9} {_ms('mt'):>9} {_ms('co'):>9}")
+        print("-" * len(hdr))
+        total = len(rows)
+        for pfx, label in [("st", "A:Single-turn(L3)"), ("mt", "B:Multi-turn(L3)"), ("co", "C:CompileOnly(L2)")]:
+            passed = sum(1 for r in rows if r.get(f"{pfx}_passed"))
+            api_err = sum(1 for r in rows if r.get(f"{pfx}_api_error"))
+            valid = total - api_err
+            if valid:
+                print(f"  {label:<25s}: {passed}/{valid} ({passed/valid*100:.0f}%), API errors: {api_err}")
+
+    elif args.mode == "both":
         print(f"{'Problem':<28} {'Category':<25} {'Zero-shot':>10} {'Feedback':>18} {'Improved?':>10}")
         print("-" * 95)
         for r in rows:

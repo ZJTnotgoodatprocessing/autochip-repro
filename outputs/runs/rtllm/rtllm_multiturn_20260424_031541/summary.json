@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "run_id": "rtllm_multiturn_20260424_031541",
+    "timestamp": "20260424_031541",
+    "script": "scripts/run_rtllm_subset.py",
+    "run_kind": "rtllm_subset",
+    "argv": [
+      "scripts/run_rtllm_subset.py",
+      "--subset",
+      "multiturn6",
+      "--mode",
+      "multiturn",
+      "--model",
+      "gpt-5.4"
+    ],
+    "model_name": "gpt-5.4",
+    "parameters": {
+      "mode": "multiturn",
+      "subset": "multiturn6",
+      "temperature": 0.7,
+      "feedback_k": 3,
+      "feedback_iterations": 5,
+      "feedback_mode": "succinct"
+    },
+    "source_inputs": {
+      "problem_names": [
+        "div_16bit",
+        "sequence_detector",
+        "LFSR",
+        "traffic_light",
+        "freq_divbyfrac",
+        "fsm"
+      ],
+      "benchmark": "RTLLM-2.0"
+    },
+    "git": {
+      "commit": "d313fc908ee47695ae9883df81c94bfacaf9d41e",
+      "branch": "main",
+      "dirty": true
+    },
+    "runtime": {
+      "python_version": "3.12.4 (tags/v3.12.4:8e8a4ba, Jun  6 2024, 19:30:16) [MSC v.1940 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26200-SP0"
+    }
+  },
+  "summary": {
+    "total_problems": 6,
+    "results": [
+      {
+        "task_name": "div_16bit",
+        "category": "Arithmetic/Divider",
+        "st_passed": true,
+        "st_rank": 1.0,
+        "st_iterations": 2,
+        "st_api_error": false,
+        "mt_passed": true,
+        "mt_rank": 1.0,
+        "mt_iterations": 1,
+        "mt_api_error": false,
+        "co_passed": true,
+        "co_rank": 1.0,
+        "co_iterations": 1,
+        "co_api_error": false
+      },
+      {
+        "task_name": "sequence_detector",
+        "category": "Control/Finite State Machine",
+        "st_passed": true,
+        "st_rank": 1.0,
+        "st_iterations": 2,
+        "st_api_error": false,
+        "mt_passed": false,
+        "mt_rank": 0.0,
+        "mt_iterations": 5,
+        "mt_api_error": false,
+        "co_passed": false,
+        "co_rank": -1.0,
+        "co_iterations": 5,
+        "co_api_error": false
+      },
+      {
+        "task_name": "LFSR",
+        "category": "Memory/Shifter",
+        "st_passed": true,
+        "st_rank": 1.0,
+        "st_iterations": 2,
+        "st_api_error": false,
+        "mt_passed": false,
+        "mt_rank": -1.0,
+        "mt_iterations": 5,
+        "mt_api_error": false,
+        "co_passed": false,
+        "co_rank": -1.0,
+        "co_iterations": 5,
+        "co_api_error": false
+      },
+      {
+        "task_name": "traffic_light",
+        "category": "Miscellaneous/Others",
+        "st_passed": true,
+        "st_rank": 1.0,
+        "st_iterations": 5,
+        "st_api_error": false,
+        "mt_passed": false,
+        "mt_rank": 0.0,
+        "mt_iterations": 5,
+        "mt_api_error": false,
+        "co_passed": true,
+        "co_rank": 1.0,
+        "co_iterations": 2,
+        "co_api_error": false
+      },
+      {
+        "task_name": "freq_divbyfrac",
+        "category": "Miscellaneous/Frequency divider",
+        "st_passed": false,
+        "st_rank": 0.0,
+        "st_iterations": 5,
+        "st_api_error": false,
+        "mt_passed": false,
+        "mt_rank": 0.0,
+        "mt_iterations": 5,
+        "mt_api_error": false,
+        "co_passed": false,
+        "co_rank": 0.0,
+        "co_iterations": 5,
+        "co_api_error": false
+      },
+      {
+        "task_name": "fsm",
+        "category": "Control/Finite State Machine",
+        "st_passed": true,
+        "st_rank": 1.0,
+        "st_iterations": 1,
+        "st_api_error": false,
+        "mt_passed": true,
+        "mt_rank": 1.0,
+        "mt_iterations": 1,
+        "mt_api_error": false,
+        "co_passed": true,
+        "co_rank": 1.0,
+        "co_iterations": 1,
+        "co_api_error": false
+      }
+    ]
+  }
+}

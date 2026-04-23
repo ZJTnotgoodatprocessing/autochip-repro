@@ -13,7 +13,7 @@ rather than crashing the entire batch run.
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from src.llm.client import generate, get_model_name, APIError
+from src.llm.client import generate, generate_with_history, get_model_name, APIError
 from src.utils.extract_verilog import extract_modules
 from src.runner.task import Task
 from src.runner.verilog_executor import (
@@ -23,7 +23,10 @@ from src.runner.verilog_executor import (
     simulate as verilog_simulate,
 )
 from src.ranking.ranker import rank as compute_rank
-from src.feedback.prompt_builder import build_initial_prompt, build_feedback_prompt, FeedbackMode
+from src.feedback.prompt_builder import (
+    build_initial_prompt, build_feedback_prompt, FeedbackMode,
+    build_multiturn_initial_message, build_multiturn_feedback_message,
+)
 
 
 # ── data structures ──────────────────────────────────────────────────────────
@@ -241,3 +244,163 @@ def run_feedback_loop(
     result.best_rank = global_best_rank
     result.passed = (global_best_rank == 1.0)
     return result
+
+
+# ── Multi-turn feedback loop ────────────────────────────────────────────────
+
+
+def _generate_multiturn_candidate(messages: list[dict], temperature: float):
+    """Generate a candidate using multi-turn conversation history.
+
+    Returns (raw_response, extracted_verilog, api_error_info).
+    """
+    try:
+        raw = generate_with_history(messages, temperature=temperature)
+        modules = extract_modules(raw)
+        verilog = modules[0] if modules else None
+        return raw, verilog, None
+    except APIError as e:
+        return "", None, (e.error_type, str(e))
+
+
+def run_multiturn_feedback_loop(
+    task: Task,
+    *,
+    k: int = 1,
+    max_iterations: int = 5,
+    temperature: float = 0.7,
+    feedback_mode: FeedbackMode = FeedbackMode.SUCCINCT,
+    on_iteration: callable = None,
+) -> FeedbackLoopResult:
+    """Run a multi-turn conversational feedback loop on a single task.
+
+    Unlike run_feedback_loop (single-turn), this function:
+      - Maintains a growing list of (user, assistant) message pairs
+      - Sends the full conversation history with each API call
+      - The model can see all its previous attempts and feedback
+
+    Note: Multi-turn uses k=1 per iteration by design. Each turn is a
+    sequential refinement in a single conversation thread. Using k>1
+    would require k independent conversation threads.
+    """
+    model_name = get_model_name()
+    result = FeedbackLoopResult(
+        task_name=task.name,
+        model_name=model_name,
+        temperature=temperature,
+        k=k,
+        max_iterations=max_iterations,
+    )
+
+    # Conversation history: alternating user/assistant messages
+    conversation: list[dict] = []
+
+    global_best_verilog: str | None = None
+    global_best_rank: float = -2.0
+    global_best_comp: CompileResult | None = None
+    global_best_sim: SimResult | None = None
+
+    for iteration_num in range(1, max_iterations + 1):
+        iter_record = IterationRecord(iteration=iteration_num)
+
+        # ── build user message ───────────────────────────────────────────
+        if iteration_num == 1:
+            user_msg = build_multiturn_initial_message(
+                task.description, task.module_header
+            )
+        else:
+            user_msg = build_multiturn_feedback_message(
+                global_best_comp, global_best_sim,
+                feedback_mode=feedback_mode,
+            )
+
+        conversation.append({"role": "user", "content": user_msg})
+
+        # ── generate candidates (k threads, each with own conversation) ──
+        all_api_errors = True
+        last_api_error_type = None
+        last_api_error_msg = None
+
+        for idx in range(k):
+            raw, verilog, api_err = _generate_multiturn_candidate(
+                conversation, temperature
+            )
+
+            if api_err is not None:
+                cr = CandidateResult(
+                    candidate_index=idx,
+                    prompt=user_msg,
+                    raw_response="",
+                    extracted_verilog=None,
+                    compile_result=None,
+                    sim_result=None,
+                    rank=-2.0,
+                    api_error=True,
+                    api_error_type=api_err[0],
+                    api_error_message=api_err[1],
+                )
+                last_api_error_type = api_err[0]
+                last_api_error_msg = api_err[1]
+            else:
+                all_api_errors = False
+                comp, sim, score = _evaluate_candidate(
+                    verilog, task.testbench_path
+                )
+                cr = CandidateResult(
+                    candidate_index=idx,
+                    prompt=user_msg,
+                    raw_response=raw,
+                    extracted_verilog=verilog,
+                    compile_result=comp,
+                    sim_result=sim,
+                    rank=score,
+                )
+
+            iter_record.candidates.append(cr)
+
+            if not cr.api_error and cr.rank > iter_record.best_rank:
+                iter_record.best_rank = cr.rank
+                iter_record.best_candidate_index = idx
+
+        # ── check if all failed ──────────────────────────────────────────
+        if all_api_errors:
+            result.api_error = True
+            result.api_error_type = last_api_error_type
+            result.api_error_message = last_api_error_msg
+            result.iterations.append(iter_record)
+            # Remove the unanswered user message from conversation
+            conversation.pop()
+            if on_iteration:
+                on_iteration(iter_record)
+            break
+
+        # ── update global best & conversation history ────────────────────
+        if iter_record.best_candidate_index >= 0:
+            best_in_iter = iter_record.candidates[iter_record.best_candidate_index]
+            # Add the best assistant response to conversation history
+            conversation.append({
+                "role": "assistant",
+                "content": best_in_iter.raw_response,
+            })
+
+            if best_in_iter.rank > global_best_rank:
+                global_best_rank = best_in_iter.rank
+                global_best_verilog = best_in_iter.extracted_verilog
+                global_best_comp = best_in_iter.compile_result
+                global_best_sim = best_in_iter.sim_result
+
+        iter_record.passed = (global_best_rank == 1.0)
+        result.iterations.append(iter_record)
+
+        if on_iteration:
+            on_iteration(iter_record)
+
+        if global_best_rank == 1.0:
+            break
+
+    result.total_iterations = len(result.iterations)
+    result.best_verilog = global_best_verilog
+    result.best_rank = global_best_rank
+    result.passed = (global_best_rank == 1.0)
+    return result
+

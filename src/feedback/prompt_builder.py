@@ -232,3 +232,43 @@ def build_feedback_prompt(
         previous_code=previous_code,
         feedback=feedback_text,
     )
+
+
+# ── Multi-turn prompt helpers ────────────────────────────────────────────────
+
+
+def build_multiturn_initial_message(description: str, module_header: str) -> str:
+    """Build the first user message for a multi-turn dialogue.
+
+    Shorter than the single-turn initial prompt because the context persists.
+    """
+    return (
+        "You are an expert Verilog designer. I need you to implement a module.\n"
+        "Return ONLY the Verilog code, no explanations.\n\n"
+        f"## Task Description\n{description}\n\n"
+        f"## Module Interface\n{module_header}\n\n"
+        "Your implementation:"
+    )
+
+
+def build_multiturn_feedback_message(
+    compile_result: CompileResult | None,
+    sim_result: SimResult | None,
+    *,
+    feedback_mode: FeedbackMode = FeedbackMode.SUCCINCT,
+) -> str:
+    """Build a follow-up user message for multi-turn dialogue.
+
+    Unlike single-turn, this does NOT re-include the task description or
+    the previous code — those are already in the conversation history.
+    """
+    feedback_text = _summarize_feedback(
+        compile_result, sim_result, mode=feedback_mode
+    )
+    return (
+        "Your code has errors. Here is the feedback:\n\n"
+        f"{feedback_text}\n\n"
+        "Please fix the errors and return ONLY the corrected Verilog module. "
+        "Ensure the module name and port list match the original interface exactly."
+    )
+

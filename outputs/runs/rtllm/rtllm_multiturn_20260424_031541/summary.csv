@@ -1,0 +1,7 @@
+task_name,category,st_passed,st_rank,st_iterations,st_api_error,mt_passed,mt_rank,mt_iterations,mt_api_error,co_passed,co_rank,co_iterations,co_api_error
+div_16bit,Arithmetic/Divider,True,1.0,2,False,True,1.0,1,False,True,1.0,1,False
+sequence_detector,Control/Finite State Machine,True,1.0,2,False,False,0.0,5,False,False,-1.0,5,False
+LFSR,Memory/Shifter,True,1.0,2,False,False,-1.0,5,False,False,-1.0,5,False
+traffic_light,Miscellaneous/Others,True,1.0,5,False,False,0.0,5,False,True,1.0,2,False
+freq_divbyfrac,Miscellaneous/Frequency divider,False,0.0,5,False,False,0.0,5,False,False,0.0,5,False
+fsm,Control/Finite State Machine,True,1.0,1,False,True,1.0,1,False,True,1.0,1,False
