@@ -113,24 +113,24 @@ Runs: `rtllm_multiturn_20260424_160853/` (GPT), `…_181012/` (Sonnet)
 
 ### 4.1 高置信结论（可直接写入）
 
-| # | 结论 | 数据支撑 | 谨慎程度 |
-|---|------|----------|----------|
-| C1 | VerilogEval-Human 上，Haiku feedback 从 80% 提升至 90% | §2 VerilogEval | 低 |
-| C2 | RTLLM STUDY_12 上，feedback 对三模型均有正向增益，GPT-5.4 增益最大 (+33pp) | §2.1 正式实验 | 低 |
-| C3 | GPT-5.4 的 feedback 优势在 4 轮稳定性实验中 100% 成立 (79.2% ± 4.2%) | §2.3 稳定性 | 低 |
-| C4 | Feedback 约 57% 的收益来自错误反馈信息本身，43% 来自多采样 (GPT) | §2.2 消融 | 低 |
-| C5 | 存在"仅 feedback 能解决"的设计：sequence_detector, traffic_light (GPT) | §2.2 + §2.3 | 低 |
-| C6 | Feedback 粒度呈倒 U 型，compile-only / succinct 是最优区间 | §2.4 粒度 | 中 |
-| C7 | Rich feedback 可能导致信息过载，反而降低通过率 | §2.4 粒度 | 中 |
+| # | 结论 | 数据支撑 | 支撑 Commit | 支撑 Notes | 谨慎程度 |
+|---|------|----------|-------------|------------|----------|
+| C1 | VerilogEval-Human 上，Haiku feedback 从 80% 提升至 90% | §2 VerilogEval | pre-midterm | `haiku_main_experiment_summary.md` | 低 |
+| C2 | RTLLM STUDY_12 上，feedback 对三模型均有正向增益，GPT-5.4 增益最大 (+33pp) | §2.1 正式实验 | `3338b96` | `rtllm_formal_experiment_summary.md` | 低 |
+| C3 | GPT-5.4 的 feedback 优势在 4 轮稳定性实验中 100% 成立 (79.2% ± 4.2%) | §2.3 稳定性 | `8989133` | `rtllm_stability_summary.md` | 低 |
+| C4 | Feedback 约 57% 的收益来自错误反馈信息本身，43% 来自多采样 (GPT) | §2.2 消融 | `7655475` | `rtllm_feedback_ablation_summary.md` | 低 |
+| C5 | 存在"仅 feedback 能解决"的设计：sequence_detector, traffic_light (GPT) | §2.2 + §2.3 | `7655475` | `rtllm_feedback_ablation_summary.md` | 低 |
+| C6 | Feedback 粒度呈倒 U 型，compile-only / succinct 是最优区间 | §2.4 粒度 | `5ccd419` | `rtllm_feedback_granularity_summary.md` | 中 |
+| C7 | Rich feedback 可能导致信息过载，反而降低通过率 | §2.4 粒度 | `5ccd419` | `rtllm_feedback_granularity_summary.md` | 中 |
 
 ### 4.2 需要谨慎表述的结论
 
-| # | 结论 | 风险点 | 建议表述 |
-|---|------|--------|----------|
-| C8 | Feedback 效果具有模型依赖性：Sonnet 上 FB < RO | 稳定但反直觉 | "在本实验设置下，feedback 对 Sonnet 4.6 未产生正向效果，甚至低于 retry-only" |
-| C9 | Multi-turn v2 对话式反馈对两模型均 +17pp | 6 题小子集、单次运行 | "在控制候选数后，multi-turn 对话在 6 题子集上展现正向趋势（+17pp），但需更大规模验证" |
-| C10 | k=3 多候选选择对 Sonnet 可能有害 (17% < 33%) | 小样本 | "在本实验中观察到 k=3 对 Sonnet 产生候选选择偏差，需谨慎解释" |
-| C11 | 粒度倒 U 型结论来自 STUDY_12 + 两模型 | 样本有限 | "在 RTLLM STUDY_12 和两个模型上观察到" |
+| # | 结论 | 风险点 | 支撑 Commit | 支撑 Notes | 建议表述 |
+|---|------|--------|-------------|------------|----------|
+| C8 | Feedback 效果具有模型依赖性：Sonnet 上 FB < RO | 稳定但反直觉 | `8989133` | `rtllm_stability_summary.md` | "在本实验设置下，feedback 对 Sonnet 4.6 未产生正向效果，甚至低于 retry-only" |
+| C9 | Multi-turn v2 对话式反馈对两模型均 +17pp | 6 题小子集、单次运行 | `e792955` | `rtllm_multiturn_feedback_summary.md` | "在控制候选数后，multi-turn 对话在 6 题子集上展现正向趋势（+17pp），但需更大规模验证" |
+| C10 | k=3 多候选选择对 Sonnet 可能有害 (17% < 33%) | 小样本 | `e792955` | `rtllm_multiturn_feedback_summary.md` | "在本实验中观察到 k=3 对 Sonnet 产生候选选择偏差，需谨慎解释" |
+| C11 | 粒度倒 U 型结论来自 STUDY_12 + 两模型 | 样本有限 | `5ccd419` | `rtllm_feedback_granularity_summary.md` | "在 RTLLM STUDY_12 和两个模型上观察到" |
 
 ### 4.3 不可写入论文的结论
 
@@ -150,6 +150,23 @@ Runs: `rtllm_multiturn_20260424_160853/` (GPT), `…_181012/` (Sonnet)
 | `audit_data.py` (数据一致性) | 2026-04-24 23:22 | **PASSED** (20 runs, 0 inconsistencies) |
 | 文档-数据交叉验证 | 2026-04-24 23:22 | **PASSED** (11 项全部匹配) |
 | Multi-turn v1 bug 发现与修正 | 2026-04-24 | ✅ 已修正 (commit `e792955`) |
+
+---
+
+## 五bis、结论 → 原始数据完整交叉索引
+
+| 结论 | 原始结果目录 | summary.json | 分析文档 | 图表 | 状态 |
+|------|-------------|--------------|----------|------|------|
+| C1: Haiku FB +10pp | `outputs/verilogeval_both_20260412_173450.json` | 同左 | `haiku_main_experiment_summary.md` | `haiku_pass_rate_bar.png` | ✅ |
+| C2: 三模型 FB 增益 | `rtllm_both_20260422_004806/`, `…011115/`, `…013439/` | 各目录 `summary.json` | `rtllm_formal_experiment_summary.md` | `fig_passrate_comparison.png`, `fig_per_problem_matrix.png` | ✅ |
+| C3: GPT FB 稳定 | 4 runs: `rtllm_ablation_20260422_222409/` 等 | 各目录 `summary.json` | `rtllm_stability_summary.md` | `fig_stability_ablation.png` | ✅ |
+| C4: FB ≠ 重试 | `rtllm_ablation_20260422_222409/` | `summary.json` | `rtllm_feedback_ablation_summary.md` | `fig_ablation_decomposition.png` | ✅ |
+| C5: FB-only 题 | `rtllm_ablation_20260422_222409/` + 4 stability runs | `summary.json` + `details.json` | `rtllm_feedback_ablation_summary.md` | `fig_ablation_comparison.png` | ✅ |
+| C6–C7: 粒度倒U | `rtllm_granularity_20260423_212239/`, `…233052/` | `summary.json` | `rtllm_feedback_granularity_summary.md` | `fig_granularity_curve.png` | ✅ |
+| C8: Sonnet FB<RO | 4 runs: `rtllm_ablation_20260422_214745/` 等 | `summary.json` | `rtllm_stability_summary.md` | `fig_stability_ablation.png` | ✅ |
+| C9: MT +17pp | `rtllm_multiturn_20260424_160853/`, `…181012/` | `summary.json` | `rtllm_multiturn_feedback_summary.md` | `fig_multiturn_comparison_v2.png` | ✅ |
+| C10: k=3 害 Sonnet | `rtllm_multiturn_20260424_181012/` | `summary.json` | `rtllm_multiturn_feedback_summary.md` | `fig_multiturn_matrix_v2.png` | ✅ |
+| C11: 粒度局限 | 同 C6–C7 | 同上 | 同上 | 同上 | ✅ |
 
 ---
 
