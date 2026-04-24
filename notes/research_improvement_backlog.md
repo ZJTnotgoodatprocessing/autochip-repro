@@ -1,7 +1,8 @@
 # AutoChip 研究改进路线 (Research Improvement Backlog)
 
-> 最后更新：2026-04-23
-> 当前阶段：RTLLM STUDY_12 正式实验 + 消融 + 稳定性实验已完成
+> 最后更新：2026-04-24
+> 当前阶段：全部实验完成，代码/数据审计通过，权威索引已建立
+> 权威引用入口：`notes/authoritative_experiment_index.md`
 
 ---
 
@@ -15,6 +16,8 @@
 | 反馈粒度实验 | ✅ 完成 | 倒 U 型曲线，L2/L3 最优 |
 | 多轮对话实验 | ✅ 完成(v2) | MT 对两模型均 +17pp（v1 有 bug 已修正） |
 | 论文/答辩资产化 | ✅ 完成 | 图表、案例分析、可靠性说明 |
+| 项目审计 | ✅ 完成 | 24/24 代码测试 + 20/20 数据一致性 |
+| 权威实验索引 | ✅ 完成 | `authoritative_experiment_index.md` |
 
 ---
 

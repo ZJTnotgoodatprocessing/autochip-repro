@@ -11,31 +11,33 @@
 4. 做案例分析
 5. 支撑中期报告、毕业论文和答辩材料
 
-## Current Main Benchmark
-VerilogEval-Human subset (20 problems)
+## Current Main Benchmarks
+- VerilogEval-Human subset (20 problems) — Haiku baseline
+- RTLLM STUDY_12 (12 problems) — 3 models × 2 conditions
 
-## Main Experiment Baseline
-- model: claude-haiku-4-5-20251001
-- zero-shot: 16/20
-- feedback: 18/20
-- improved by feedback: 2 tasks
-- API errors: 0
+## Main Experiment Results
+- VerilogEval Haiku: ZS 80% → FB 90%
+- RTLLM GPT-5.4: ZS 50% → FB 83% (+33pp)
+- RTLLM Sonnet 4.6: ZS 42% → FB 58% (+17pp)
+- RTLLM Haiku: ZS 42% → FB 50% (+8pp)
+- Stability: GPT FB 79.2% ± 4.2% (4 runs)
+- **Authoritative results**: see `notes/authoritative_experiment_index.md`
 
-## Key Findings So Far
-1. feedback loop 将通过率从 80% 提升到 90%
-2. feedback 对部分 FSM 任务有效
-3. 对 LFSR 抽头类问题和复杂协议边界条件问题作用有限
-4. 当前系统已具备中期报告所需的阶段性成果
+## Key Findings
+1. Feedback consistently improves pass rates across models and benchmarks
+2. ~57% of improvement comes from error feedback itself, ~43% from resampling (GPT ablation)
+3. Feedback granularity shows inverted-U: compile-only/succinct optimal, rich may overload
+4. Multi-turn dialogue provides +17pp over single-turn at equal k (v2, bug-fixed)
+5. Feedback effectiveness is model-dependent: Sonnet FB < RO in stability runs
+6. Ceiling problems exist (freq_divbyfrac, LFSR) beyond current framework capability
 
 ## Current Stage
-Post-midterm (midterm defense completed 2026-04-14)
+Thesis writing preparation (all experiments completed, audit passed 2026-04-24)
 
 ## Current Priorities
-1. Design and execute expansion experiments with stronger models + harder benchmarks
-2. Run repeat experiments on 20-problem subset for result stability
-3. Deepen error type analysis and case study materials
-4. Progressively write thesis body text
-5. Accumulate final defense materials
+1. Write thesis body text using `notes/authoritative_experiment_index.md` as citation source
+2. Prepare final defense PPT
+3. Optional: larger-scale multi-turn validation
 
 ## Working Rules
 - Do not rebuild the project from scratch
@@ -47,16 +49,14 @@ Post-midterm (midterm defense completed 2026-04-14)
 - Save new experiment results to outputs/runs/{category}/{run_id}/
 
 ## Important Files
+- **notes/authoritative_experiment_index.md** — single source of truth for all results
 - notes/current_status.md
-- notes/haiku_main_experiment_summary.md
-- outputs/verilogeval_both_20260412_173450.json  (authoritative main experiment result)
-- outputs/reports/haiku_pass_rate_bar.png
-- outputs/reports/haiku_per_problem_rank.png
-- scripts/run_verilogeval_subset.py
-- scripts/run_feedback_loop.py
-- src/feedback/
-- src/runner/
-- src/llm/
+- scripts/audit_project.py — code correctness tests
+- scripts/audit_data.py — data consistency verification
+- scripts/run_rtllm_subset.py — main experiment runner
+- src/feedback/ — feedback loop core
+- src/runner/ — verilog executor
+- src/llm/ — LLM client
 
 ## What To Avoid
 - Do not write incomplete work as completed
