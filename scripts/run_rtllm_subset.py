@@ -482,24 +482,35 @@ Common model names (unified relay — just change the name, no key change needed
                 print(f"FAIL({ri['best_rank']:.2f})")
             gran_results["rich"] = (ri, ri_detail)
 
-        # ── Multi-turn mode: ST(L3) vs MT(L3) vs CO(L2) ────────────────
+        # ── Multi-turn mode: 4 conditions ──────────────────────────────
         mt_results = {}  # key: condition name, value: (summary, detail)
         if args.mode == "multiturn":
-            # Condition A: Single-turn L3 Succinct (current default)
-            print(f"  A:ST-Succinct(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
-            st, st_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
-                                     temperature=args.temperature, feedback_mode=FeedbackMode.SUCCINCT)
-            if st["api_error"]:
-                print(f"API_ERR({st['api_error_type']})")
-            elif st["passed"]:
-                print(f"PASS(iter={st['total_iterations']})")
+            # Condition A: Single-turn L3 Succinct k=3 (current default baseline)
+            print(f"  A:ST-k3(k=3,iter={args.feedback_iterations})...", end=" ", flush=True)
+            st3, st3_detail = _run_one(task, k=3, max_iterations=args.feedback_iterations,
+                                       temperature=args.temperature, feedback_mode=FeedbackMode.SUCCINCT)
+            if st3["api_error"]:
+                print(f"API_ERR({st3['api_error_type']})")
+            elif st3["passed"]:
+                print(f"PASS(iter={st3['total_iterations']})")
             else:
-                print(f"FAIL({st['best_rank']:.2f})")
-            mt_results["st_succinct"] = (st, st_detail)
+                print(f"FAIL({st3['best_rank']:.2f})")
+            mt_results["st_k3"] = (st3, st3_detail)
 
-            # Condition B: Multi-turn L3 Succinct
-            # Multi-turn uses k=1 per turn (sequential refinement)
-            print(f"  B:MT-Succinct(k=1,iter={args.feedback_iterations})...", end=" ", flush=True)
+            # Condition D: Single-turn L3 Succinct k=1 (controls for k effect)
+            print(f"  D:ST-k1(k=1,iter={args.feedback_iterations})...", end=" ", flush=True)
+            st1, st1_detail = _run_one(task, k=1, max_iterations=args.feedback_iterations,
+                                       temperature=args.temperature, feedback_mode=FeedbackMode.SUCCINCT)
+            if st1["api_error"]:
+                print(f"API_ERR({st1['api_error_type']})")
+            elif st1["passed"]:
+                print(f"PASS(iter={st1['total_iterations']})")
+            else:
+                print(f"FAIL({st1['best_rank']:.2f})")
+            mt_results["st_k1"] = (st1, st1_detail)
+
+            # Condition B: Multi-turn L3 Succinct k=1
+            print(f"  B:MT-k1(k=1,iter={args.feedback_iterations})...", end=" ", flush=True)
             mt, mt_detail = _run_one_multiturn(task, k=1, max_iterations=args.feedback_iterations,
                                                temperature=args.temperature, feedback_mode=FeedbackMode.SUCCINCT)
             if mt["api_error"]:
@@ -508,11 +519,11 @@ Common model names (unified relay — just change the name, no key change needed
                 print(f"PASS(iter={mt['total_iterations']})")
             else:
                 print(f"FAIL({mt['best_rank']:.2f})")
-            mt_results["mt_succinct"] = (mt, mt_detail)
+            mt_results["mt_k1"] = (mt, mt_detail)
 
-            # Condition C: Single-turn L2 Compile-only (for mechanism analysis)
-            print(f"  C:ST-CompileOnly(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
-            co, co_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
+            # Condition C: Single-turn L2 Compile-only k=3 (mechanism analysis)
+            print(f"  C:CO-k3(k=3,iter={args.feedback_iterations})...", end=" ", flush=True)
+            co, co_detail = _run_one(task, k=3, max_iterations=args.feedback_iterations,
                                      temperature=args.temperature, feedback_mode=FeedbackMode.COMPILE_ONLY)
             if co["api_error"]:
                 print(f"API_ERR({co['api_error_type']})")
@@ -520,7 +531,7 @@ Common model names (unified relay — just change the name, no key change needed
                 print(f"PASS(iter={co['total_iterations']})")
             else:
                 print(f"FAIL({co['best_rank']:.2f})")
-            mt_results["st_compile_only"] = (co, co_detail)
+            mt_results["co_k3"] = (co, co_detail)
 
         # ── Build row ────────────────────────────────────────────────────
         row = {"task_name": prob.name, "category": prob.category}
@@ -561,7 +572,7 @@ Common model names (unified relay — just change the name, no key change needed
                 detail_row[level_key] = gdet
 
         # Multi-turn specific fields
-        for cond_key, pfx in [("st_succinct", "st"), ("mt_succinct", "mt"), ("st_compile_only", "co")]:
+        for cond_key, pfx in [("st_k3", "a"), ("st_k1", "d"), ("mt_k1", "b"), ("co_k3", "c")]:
             if cond_key in mt_results:
                 ms, md = mt_results[cond_key]
                 row[f"{pfx}_passed"] = ms["passed"]
@@ -578,7 +589,7 @@ Common model names (unified relay — just change the name, no key change needed
     print()
 
     if args.mode == "multiturn":
-        hdr = f"{'Problem':<25} {'A:ST-L3':>9} {'B:MT-L3':>9} {'C:ST-L2':>9}"
+        hdr = f"{'Problem':<25} {'A:STk3':>8} {'D:STk1':>8} {'B:MTk1':>8} {'C:COk3':>8}"
         print(hdr)
         print("-" * len(hdr))
         for r in rows:
@@ -586,10 +597,11 @@ Common model names (unified relay — just change the name, no key change needed
                 if r.get(f"{pfx}_api_error"):
                     return "ERR"
                 return "PASS" if r.get(f"{pfx}_passed") else "FAIL"
-            print(f"{r['task_name']:<25} {_ms('st'):>9} {_ms('mt'):>9} {_ms('co'):>9}")
+            print(f"{r['task_name']:<25} {_ms('a'):>8} {_ms('d'):>8} {_ms('b'):>8} {_ms('c'):>8}")
         print("-" * len(hdr))
         total = len(rows)
-        for pfx, label in [("st", "A:Single-turn(L3)"), ("mt", "B:Multi-turn(L3)"), ("co", "C:CompileOnly(L2)")]:
+        for pfx, label in [("a", "A:ST-Succinct k=3"), ("d", "D:ST-Succinct k=1"),
+                            ("b", "B:MT-Succinct k=1"), ("c", "C:CO-only k=3")]:
             passed = sum(1 for r in rows if r.get(f"{pfx}_passed"))
             api_err = sum(1 for r in rows if r.get(f"{pfx}_api_error"))
             valid = total - api_err

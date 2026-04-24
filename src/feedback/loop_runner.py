@@ -297,8 +297,12 @@ def run_multiturn_feedback_loop(
 
     global_best_verilog: str | None = None
     global_best_rank: float = -2.0
-    global_best_comp: CompileResult | None = None
-    global_best_sim: SimResult | None = None
+
+    # last_iter_comp/sim tracks the LAST iteration's best candidate result.
+    # This is what the model just generated (visible in conversation history),
+    # so feedback must describe THIS code's errors, not the global best's.
+    last_iter_comp: CompileResult | None = None
+    last_iter_sim: SimResult | None = None
 
     for iteration_num in range(1, max_iterations + 1):
         iter_record = IterationRecord(iteration=iteration_num)
@@ -309,8 +313,10 @@ def run_multiturn_feedback_loop(
                 task.description, task.module_header
             )
         else:
+            # Use last_iter (not global_best) so feedback matches the code
+            # the model can see as its last response in the conversation.
             user_msg = build_multiturn_feedback_message(
-                global_best_comp, global_best_sim,
+                last_iter_comp, last_iter_sim,
                 feedback_mode=feedback_mode,
             )
 
@@ -383,11 +389,14 @@ def run_multiturn_feedback_loop(
                 "content": best_in_iter.raw_response,
             })
 
+            # Always update last_iter to match what's now in conversation
+            last_iter_comp = best_in_iter.compile_result
+            last_iter_sim = best_in_iter.sim_result
+
+            # Only update global best if this iteration improved
             if best_in_iter.rank > global_best_rank:
                 global_best_rank = best_in_iter.rank
                 global_best_verilog = best_in_iter.extracted_verilog
-                global_best_comp = best_in_iter.compile_result
-                global_best_sim = best_in_iter.sim_result
 
         iter_record.passed = (global_best_rank == 1.0)
         result.iterations.append(iter_record)

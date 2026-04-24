@@ -1,0 +1,171 @@
+{
+  "metadata": {
+    "run_id": "rtllm_multiturn_20260424_181012",
+    "timestamp": "20260424_181012",
+    "script": "scripts/run_rtllm_subset.py",
+    "run_kind": "rtllm_subset",
+    "argv": [
+      "scripts/run_rtllm_subset.py",
+      "--subset",
+      "multiturn6",
+      "--mode",
+      "multiturn",
+      "--model",
+      "claude-sonnet-4-6"
+    ],
+    "model_name": "claude-sonnet-4-6",
+    "parameters": {
+      "mode": "multiturn",
+      "subset": "multiturn6",
+      "temperature": 0.7,
+      "feedback_k": 3,
+      "feedback_iterations": 5,
+      "feedback_mode": "succinct"
+    },
+    "source_inputs": {
+      "problem_names": [
+        "div_16bit",
+        "sequence_detector",
+        "LFSR",
+        "traffic_light",
+        "freq_divbyfrac",
+        "fsm"
+      ],
+      "benchmark": "RTLLM-2.0"
+    },
+    "git": {
+      "commit": "9760eb4613cc069f6c1f2b4564c1454ee63a525d",
+      "branch": "main",
+      "dirty": true
+    },
+    "runtime": {
+      "python_version": "3.12.4 (tags/v3.12.4:8e8a4ba, Jun  6 2024, 19:30:16) [MSC v.1940 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26200-SP0"
+    }
+  },
+  "summary": {
+    "total_problems": 6,
+    "results": [
+      {
+        "task_name": "div_16bit",
+        "category": "Arithmetic/Divider",
+        "a_passed": false,
+        "a_rank": 0.0,
+        "a_iterations": 5,
+        "a_api_error": false,
+        "d_passed": false,
+        "d_rank": 0.0,
+        "d_iterations": 5,
+        "d_api_error": false,
+        "b_passed": false,
+        "b_rank": 0.0,
+        "b_iterations": 5,
+        "b_api_error": false,
+        "c_passed": false,
+        "c_rank": 0.0,
+        "c_iterations": 5,
+        "c_api_error": false
+      },
+      {
+        "task_name": "sequence_detector",
+        "category": "Control/Finite State Machine",
+        "a_passed": false,
+        "a_rank": -1.0,
+        "a_iterations": 5,
+        "a_api_error": false,
+        "d_passed": false,
+        "d_rank": -1.0,
+        "d_iterations": 5,
+        "d_api_error": false,
+        "b_passed": true,
+        "b_rank": 1.0,
+        "b_iterations": 3,
+        "b_api_error": false,
+        "c_passed": false,
+        "c_rank": -1.0,
+        "c_iterations": 5,
+        "c_api_error": false
+      },
+      {
+        "task_name": "LFSR",
+        "category": "Memory/Shifter",
+        "a_passed": false,
+        "a_rank": -1.0,
+        "a_iterations": 5,
+        "a_api_error": false,
+        "d_passed": true,
+        "d_rank": 1.0,
+        "d_iterations": 4,
+        "d_api_error": false,
+        "b_passed": true,
+        "b_rank": 1.0,
+        "b_iterations": 4,
+        "b_api_error": false,
+        "c_passed": true,
+        "c_rank": 1.0,
+        "c_iterations": 5,
+        "c_api_error": false
+      },
+      {
+        "task_name": "traffic_light",
+        "category": "Miscellaneous/Others",
+        "a_passed": false,
+        "a_rank": 0.0,
+        "a_iterations": 5,
+        "a_api_error": false,
+        "d_passed": false,
+        "d_rank": 0.0,
+        "d_iterations": 5,
+        "d_api_error": false,
+        "b_passed": false,
+        "b_rank": 0.0,
+        "b_iterations": 5,
+        "b_api_error": false,
+        "c_passed": false,
+        "c_rank": 0.0,
+        "c_iterations": 5,
+        "c_api_error": false
+      },
+      {
+        "task_name": "freq_divbyfrac",
+        "category": "Miscellaneous/Frequency divider",
+        "a_passed": false,
+        "a_rank": 0.0,
+        "a_iterations": 5,
+        "a_api_error": false,
+        "d_passed": false,
+        "d_rank": 0.0,
+        "d_iterations": 5,
+        "d_api_error": false,
+        "b_passed": false,
+        "b_rank": 0.0,
+        "b_iterations": 5,
+        "b_api_error": false,
+        "c_passed": false,
+        "c_rank": 0.0,
+        "c_iterations": 5,
+        "c_api_error": false
+      },
+      {
+        "task_name": "fsm",
+        "category": "Control/Finite State Machine",
+        "a_passed": true,
+        "a_rank": 1.0,
+        "a_iterations": 1,
+        "a_api_error": false,
+        "d_passed": true,
+        "d_rank": 1.0,
+        "d_iterations": 1,
+        "d_api_error": false,
+        "b_passed": true,
+        "b_rank": 1.0,
+        "b_iterations": 1,
+        "b_api_error": false,
+        "c_passed": true,
+        "c_rank": 1.0,
+        "c_iterations": 1,
+        "c_api_error": false
+      }
+    ]
+  }
+}
