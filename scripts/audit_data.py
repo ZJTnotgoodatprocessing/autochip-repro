@@ -126,4 +126,26 @@ for model, run in [
             print(f"  {model} {label}: {p}/{v} = {p/v*100:.1f}% (DEPRECATED)")
 
 print("\n" + "=" * 60)
+print("=== 7. Prompt Strategy Experiment ===")
+print("=" * 60)
+
+ps_run = "rtllm_prompt_strategy_20260425_032429"
+ps_path = run_dir / ps_run / "summary.json"
+if ps_path.exists():
+    data = load_results(ps_run)
+    results = data["summary"]["results"]
+    for pfx, label in [
+        ("p0zs", "Base ZS"), ("p0fb", "Base FB"),
+        ("p1zs", "CoT ZS"), ("p1fb", "CoT FB"),
+        ("p2zs", "Fewshot ZS"), ("p2fb", "Fewshot FB"),
+        ("p3zs", "FS+CoT ZS"), ("p3fb", "FS+CoT FB"),
+    ]:
+        p, v, e = count_by_prefix(results, pfx)
+        if v > 0:
+            print(f"  {label}: {p}/{v} = {p/v*100:.1f}% (api_err={e})")
+else:
+    print(f"  WARNING: {ps_run} not found — skipping")
+
+print("\n" + "=" * 60)
 print("Data audit complete. Check results above against documentation.")
+
