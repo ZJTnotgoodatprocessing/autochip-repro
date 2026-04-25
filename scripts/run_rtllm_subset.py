@@ -44,7 +44,7 @@ from src.llm.client import get_model_name
 from src.runner.rtllm_loader import discover_all, load_by_name, RTLLMProblem
 from src.runner.task import Task
 from src.feedback.loop_runner import run_feedback_loop, run_multiturn_feedback_loop
-from src.feedback.prompt_builder import FeedbackMode
+from src.feedback.prompt_builder import FeedbackMode, PromptStrategy
 from src.utils.artifacts import build_run_metadata, create_run_dir, make_run_id, timestamp_now
 
 # ── Predefined subsets ───────────────────────────────────────────────────────
@@ -237,11 +237,13 @@ def _serialize_feedback_result(result) -> dict:
 
 
 def _run_one(task, k, max_iterations, temperature, no_feedback=False,
-             feedback_mode=FeedbackMode.SUCCINCT):
+             feedback_mode=FeedbackMode.SUCCINCT,
+             prompt_strategy=PromptStrategy.BASE):
     """Run feedback loop and return both summary and detailed dicts."""
     result = run_feedback_loop(
         task, k=k, max_iterations=max_iterations, temperature=temperature,
         no_feedback=no_feedback, feedback_mode=feedback_mode,
+        prompt_strategy=prompt_strategy,
     )
     summary = {
         "task_name": result.task_name,
@@ -314,10 +316,14 @@ Common model names (unified relay — just change the name, no key change needed
                         help="Predefined subset to run (default: core5)")
     parser.add_argument("--problems", nargs="*",
                         help="Override with specific RTLLM problem names")
-    parser.add_argument("--mode", choices=["zero-shot", "feedback", "retry-only", "both", "ablation", "granularity", "multiturn"],
+    parser.add_argument("--mode", choices=["zero-shot", "feedback", "retry-only", "both", "ablation", "granularity", "multiturn", "prompt_strategy"],
                         default="both",
                         help="Experiment mode. 'ablation' runs ZS+RO+FB. "
-                             "'granularity' runs L0-L4. 'multiturn' runs ST vs MT vs CO.")
+                             "'granularity' runs L0-L4. 'multiturn' runs ST vs MT vs CO. "
+                             "'prompt_strategy' runs ZS+FB for each prompt strategy.")
+    parser.add_argument("--prompt-strategy", type=str, default="base",
+                        choices=["base", "cot", "fewshot", "fewshot_cot"],
+                        help="Prompt strategy for 'feedback'/'both' mode (default: base)")
     parser.add_argument("--feedback-mode", type=str, default="succinct",
                         choices=["compile_only", "succinct", "rich"],
                         help="Feedback granularity level for 'feedback' mode (default: succinct)")
@@ -330,6 +336,7 @@ Common model names (unified relay — just change the name, no key change needed
                         help="Limit number of problems to run (for quick smoke tests)")
     args = parser.parse_args()
     fb_mode = FeedbackMode(args.feedback_mode)
+    ps = PromptStrategy(args.prompt_strategy)
 
     # ── Model switching: --model overrides env var ────────────────────────
     if args.model:
@@ -388,7 +395,8 @@ Common model names (unified relay — just change the name, no key change needed
         # ── Zero-shot ────────────────────────────────────────────────────
         if args.mode in ("zero-shot", "both", "ablation"):
             print("  Zero-shot...", end=" ", flush=True)
-            zs, zs_detail = _run_one(task, k=1, max_iterations=1, temperature=args.temperature)
+            zs, zs_detail = _run_one(task, k=1, max_iterations=1, temperature=args.temperature,
+                                     prompt_strategy=ps)
             if zs["api_error"]:
                 print(f"API_ERR({zs['api_error_type']})")
             elif zs["passed"]:
@@ -412,7 +420,8 @@ Common model names (unified relay — just change the name, no key change needed
         if args.mode in ("feedback", "both", "ablation"):
             print(f"  Feedback(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
             fb, fb_detail = _run_one(task, k=args.feedback_k, max_iterations=args.feedback_iterations,
-                                     temperature=args.temperature, feedback_mode=fb_mode)
+                                     temperature=args.temperature, feedback_mode=fb_mode,
+                                     prompt_strategy=ps)
             if fb["api_error"]:
                 print(f"API_ERR({fb['api_error_type']})")
             elif fb["passed"]:
@@ -533,6 +542,45 @@ Common model names (unified relay — just change the name, no key change needed
                 print(f"FAIL({co['best_rank']:.2f})")
             mt_results["co_k3"] = (co, co_detail)
 
+        # ── Prompt strategy mode: ZS+FB per strategy ─────────────────────
+        ps_results = {}  # key: strategy name, value: {"zs": (s,d), "fb": (s,d)}
+        if args.mode == "prompt_strategy":
+            strategies = [
+                PromptStrategy.BASE,
+                PromptStrategy.COT,
+                PromptStrategy.FEWSHOT,
+                PromptStrategy.FEWSHOT_COT,
+            ]
+            for strat in strategies:
+                ps_results[strat.value] = {}
+                # Zero-shot
+                print(f"  {strat.value}:ZS...", end=" ", flush=True)
+                s_zs, d_zs = _run_one(task, k=1, max_iterations=1,
+                                       temperature=args.temperature,
+                                       prompt_strategy=strat)
+                if s_zs["api_error"]:
+                    print(f"API_ERR({s_zs['api_error_type']})")
+                elif s_zs["passed"]:
+                    print("PASS")
+                else:
+                    print(f"FAIL({s_zs['best_rank']:.2f})")
+                ps_results[strat.value]["zs"] = (s_zs, d_zs)
+
+                # Feedback
+                print(f"  {strat.value}:FB(k={args.feedback_k},iter={args.feedback_iterations})...", end=" ", flush=True)
+                s_fb, d_fb = _run_one(task, k=args.feedback_k,
+                                       max_iterations=args.feedback_iterations,
+                                       temperature=args.temperature,
+                                       feedback_mode=fb_mode,
+                                       prompt_strategy=strat)
+                if s_fb["api_error"]:
+                    print(f"API_ERR({s_fb['api_error_type']})")
+                elif s_fb["passed"]:
+                    print(f"PASS(iter={s_fb['total_iterations']})")
+                else:
+                    print(f"FAIL({s_fb['best_rank']:.2f})")
+                ps_results[strat.value]["fb"] = (s_fb, d_fb)
+
         # ── Build row ────────────────────────────────────────────────────
         row = {"task_name": prob.name, "category": prob.category}
         detail_row = {"task_name": prob.name, "category": prob.category}
@@ -581,14 +629,53 @@ Common model names (unified relay — just change the name, no key change needed
                 row[f"{pfx}_api_error"] = ms["api_error"]
                 detail_row[cond_key] = md
 
+        # Prompt strategy specific fields
+        # prefixes: p0zs, p0fb, p1zs, p1fb, p2zs, p2fb, p3zs, p3fb
+        _PS_PREFIXES = {"base": "p0", "cot": "p1", "fewshot": "p2", "fewshot_cot": "p3"}
+        for strat_name, strat_data in ps_results.items():
+            pfx = _PS_PREFIXES[strat_name]
+            for cond, (s, d) in strat_data.items():
+                key = f"{pfx}{cond}"  # e.g. p0zs, p0fb
+                row[f"{key}_passed"] = s["passed"]
+                row[f"{key}_rank"] = s["best_rank"]
+                if cond == "fb":
+                    row[f"{key}_iterations"] = s["total_iterations"]
+                row[f"{key}_api_error"] = s["api_error"]
+                detail_row[f"{strat_name}_{cond}"] = d
+
         rows.append(row)
         detailed_results.append(detail_row)
         print()
 
     # ── Summary table ────────────────────────────────────────────────────
     print()
+    if args.mode == "prompt_strategy":
+        hdr = f"{'Problem':<25} {'P0:ZS':>7} {'P0:FB':>7} {'P1:ZS':>7} {'P1:FB':>7} {'P2:ZS':>7} {'P2:FB':>7} {'P3:ZS':>7} {'P3:FB':>7}"
+        print(hdr)
+        print("-" * len(hdr))
+        for r in rows:
+            def _ps(key):
+                if r.get(f"{key}_api_error"):
+                    return "ERR"
+                return "PASS" if r.get(f"{key}_passed") else "FAIL"
+            print(f"{r['task_name']:<25} "
+                  f"{_ps('p0zs'):>7} {_ps('p0fb'):>7} "
+                  f"{_ps('p1zs'):>7} {_ps('p1fb'):>7} "
+                  f"{_ps('p2zs'):>7} {_ps('p2fb'):>7} "
+                  f"{_ps('p3zs'):>7} {_ps('p3fb'):>7}")
+        print("-" * len(hdr))
+        total = len(rows)
+        for pfx, label in [("p0", "P0:Base"), ("p1", "P1:CoT"), ("p2", "P2:Fewshot"), ("p3", "P3:FS+CoT")]:
+            for cond, clabel in [("zs", "ZS"), ("fb", "FB")]:
+                key = f"{pfx}{cond}"
+                passed = sum(1 for r in rows if r.get(f"{key}_passed"))
+                api_err = sum(1 for r in rows if r.get(f"{key}_api_error"))
+                valid = total - api_err
+                if valid:
+                    print(f"  {label} {clabel:<3s}: {passed}/{valid} ({passed/valid*100:.0f}%), API errors: {api_err}")
+        print()
 
-    if args.mode == "multiturn":
+    elif args.mode == "multiturn":
         hdr = f"{'Problem':<25} {'A:STk3':>8} {'D:STk1':>8} {'B:MTk1':>8} {'C:COk3':>8}"
         print(hdr)
         print("-" * len(hdr))

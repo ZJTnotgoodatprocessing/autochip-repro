@@ -22,11 +22,57 @@ class FeedbackMode(str, Enum):
     RICH = "rich"                  # Level 4: detailed sim output
 
 
+class PromptStrategy(str, Enum):
+    """Initial prompt strategy for the first generation round."""
+    BASE = "base"              # Current default: direct instruction
+    COT = "cot"                # Chain-of-thought: reason before coding
+    FEWSHOT = "fewshot"        # Include 1-2 worked examples
+    FEWSHOT_COT = "fewshot_cot"  # Few-shot + CoT combined
+
+
 _PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent / "prompts"
 
+# ── Few-shot examples (NOT from STUDY_12 — safe to include) ──────────────
 
-def build_initial_prompt(description: str, module_header: str) -> str:
-    """Build the zero-shot prompt for the first generation round."""
+_FEWSHOT_EXAMPLE_1 = """\
+**Task**: Implement an 8-bit adder with carry-in and carry-out.
+**Interface**: `module adder_8bit(input [7:0] a, b, input cin, output [7:0] sum, output cout);`
+
+```verilog
+module adder_8bit(
+    input [7:0] a, b,
+    input cin,
+    output [7:0] sum,
+    output cout
+);
+    assign {cout, sum} = a + b + cin;
+endmodule
+```"""
+
+_FEWSHOT_EXAMPLE_2 = """\
+**Task**: Implement a 4-bit up counter with synchronous reset.
+**Interface**: `module counter_4bit(input clk, rst, output reg [3:0] count);`
+
+```verilog
+module counter_4bit(
+    input clk, rst,
+    output reg [3:0] count
+);
+    always @(posedge clk) begin
+        if (rst)
+            count <= 4'b0;
+        else
+            count <= count + 1;
+    end
+endmodule
+```"""
+
+
+# ── Initial prompt builders per strategy ─────────────────────────────────
+
+
+def _build_base_prompt(description: str, module_header: str) -> str:
+    """P0: Base prompt — direct instruction, code only."""
     return (
         "Generate a Verilog module that satisfies the following description.\n"
         "Return ONLY the Verilog code, no explanations.\n\n"
@@ -34,6 +80,81 @@ def build_initial_prompt(description: str, module_header: str) -> str:
         f"Module interface:\n{module_header}\n\n"
         "Your implementation:"
     )
+
+
+def _build_cot_prompt(description: str, module_header: str) -> str:
+    """P1: CoT prompt — brief analysis before code."""
+    return (
+        "You are an expert Verilog designer. Your task is to implement a module.\n\n"
+        "Before writing code, briefly analyze:\n"
+        "1. What type of logic is this? (combinational / sequential / FSM)\n"
+        "2. What are the key signals and their relationships?\n"
+        "3. Are there any timing or reset considerations?\n\n"
+        "Then output your complete Verilog implementation inside a "
+        "`module ... endmodule` block.\n\n"
+        f"## Task Description\n{description}\n\n"
+        f"## Module Interface\n{module_header}\n\n"
+        "## Your Analysis and Implementation:"
+    )
+
+
+def _build_fewshot_prompt(description: str, module_header: str) -> str:
+    """P2: Few-shot prompt — include worked examples before target task."""
+    return (
+        "You are an expert Verilog designer. "
+        "Here are two examples of correct Verilog implementations:\n\n"
+        f"### Example 1\n{_FEWSHOT_EXAMPLE_1}\n\n"
+        f"### Example 2\n{_FEWSHOT_EXAMPLE_2}\n\n"
+        "---\n\n"
+        "Now implement the following module. "
+        "Return ONLY the Verilog code, no explanations.\n\n"
+        f"## Task Description\n{description}\n\n"
+        f"## Module Interface\n{module_header}\n\n"
+        "Your implementation:"
+    )
+
+
+def _build_fewshot_cot_prompt(description: str, module_header: str) -> str:
+    """P3: Few-shot + CoT combined."""
+    return (
+        "You are an expert Verilog designer. "
+        "Here are two examples of correct Verilog implementations:\n\n"
+        f"### Example 1\n{_FEWSHOT_EXAMPLE_1}\n\n"
+        f"### Example 2\n{_FEWSHOT_EXAMPLE_2}\n\n"
+        "---\n\n"
+        "Now implement the following module.\n\n"
+        "Before writing code, briefly analyze:\n"
+        "1. What type of logic is this? (combinational / sequential / FSM)\n"
+        "2. What are the key signals and their relationships?\n"
+        "3. Are there any timing or reset considerations?\n\n"
+        "Then output your complete Verilog implementation inside a "
+        "`module ... endmodule` block.\n\n"
+        f"## Task Description\n{description}\n\n"
+        f"## Module Interface\n{module_header}\n\n"
+        "## Your Analysis and Implementation:"
+    )
+
+
+_STRATEGY_BUILDERS = {
+    PromptStrategy.BASE: _build_base_prompt,
+    PromptStrategy.COT: _build_cot_prompt,
+    PromptStrategy.FEWSHOT: _build_fewshot_prompt,
+    PromptStrategy.FEWSHOT_COT: _build_fewshot_cot_prompt,
+}
+
+
+def build_initial_prompt(
+    description: str,
+    module_header: str,
+    *,
+    strategy: PromptStrategy = PromptStrategy.BASE,
+) -> str:
+    """Build the initial prompt for the first generation round.
+
+    Args:
+        strategy: Prompt strategy to use. Defaults to BASE for backward compat.
+    """
+    return _STRATEGY_BUILDERS[strategy](description, module_header)
 
 
 # ── Feedback summarizers per granularity level ───────────────────────────────

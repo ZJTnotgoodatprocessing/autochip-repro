@@ -20,6 +20,7 @@
 | 8 | Multi-turn v1 | `9760eb4` | ❌ **Superseded** | — | 见§三（不可引用） |
 | 9 | Multi-turn v2 (bug-fixed) | `e792955` | ✅ Authoritative | `rtllm_multiturn_feedback_summary.md` | 见§二 |
 | 10 | Project Audit | `6b113aa` | ✅ Authoritative | 本文档 | `scripts/audit_*.py` |
+| 11 | Prompt Strategy (P0/P1/P2/P3) | *pending* | ✅ Authoritative | `rtllm_prompt_strategy_summary.md` | `rtllm_prompt_strategy_20260425_032429/` |
 
 ---
 

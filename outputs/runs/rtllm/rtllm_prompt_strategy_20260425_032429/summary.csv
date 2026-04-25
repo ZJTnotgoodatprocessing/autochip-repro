@@ -1,0 +1,13 @@
+task_name,category,p0zs_passed,p0zs_rank,p0zs_api_error,p0fb_passed,p0fb_rank,p0fb_iterations,p0fb_api_error,p1zs_passed,p1zs_rank,p1zs_api_error,p1fb_passed,p1fb_rank,p1fb_iterations,p1fb_api_error,p2zs_passed,p2zs_rank,p2zs_api_error,p2fb_passed,p2fb_rank,p2fb_iterations,p2fb_api_error,p3zs_passed,p3zs_rank,p3zs_api_error,p3fb_passed,p3fb_rank,p3fb_iterations,p3fb_api_error
+float_multi,Arithmetic/Other,True,1.0,False,True,1.0,1,False,False,0.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False
+multi_booth_8bit,Arithmetic/Multiplier,False,-2.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False
+multi_pipe_8bit,Arithmetic/Multiplier,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False
+div_16bit,Arithmetic/Divider,True,1.0,False,True,1.0,1,False,False,0.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,False,0.0,False,True,1.0,1,False
+adder_bcd,Arithmetic/Adder,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False
+fsm,Control/Finite State Machine,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False
+sequence_detector,Control/Finite State Machine,False,-1.0,False,True,1.0,2,False,False,-1.0,False,True,1.0,2,False,False,-1.0,False,True,1.0,2,False,False,-1.0,False,True,1.0,2,False
+JC_counter,Control/Counter,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False
+LIFObuffer,Memory/LIFO,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False,True,1.0,False,True,1.0,1,False
+LFSR,Memory/Shifter,False,-1.0,False,True,1.0,2,False,False,-1.0,False,True,1.0,2,False,False,-1.0,False,True,1.0,3,False,False,-1.0,False,True,1.0,2,False
+traffic_light,Miscellaneous/Others,False,0.0,False,True,1.0,2,False,False,0.0,False,True,1.0,2,False,False,0.0,False,True,1.0,1,False,False,0.0,False,True,1.0,1,False
+freq_divbyfrac,Miscellaneous/Frequency divider,False,0.0,False,False,0.0,5,False,False,0.0,False,False,0.0,5,False,False,0.0,False,False,0.0,5,False,False,0.0,False,False,0.0,5,False

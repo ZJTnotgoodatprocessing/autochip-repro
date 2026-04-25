@@ -24,7 +24,7 @@ from src.runner.verilog_executor import (
 )
 from src.ranking.ranker import rank as compute_rank
 from src.feedback.prompt_builder import (
-    build_initial_prompt, build_feedback_prompt, FeedbackMode,
+    build_initial_prompt, build_feedback_prompt, FeedbackMode, PromptStrategy,
     build_multiturn_initial_message, build_multiturn_feedback_message,
 )
 
@@ -120,6 +120,7 @@ def run_feedback_loop(
     temperature: float = 0.7,
     no_feedback: bool = False,
     feedback_mode: FeedbackMode = FeedbackMode.SUCCINCT,
+    prompt_strategy: PromptStrategy = PromptStrategy.BASE,
     on_iteration: callable = None,
 ) -> FeedbackLoopResult:
     """Run the AutoChip feedback loop on a single task.
@@ -147,7 +148,9 @@ def run_feedback_loop(
     global_best_comp: CompileResult | None = None
     global_best_sim: SimResult | None = None
 
-    initial_prompt = build_initial_prompt(task.description, task.module_header)
+    initial_prompt = build_initial_prompt(
+        task.description, task.module_header, strategy=prompt_strategy,
+    )
 
     for iteration_num in range(1, max_iterations + 1):
         iter_record = IterationRecord(iteration=iteration_num)
