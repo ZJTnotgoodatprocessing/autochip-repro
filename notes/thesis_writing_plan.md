@@ -254,7 +254,7 @@
 | 第 4 章 实验设计 | ✅ 初稿已完成 | 5-7 页 | 2026-05-01 | 2026-05-01 | 草稿：`report/thesis/chapter4_experiment_design.md` |
 | 第 5 章 实验结果 | ✅ 初稿已完成 | 12-15 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/chapter5_results_analysis.md` |
 | 第 2 章 相关技术 | ✅ 初稿已完成 | 6-8 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/chapter2_related_work.md` |
-| 第 1 章 绪论 | 待开始 | 4-5 页 | — | — |
+| 第 1 章 绪论 | ✅ 初稿已完成 | 4-5 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/chapter1_introduction.md` |
 | 第 6 章 总结展望 | 待开始 | 2-3 页 | — | — |
 | 中文摘要 | 待开始 | 1 页 | — | — |
 | 英文摘要 | 待开始 | 1 页 | — | — |
