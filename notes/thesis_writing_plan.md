@@ -261,6 +261,7 @@
 | 致谢 | ✅ 初稿已完成 | 1 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/acknowledgements.md` |
 | 参考文献 | ✅ 初稿已完成 | 2-3 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/references.md` |
 | 附录 | ✅ 规划已完成 | 3-5 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/appendix_plan.md` |
+| 完整 Word 初稿 | ✅ 已生成 v1 | — | 2026-05-02 | 2026-05-02 | `report/thesis/thesis_draft_v1.docx`（格式待人工检查） |
 | **总计** | — | **~45-58 页** | — | — |
 
 ---
