@@ -45,8 +45,8 @@
 |------|---------|---------|
 | §3.1 | AutoChip 风格闭环设计 | [1] AutoChip |
 | §3.4 | Icarus Verilog 编译仿真 | [13] Icarus Verilog |
-| §3.2.1 | VerilogEval 加载器 | [2] VerilogEval |
-| §3.2.2 | RTLLM 加载器 | [3] RTLLM |
+| §3.2.2 | VerilogEval 加载器 | [2] VerilogEval |
+| §3.2.3 | RTLLM 加载器 | [3] RTLLM |
 | §3.7 | CoT / Few-shot 策略 | [11] CoT, [12] GPT-3 |
 
 ---
