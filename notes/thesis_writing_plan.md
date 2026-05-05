@@ -261,7 +261,11 @@
 | 致谢 | ✅ 初稿已完成 | 1 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/acknowledgements.md` |
 | 参考文献 | ✅ 初稿已完成 | 2-3 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/references.md` |
 | 附录 | ✅ 规划已完成 | 3-5 页 | 2026-05-02 | 2026-05-02 | 草稿：`report/thesis/appendix_plan.md` |
-| 完整 Word 初稿 | ✅ 已生成 v1 | — | 2026-05-02 | 2026-05-02 | `report/thesis/thesis_draft_v1.docx`（格式待人工检查） |
+| 完整 Word 初稿 | ✅ 内容整合版 v1 | — | 2026-05-02 | 2026-05-02 | `report/thesis/thesis_draft_v1.docx`（格式待人工处理） |
+| 人工排版指导包 | ✅ 已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/thesis_manual_formatting_guide.md` |
+| 图表与制表建议 | ✅ 已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/figure_table_placement_plan.md` |
+| 参考文献核验版 | ✅ 初稿已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/references_verified.md`（17 条已核验） |
+| 正文引用位置计划 | ✅ 初稿已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/citation_insertion_plan.md` |
 | **总计** | — | **~45-58 页** | — | — |
 
 ---
