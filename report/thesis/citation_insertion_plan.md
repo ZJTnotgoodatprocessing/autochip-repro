@@ -58,7 +58,7 @@
 | §4.2.1 | VerilogEval-Human 20 题 | [2] VerilogEval |
 | §4.2.2 | RTLLM_STUDY_12 | [3] RTLLM |
 | §4.4 | Zero-shot / Feedback 条件 | [1] AutoChip |
-| §4.4.5 | CoT / Few-shot 策略定义 | [11] CoT, [12] GPT-3 |
+| §4.4.6 | CoT / Few-shot 策略定义 | [11] CoT, [12] GPT-3 |
 
 ---
 

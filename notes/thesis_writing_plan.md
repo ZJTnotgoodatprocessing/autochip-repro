@@ -266,7 +266,10 @@
 | 图表与制表建议 | ✅ 已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/figure_table_placement_plan.md` |
 | 参考文献核验版 | ✅ 初稿已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/references_verified.md`（17 条已核验） |
 | 正文引用位置计划 | ✅ 初稿已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/citation_insertion_plan.md` |
+| 全文内容审阅报告 | ✅ 已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/thesis_content_review_report.md` |
 | **总计** | — | **~45-58 页** | — | — |
+
+> **下一步建议**：用户手工排版 Word 前，先根据审阅报告处理高优先级修改（§5.3.2 数据表述、Ch1/Ch6 降 AIGC 格式、citation plan §4.4.6 已修正）。
 
 ---
 
