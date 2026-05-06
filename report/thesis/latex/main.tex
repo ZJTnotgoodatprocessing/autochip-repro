@@ -1,0 +1,54 @@
+% !Mode:: "TeX:UTF-8"
+\documentclass[bachelor,openany,oneside,AutoFakeBold=true]{buaathesis}
+
+% 参考文献
+\usepackage{gbt7714}
+\citestyle{numerical}
+
+% 额外宏包
+\usepackage{booktabs}   % 三线表
+\usepackage{multirow}   % 多行表格
+\usepackage{graphicx}   % 图片
+\usepackage{subcaption}  % 子图
+
+\begin{document}
+
+% 用户信息
+\include{data/com_info}
+\include{data/bachelor/bachelor_info}
+
+% 任务书信息
+\include{data/bachelor/assign}
+
+% 页眉页脚样式
+\pagestyle{mainmatter}
+% 封面、任务书、声明
+\maketitle
+% 摘要
+\mainmatter
+\pagestyle{abstractstyle}
+\include{data/abstract}
+% 目录
+% 正文页码样式
+\pagestyle{mainmatter}
+\mainmatter
+\tableofcontents
+
+% 正文
+\include{data/chapter1}
+\include{data/chapter2}
+\include{data/chapter3}
+\include{data/chapter4}
+\include{data/chapter5}
+\include{data/chapter6}
+\include{data/conclusion}
+
+% 致谢
+\include{data/bachelor/acknowledgement}
+% 参考文献
+\include{data/reference}
+
+% 附录
+\appendix
+\include{data/appendix}
+\end{document}

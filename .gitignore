@@ -33,3 +33,25 @@ Thumbs.db
 third_party/RTLLM/_chatgpt35/
 third_party/RTLLM/_chatgpt4/
 third_party/RTLLM/_pic/
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.xdv
+*.bcf
+*.run.xml
+
+# Fonts from local templates (large binary files)
+*.ttf
+*.ttc
+*.otf
+*.TTF

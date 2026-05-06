@@ -267,9 +267,11 @@
 | 参考文献核验版 | ✅ 初稿已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/references_verified.md`（17 条已核验） |
 | 正文引用位置计划 | ✅ 初稿已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/citation_insertion_plan.md` |
 | 全文内容审阅报告 | ✅ 已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/thesis_content_review_report.md` |
+| LaTeX 论文工程 | ⚠️ 源文件已生成，PDF 编译待用户环境 | — | 2026-05-06 | 2026-05-06 | `report/thesis/latex/` |
+| LaTeX 迁移记录 | ✅ 已完成 | — | 2026-05-06 | 2026-05-06 | `report/thesis/latex_migration_notes.md` |
 | **总计** | — | **~45-58 页** | — | — |
 
-> **下一步建议**：用户手工排版 Word 前，先根据审阅报告处理高优先级修改（§5.3.2 数据表述、Ch1/Ch6 降 AIGC 格式、citation plan §4.4.6 已修正）。
+> **下一步建议**：用户安装 TeX Live 或 MiKTeX 后，在 `report/thesis/latex/` 目录下执行 `xelatex main.tex && bibtex main && xelatex main.tex && xelatex main.tex` 编译 PDF。审阅报告中的 5 个高优先级问题已在 LaTeX 迁移中处理。
 
 ---
 

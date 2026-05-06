@@ -1,0 +1,150 @@
+% !Mode:: "TeX:UTF-8"
+\chapter{实验设计}
+
+本章定义本文全部实验的目标、评估基准、模型配置、实验条件、评价指标与可靠性控制方法。所有实验设置均来自真实的实验脚本与权威文档，具体实验结果将在第5章中呈现和分析。
+
+\section{实验目标与总体设计}
+
+\subsection{实验目标}
+
+本文的实验旨在系统性地回答以下研究问题：（1）AutoChip风格的EDA反馈循环是否能稳定提升大语言模型生成Verilog代码的正确性？（2）反馈循环带来的通过率提升中，有多少来自错误反馈信息本身，有多少仅来自多次重试机会？（3）上述结论在多次独立重复实验下是否稳定？（4）不同粒度的反馈信息对修复效果有何影响？（5）多轮对话式反馈是否优于单轮反馈？（6）初始提示词的工程优化对生成质量有多大影响？（7）上述结论在不同能力水平的模型上是否一致？
+
+\subsection{实验总体逻辑}
+
+围绕上述研究问题，本文设计了七组递进式实验。首先在VerilogEval-Human基准上完成中期基线实验；其次在RTLLM\_STUDY\_12上进行正式实验矩阵；然后通过消融实验和稳定性重复实验回答因果归因和统计置信度问题；最后通过反馈粒度、多轮对话和提示词策略实验探索优化方向。
+
+\section{Benchmark与任务子集}
+
+\subsection{VerilogEval-Human 20题子集}
+
+VerilogEval-Human\cite{verilogeval}是NVlabs发布的Verilog代码生成评估基准的人工编写子集。本文在中期阶段选取其中20个题目作为基线实验的任务集，覆盖组合逻辑、时序逻辑、有限状态机等多种类型。
+
+\subsection{RTLLM基准与兼容性审计}
+
+RTLLM 2.0\cite{rtllm}包含50个硬件设计任务。由于本文使用Icarus Verilog作为编译仿真工具，在接入前进行了全量兼容性审计，结果如表\ref{tab:rtllm_audit}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{RTLLM 2.0 Icarus Verilog兼容性审计结果}
+\label{tab:rtllm_audit}
+\begin{tabular}{lrr}
+\toprule
+指标 & 数量 & 比例 \\
+\midrule
+总设计数 & 50 & 100\% \\
+编译通过 & 46 & 92\% \\
+仿真通过 & 41 & 82\% \\
+编译失败 & 4 & 8\% \\
+编译通过但仿真异常 & 5 & 10\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{RTLLM\_CORE\_5打通验证子集}
+
+在进入正式实验前，本文先定义了一个5题的最小验证子集RTLLM\_CORE\_5，用于端到端验证。CORE\_5的结果不作为论文正式结论的数据来源，在权威实验索引中被标记为Exploratory。
+
+\subsection{RTLLM\_STUDY\_12正式研究子集}
+
+RTLLM\_STUDY\_12是本文全部正式实验的核心任务集，包含12个精心选取的题目，如表\ref{tab:study12}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{RTLLM\_STUDY\_12任务组成与类别分布}
+\label{tab:study12}
+\begin{tabular}{rlll}
+\toprule
+\# & 设计名 & 类别 & 难度 \\
+\midrule
+1 & float\_multi & Arithmetic/Other & \(\star\star\star\star\star\) \\
+2 & multi\_booth\_8bit & Arithmetic/Multiplier & \(\star\star\star\star\) \\
+3 & multi\_pipe\_8bit & Arithmetic/Multiplier & \(\star\star\star\star\) \\
+4 & div\_16bit & Arithmetic/Divider & \(\star\star\star\star\) \\
+5 & adder\_bcd & Arithmetic/Adder & \(\star\star\star\) \\
+6 & fsm & Control/FSM & \(\star\star\star\) \\
+7 & sequence\_detector & Control/FSM & \(\star\star\star\) \\
+8 & JC\_counter & Control/Counter & \(\star\star\star\) \\
+9 & LIFObuffer & Memory/LIFO & \(\star\star\star\) \\
+10 & LFSR & Memory/Shifter & \(\star\star\star\) \\
+11 & traffic\_light & Miscellaneous/Others & \(\star\star\star\star\) \\
+12 & freq\_divbyfrac & Miscellaneous/Freq divider & \(\star\star\star\star\) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{模型设置}
+
+\subsection{模型接入方式}
+
+本系统通过第三方统一API网关接入多种大语言模型，模型名称通过\texttt{LLM\_MODEL}环境变量或\texttt{--model}命令行参数指定。
+
+\subsection{实验模型选择}
+
+本文的实验涉及三个主要模型，代表三个不同的能力等级，如表\ref{tab:models}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{实验模型与角色说明}
+\label{tab:models}
+\begin{tabular}{llll}
+\toprule
+模型名称 & 提供商 & 角色 & 实验覆盖 \\
+\midrule
+claude-haiku-4-5 & Anthropic & 较弱基线 & VerilogEval基线 + RTLLM正式 \\
+claude-sonnet-4-6 & Anthropic & 中强模型 & 正式 + 消融 + 稳定性 + 粒度 + 多轮 \\
+gpt-5.4 & OpenAI & 强模型 & 正式 + 消融 + 稳定性 + 粒度 + 多轮 + 策略 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{公共实验参数}
+
+除另有说明外，本文所有实验使用以下统一参数：temperature$=$0.7，max\_tokens$=$4096，$k=$3（每轮候选数），max\_iterations$=$5，默认反馈级别为L3 Succinct，默认提示策略为P0 Base。
+
+\section{实验条件与对照设计}
+
+\subsection{正式实验：Zero-shot与Feedback}
+
+正式实验矩阵在RTLLM\_STUDY\_12上对三个模型分别运行两种条件：Zero-shot（$k=1$，不迭代，无反馈）和Feedback（$k=3$，最多5轮，L3 Succinct反馈）\cite{autochip}。
+
+\subsection{消融实验：Retry-only条件}
+
+设计了三条件消融实验：Zero-shot（预算1）、Retry-only（预算最多15，无反馈）和Feedback（预算最多15，L3反馈）。
+
+\subsection{稳定性重复实验}
+
+对消融实验进行了独立重复：GPT-5.4和Sonnet 4.6各4轮，每轮完全独立的API调用。
+
+\subsection{反馈粒度实验}
+
+设计了五级反馈粒度实验：L0 Zero-shot、L1 Retry-only、L2 Compile-only、L3 Succinct、L4 Rich。
+
+\subsection{多轮对话反馈实验}
+
+设计了四条件对照实验，在STUDY\_12的6题代表性子集（Multiturn-6）上运行。需要说明的是，本实验的初始版本（v1）存在代码bug，已修正为v2版本。本文报告的所有多轮对话结果均来自v2。
+
+\subsection{提示词策略实验\cite{cot,gpt3}}
+
+设计了四种提示策略（P0 Base、P1 CoT、P2 Few-shot、P3 Few-shot+CoT）的对比实验，每种策略均运行Zero-shot和Feedback两种条件。该实验使用GPT-5.4模型。
+
+\section{评价指标与统计方法}
+
+\subsection{主要评价指标}
+
+通过率（Pass Rate）是本文的首要评价指标，定义为在给定条件下通过测试平台全部测试用例的任务数占总任务数的比例。Rank分数作为辅助指标，取值范围为$[-2.0, 1.0]$。
+
+\subsection{派生指标}
+
+Feedback改善题数和API错误率分别衡量反馈循环的净贡献和实验数据的完整性。
+
+\subsection{统计方法}
+
+对于稳定性重复实验，本文报告4轮重复的均值和标准差。对于单次运行的实验，在结论表述中注明其局限性。
+
+\section{实验产物记录与可靠性控制}
+
+审计与验证机制包括代码审计（24项检查）和数据审计（覆盖全部7个实验类别），两项均已通过。权威实验索引明确标注每个实验阶段的状态。
+
+\section{本章小结}
+
+本章系统地定义了本文全部实验的设计方案。实验以VerilogEval-Human和RTLLM\_STUDY\_12为评估基准，使用三个不同能力等级的大语言模型，通过七组递进式实验回答关于反馈机制有效性、价值归因、信息量影响、组织方式和提示词策略的研究问题。这些设计为第5章的实验结果分析奠定了方法论基础。

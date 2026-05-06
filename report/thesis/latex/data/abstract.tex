@@ -1,0 +1,24 @@
+% !Mode:: "TeX:UTF-8"
+
+% 中英文摘要
+\begin{cabstract}
+随着集成电路设计复杂度的不断提升，寄存器传输级（RTL）代码的编写和验证已成为芯片设计流程中最耗时的环节之一。大语言模型（LLM）在代码生成领域展现出潜力，但RTL代码不同于普通软件代码——它描述的是并行执行的硬件结构，不仅要求语法正确，还必须通过EDA工具的编译和仿真验证。实际使用中，模型在零样本条件下生成的Verilog代码常存在语法错误、接口不匹配、时序逻辑错误和边界条件遗漏等问题，尤其在复杂设计任务上正确率有限。
+
+针对上述问题，本文构建了一个AutoChip风格的RTL自动生成与反馈修复原型系统，实现了"生成—编译—仿真—反馈—修复"的完整迭代闭环。系统支持VerilogEval-Human和RTLLM双benchmark接入，通过第三方统一API网关实现多模型无缝切换，并支持可配置的反馈粒度（从仅编译错误到详细仿真日志）、多轮对话反馈和多种初始提示词策略。同时，系统配备了完善的实验产物管理和审计机制，确保实验结果的可追溯性和可靠性。
+
+本文设计并执行了七组递进式实验。在VerilogEval-Human 20题子集上，Haiku模型的通过率从80\%（零样本）提升至90\%（反馈）。在更具挑战性的RTLLM\_STUDY\_12（12道高难度设计）上，GPT-5.4的通过率从50\%提升至83\%，表明反馈循环在强模型和高难度任务场景下仍具有实际价值。消融实验表明，反馈信息本身贡献了约57\%的提升，多采样机会贡献约43\%，且存在仅反馈可解而多次独立重试均无法通过的设计题目。
+
+稳定性重复实验（每模型4轮）确认了核心结论的统计稳健性。反馈粒度实验揭示了倒U型趋势——编译反馈和简洁反馈是最稳健的选择，过于丰富的反馈可能导致信息过载。实验还发现反馈效果存在模型依赖性，不同模型对反馈信息的利用能力存在差异。
+
+本文的研究表明，EDA工具反馈循环对大语言模型的RTL自动生成具有实际价值，但反馈策略需要结合模型能力、任务难度和反馈粒度进行综合设计。
+\end{cabstract}
+
+\begin{eabstract}
+As integrated circuit design complexity continues to grow, writing and verifying Register Transfer Level (RTL) code has become one of the most time-consuming stages in chip design. Large Language Models (LLMs) have demonstrated potential in code generation, yet RTL code fundamentally differs from conventional software --- it describes parallel hardware structures and must pass compilation and simulation verification by Electronic Design Automation (EDA) tools. In practice, Verilog code generated under zero-shot conditions frequently contains syntax errors, interface mismatches, timing logic errors, and boundary condition omissions, particularly for complex design tasks.
+
+To address these challenges, this thesis builds an AutoChip-style prototype system for automatic RTL generation and feedback-driven repair, implementing a complete ``generation--compilation--simulation--feedback--repair'' iterative loop. The system supports dual benchmark integration (VerilogEval-Human and RTLLM), multi-model switching via a unified API gateway, configurable feedback granularity levels (from compile-only to rich simulation logs), multi-turn conversational feedback, and multiple prompt strategies.
+
+Seven progressive experiment groups were designed and executed. On VerilogEval-Human (20 problems), the Haiku model's pass rate improved from 80\% (zero-shot) to 90\% (feedback). On the more challenging RTLLM\_STUDY\_12 (12 high-difficulty designs), GPT-5.4's pass rate improved from 50\% to 83\%, demonstrating that feedback loops remain valuable even with strong models on difficult tasks. Ablation experiments showed that error feedback information itself contributed approximately 57\% of the total improvement, with multiple sampling opportunities contributing approximately 43\%. Stability experiments (4 independent repetitions per model) confirmed the statistical robustness of core conclusions. Feedback granularity experiments revealed an inverted-U trend --- compile-only and succinct feedback proved most robust, while excessively rich feedback may cause information overload.
+
+This research demonstrates that EDA tool feedback loops provide practical value for LLM-based RTL generation, but feedback strategies should be designed considering model capability, task difficulty, and feedback granularity.
+\end{eabstract}
