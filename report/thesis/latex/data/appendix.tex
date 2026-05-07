@@ -1,5 +1,5 @@
 % !Mode:: "TeX:UTF-8"
-\chapter{附录A：实验配置与运行命令}
+\chapter{实验配置与运行命令}
 
 本附录记录了本文实验使用的典型运行命令模板和关键配置。
 
@@ -25,8 +25,6 @@ python scripts/run_rtllm_experiment.py \
 
 \section{核心代码模块索引}
 
-% TODO: 根据 appendix_plan.md 补充完整的模块索引表
-
 \begin{table}[htbp]
 \centering
 \caption{系统核心代码模块索引}
@@ -34,11 +32,15 @@ python scripts/run_rtllm_experiment.py \
 \toprule
 模块 & 文件路径 \\
 \midrule
-反馈循环控制器 & \texttt{src/loop\_runner.py} \\
-提示词构建器 & \texttt{src/prompt\_builder.py} \\
-Verilog执行器 & \texttt{src/verilog\_executor.py} \\
-评分器 & \texttt{src/ranker.py} \\
-RTLLM加载器 & \texttt{src/rtllm\_loader.py} \\
+反馈循环控制器 & \texttt{src/feedback/loop\_runner.py} \\
+提示词构建器 & \texttt{src/feedback/prompt\_builder.py} \\
+Verilog执行器 & \texttt{src/runner/verilog\_executor.py} \\
+评分器 & \texttt{src/ranking/ranker.py} \\
+RTLLM加载器 & \texttt{src/runner/rtllm\_loader.py} \\
+VerilogEval加载器 & \texttt{src/runner/verilogeval\_loader.py} \\
+LLM客户端 & \texttt{src/llm/client.py} \\
+Verilog提取器 & \texttt{src/utils/extract\_verilog.py} \\
+实验产物管理 & \texttt{src/utils/artifacts.py} \\
 代码审计 & \texttt{scripts/audit\_project.py} \\
 数据审计 & \texttt{scripts/audit\_data.py} \\
 \bottomrule

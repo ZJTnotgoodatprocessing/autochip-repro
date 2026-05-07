@@ -269,9 +269,13 @@
 | 全文内容审阅报告 | ✅ 已完成 | — | 2026-05-05 | 2026-05-05 | `report/thesis/thesis_content_review_report.md` |
 | LaTeX 论文工程 | ✅ 已编译生成 PDF（59页） | — | 2026-05-06 | 2026-05-06 | `report/thesis/latex/thesis_draft_latex_v1.pdf` |
 | LaTeX 迁移记录 | ✅ 已完成 | — | 2026-05-06 | 2026-05-06 | `report/thesis/latex_migration_notes.md` |
-| **总计** | — | **~45-58 页** | — | — |
+| LaTeX PDF v2（题目修正+格式检查） | ✅ 已生成（59页） | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex/thesis_draft_latex_v2.pdf` |
+| LaTeX 格式审查报告 | ✅ 已完成 | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex_format_check_report.md` |
+| **总计** | — | **59 页** | — | — |
 
-> **下一步建议**：用户安装 TeX Live 或 MiKTeX 后，在 `report/thesis/latex/` 目录下执行 `xelatex main.tex && bibtex main && xelatex main.tex && xelatex main.tex` 编译 PDF。审阅报告中的 5 个高优先级问题已在 LaTeX 迁移中处理。
+> **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化（已于 v2 统一）
+>
+> **下一步建议**：用户根据格式审查报告确认 6 项人工检查问题，按需润色降 AIGC，准备最终提交。
 
 ---
 
