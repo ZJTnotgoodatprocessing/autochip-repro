@@ -275,11 +275,13 @@
 | v3 润色报告 | ✅ 已完成 | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex_polish_v3_report.md` |
 | LaTeX PDF v4（定稿前专项小修） | ✅ 已生成（54页） | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex/thesis_draft_latex_v4.pdf` |
 | v4 核查报告 | ✅ 已完成 | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex_v4_final_check_report.md` |
+| LaTeX 最终候选版 | ✅ 已生成（54页） | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex/thesis_final_candidate.pdf` |
+| 最终候选检查报告 | ✅ 已完成 | — | 2026-05-08 | 2026-05-08 | `report/thesis/final_candidate_check_report.md` |
 | **总计** | — | **54 页** | — | — |
 
 > **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >
-> **下一步建议**：用户阅读 v4 PDF 确认封面、附录和多轮对话表述，按需微调后提交最终版。
+> **下一步建议**：用户通读 `thesis_final_candidate.pdf` 确认无误后，可用于查重/降重和最终提交。v1/v2/v3/v4 均保留为历史版本。
 
 ---
 
