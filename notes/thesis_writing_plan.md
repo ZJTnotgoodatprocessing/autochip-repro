@@ -271,11 +271,13 @@
 | LaTeX 迁移记录 | ✅ 已完成 | — | 2026-05-06 | 2026-05-06 | `report/thesis/latex_migration_notes.md` |
 | LaTeX PDF v2（题目修正+格式检查） | ✅ 已生成（59页） | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex/thesis_draft_latex_v2.pdf` |
 | LaTeX 格式审查报告 | ✅ 已完成 | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex_format_check_report.md` |
-| **总计** | — | **59 页** | — | — |
+| LaTeX PDF v3（结构优化+全文润色） | ✅ 已生成（51页） | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex/thesis_draft_latex_v3.pdf` |
+| v3 润色报告 | ✅ 已完成 | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex_polish_v3_report.md` |
+| **总计** | — | **51 页** | — | — |
 
-> **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化（已于 v2 统一）
+> **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >
-> **下一步建议**：用户根据格式审查报告确认 6 项人工检查问题，按需润色降 AIGC，准备最终提交。
+> **下一步建议**：用户阅读 v3 PDF 确认润色效果和目录简洁度，按需微调后准备最终提交。
 
 ---
 
