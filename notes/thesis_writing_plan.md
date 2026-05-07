@@ -271,9 +271,9 @@
 | LaTeX 迁移记录 | ✅ 已完成 | — | 2026-05-06 | 2026-05-06 | `report/thesis/latex_migration_notes.md` |
 | LaTeX PDF v2（题目修正+格式检查） | ✅ 已生成（59页） | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex/thesis_draft_latex_v2.pdf` |
 | LaTeX 格式审查报告 | ✅ 已完成 | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex_format_check_report.md` |
-| LaTeX PDF v3（结构优化+全文润色） | ✅ 已生成（51页） | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex/thesis_draft_latex_v3.pdf` |
+| LaTeX PDF v3（结构优化+全文润色） | ✅ 已生成（54页） | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex/thesis_draft_latex_v3.pdf` |
 | v3 润色报告 | ✅ 已完成 | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex_polish_v3_report.md` |
-| **总计** | — | **51 页** | — | — |
+| **总计** | — | **54 页** | — | — |
 
 > **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >

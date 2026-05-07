@@ -738,14 +738,14 @@ The LaTeX template for thesis of BUAA]
                         \ifbuaa@twoteacher
                             \begin{tabular}{cc}
                                 学~~~院~~~名~~~称~~&\ulinecvcbc{\buaa@school 学院}\\[.4ex]
-                                专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major}\\[.4ex]
+                                专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major 专业}\\[.4ex]
                                 学~~~生~~~姓~~~名~~&\ulinecvcbc{\buaa@thesisauthor}\\[.4ex]
                                 指~~~导~~~教~~~师~~&\ulinecvcbc{\buaa@teacher \quad \buaa@subteacher}\\
                             \end{tabular}
                         \else
                             \begin{tabular}{cc}
                                 学~~~院~~~名~~~称~~&\ulinecvcbc{\buaa@school 学院}\\[.4ex]
-                                专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major}\\[.4ex]
+                                专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major 专业}\\[.4ex]
                                 学~~~生~~~姓~~~名~~&\ulinecvcbc{\buaa@thesisauthor}\\[.4ex]
                                 指~~~导~~~教~~~师~~&\ulinecvcbc{\buaa@teacher}\\
                             \end{tabular}
