@@ -7,16 +7,34 @@
 
 \begin{verbatim}
 # Zero-shot
-python scripts/run_rtllm_experiment.py \
-  --model gpt-5.4 --mode zero-shot \
-  --problems STUDY_12
+python scripts/run_rtllm_subset.py \
+  --model gpt-5.4 --subset study12 \
+  --mode zero-shot
 
-# Feedback
-python scripts/run_rtllm_experiment.py \
-  --model gpt-5.4 --mode feedback \
-  --k 3 --max-iterations 5 \
-  --feedback-level succinct \
-  --problems STUDY_12
+# Feedback (default: k=3, iter=5, succinct)
+python scripts/run_rtllm_subset.py \
+  --model gpt-5.4 --subset study12 \
+  --mode feedback
+
+# Ablation (zero-shot + retry-only + feedback)
+python scripts/run_rtllm_subset.py \
+  --model gpt-5.4 --subset study12 \
+  --mode ablation
+
+# Granularity (L0-L4)
+python scripts/run_rtllm_subset.py \
+  --model gpt-5.4 --subset study12 \
+  --mode granularity
+
+# Multiturn (ST/MT/CO conditions)
+python scripts/run_rtllm_subset.py \
+  --model gpt-5.4 --subset study12 \
+  --mode multiturn
+
+# Prompt strategy (P0-P3, ZS+FB each)
+python scripts/run_rtllm_subset.py \
+  --model gpt-5.4 --subset study12 \
+  --mode prompt_strategy
 \end{verbatim}
 
 \section{环境配置}

@@ -273,11 +273,13 @@
 | LaTeX 格式审查报告 | ✅ 已完成 | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex_format_check_report.md` |
 | LaTeX PDF v3（结构优化+全文润色） | ✅ 已生成（54页） | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex/thesis_draft_latex_v3.pdf` |
 | v3 润色报告 | ✅ 已完成 | — | 2026-05-07 | 2026-05-07 | `report/thesis/latex_polish_v3_report.md` |
+| LaTeX PDF v4（定稿前专项小修） | ✅ 已生成（54页） | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex/thesis_draft_latex_v4.pdf` |
+| v4 核查报告 | ✅ 已完成 | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex_v4_final_check_report.md` |
 | **总计** | — | **54 页** | — | — |
 
 > **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >
-> **下一步建议**：用户阅读 v3 PDF 确认润色效果和目录简洁度，按需微调后准备最终提交。
+> **下一步建议**：用户阅读 v4 PDF 确认封面、附录和多轮对话表述，按需微调后提交最终版。
 
 ---
 
