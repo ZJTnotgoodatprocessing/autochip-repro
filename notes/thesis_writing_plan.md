@@ -277,11 +277,13 @@
 | v4 核查报告 | ✅ 已完成 | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex_v4_final_check_report.md` |
 | LaTeX 最终候选版 | ✅ 已生成（54页） | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex/thesis_final_candidate.pdf` |
 | 最终候选检查报告 | ✅ 已完成 | — | 2026-05-08 | 2026-05-08 | `report/thesis/final_candidate_check_report.md` |
-| **总计** | — | **54 页** | — | — |
+| 知网+导师意见修订 v5 | ✅ 已生成（57页） | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex/thesis_revised_after_cnki_v5.pdf` |
+| v5 修订报告 | ✅ 已完成 | — | 2026-05-08 | 2026-05-08 | `report/thesis/cnki_and_supervisor_revision_v5_report.md` |
+| **总计** | — | **57 页** | — | — |
 
 > **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >
-> **下一步建议**：用户通读 `thesis_final_candidate.pdf` 确认无误后，可用于查重/降重和最终提交。v1/v2/v3/v4 均保留为历史版本。
+> **下一步建议**：用户将 v5 PDF 重新提交知网检测，确认降重/降AIGC效果。待导师确认后可定版。
 
 ---
 

@@ -55,3 +55,5 @@ third_party/RTLLM/_pic/
 *.ttc
 *.otf
 *.TTF
+check/*.pdf
+
