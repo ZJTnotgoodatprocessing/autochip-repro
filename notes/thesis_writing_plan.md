@@ -280,10 +280,11 @@
 | 知网+导师意见修订 v5 | ✅ 已生成（57页） | — | 2026-05-08 | 2026-05-08 | `report/thesis/latex/thesis_revised_after_cnki_v5.pdf` |
 | v5 修订报告 | ✅ 已完成 | — | 2026-05-08 | 2026-05-08 | `report/thesis/cnki_and_supervisor_revision_v5_report.md` |
 | **总计** | — | **57 页** | — | — |
+| 工作量表述轻量修订 v6-lite | ✅ 已生成（57页） | — | 2026-05-09 | 2026-05-09 | `report/thesis/latex/thesis_workload_revised_v6_lite.pdf` |
 
 > **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >
-> **下一步建议**：用户将 v5 PDF 重新提交知网检测，确认降重/降AIGC效果。待导师确认后可定版。
+> **下一步建议**：v6-lite 可直接发给导师查阅。如导师无进一步意见，可作为最终提交版本。
 
 ---
 
