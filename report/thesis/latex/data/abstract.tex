@@ -4,7 +4,7 @@
 \begin{cabstract}
 集成电路设计规模的持续扩大使得寄存器传输级（RTL）代码的开发与验证成为芯片设计流程中的关键瓶颈。大语言模型已在多种编程语言的代码生成任务中展现出潜力，但RTL代码的生成面临独特挑战——Verilog代码描述的是并行执行的硬件结构，其正确性不仅取决于语法合规性，还必须经由EDA工具的编译和功能仿真验证。实际测试表明，当前模型在零样本条件下对复杂Verilog设计的正确率仍有较大提升空间。
 
-本文构建了一个遵循AutoChip方法论的RTL自动生成与反馈修复原型系统。该系统实现了完整的``生成—编译—仿真—反馈—修复''迭代闭环：将Icarus Verilog编译器和VVP仿真器的输出解析为结构化反馈信号，引导大语言模型定向修复代码错误。系统支持VerilogEval-Human与RTLLM双benchmark接入，可通过统一API网关切换不同模型，并提供五级反馈粒度、多轮对话反馈和四种提示词策略的灵活配置。
+本文构建了一个基于EDA工具反馈的LLM Verilog生成与自动优化系统。该系统实现了完整的``生成—编译—仿真—反馈—修复''迭代闭环：将Icarus Verilog编译器和VVP仿真器的输出解析为结构化反馈信号，引导大语言模型定向修复代码错误。系统支持VerilogEval-Human与RTLLM双benchmark接入，可通过统一API网关切换不同模型，并提供五级反馈粒度、多轮对话反馈和四种提示词策略的灵活配置。
 
 实验方面，本文在三个不同能力等级的模型上执行了七组递进式对照实验。在VerilogEval-Human 20题子集上，Haiku的通过率从80\%提升至90\%；在难度更高的RTLLM\_STUDY\_12（12道精选设计）上，GPT-5.4从50\%提升至83\%。消融实验定量分离了反馈收益的来源——错误反馈信息贡献约57\%的提升，多采样贡献约43\%，且存在仅反馈可解而15次独立重试均无法通过的设计题目。
 
@@ -14,7 +14,7 @@
 \begin{eabstract}
 The growing complexity of integrated circuit design makes Register Transfer Level (RTL) code development and verification a major bottleneck in the chip design workflow.  While Large Language Models (LLMs) have demonstrated code-generation capabilities across several programming languages, generating hardware description code poses unique challenges: Verilog describes parallel hardware structures whose correctness must be verified through Electronic Design Automation (EDA) tool compilation and functional simulation, rather than simple execution.
 
-This thesis presents a prototype system for automatic RTL generation and iterative repair following the AutoChip methodology.  The system parses Icarus Verilog compiler and VVP simulator outputs into structured feedback signals that guide the LLM toward targeted code fixes.  It supports two public benchmarks (VerilogEval-Human and RTLLM), multi-model switching via a unified API gateway, five levels of feedback granularity, multi-turn conversational feedback, and four prompt engineering strategies.
+This thesis presents a prototype system for EDA-feedback-driven automatic RTL generation and optimization.  The system parses Icarus Verilog compiler and VVP simulator outputs into structured feedback signals that guide the LLM toward targeted code fixes.  It supports two public benchmarks (VerilogEval-Human and RTLLM), multi-model switching via a unified API gateway, five levels of feedback granularity, multi-turn conversational feedback, and four prompt engineering strategies.
 
 Seven progressive experiments were conducted on three models of different capability tiers.  On VerilogEval-Human (20-problem subset), Haiku's pass rate improved from 80\% to 90\%.  On the more demanding RTLLM\_STUDY\_12 (12 curated designs), GPT-5.4 rose from 50\% to 83\%.  Ablation experiments quantitatively decomposed the feedback benefit: error feedback contributed roughly 57\% of the improvement, while multi-sampling accounted for the remaining 43\%.  Notably, certain designs could only be solved with feedback and resisted 15 independent retry attempts.
 
