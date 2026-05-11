@@ -57,23 +57,13 @@ GPT-5.4 & 6/12 (50\%) & 10/12 (83\%) & +33pp & 4 \\
 \label{fig:passrate_comparison}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figure/fig_per_problem_matrix.png}
-\caption{RTLLM\_STUDY\_12逐题结果矩阵}
-\label{fig:per_problem_matrix}
-\end{figure}
+各题目的逐题结果详见附录B图\ref{fig:per_problem_matrix}。
 
 反馈对所有模型均产生了正向增益。值得注意的是，强模型从反馈中获益最大——GPT-5.4的增益（+33个百分点）远超Sonnet（+17个百分点）和Haiku（+8个百分点）。这一现象的可能解释是：反馈信息需要模型具备足够的代码理解和修复能力才能被有效利用。强模型在接收到编译或仿真错误信息后，更能准确定位问题根因并生成正确的修复方案；而弱模型即使获得了相同的错误信息，也可能因基础能力不足而无法将反馈转化为有效修复。换言之，反馈循环的收益上限取决于模型自身的代码推理能力。
 
 实验还发现了两类值得关注的特殊题目。第一类是仅反馈可解的题目：LFSR和traffic\_light在零样本下所有模型均失败，但在反馈条件下被成功修复，说明这类题目的主要障碍不是设计复杂度而是初始生成中的局部错误，反馈能够精准定位并修复这些错误。第二类是天花板题：sequence\_detector和freq\_divbyfrac在所有模型和条件下均未通过，暴露了当前反馈框架对涉及精确算法知识的设计任务的局限。
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.7\textwidth]{figure/fig_feedback_gain.png}
-\caption{各模型Feedback增益对比}
-\label{fig:feedback_gain}
-\end{figure}
+各模型反馈增益的详细对比见附录B图\ref{fig:feedback_gain}。
 
 \section{Feedback vs Retry-only消融实验}
 
@@ -190,12 +180,7 @@ L4 Rich & 83\% (10/12) & 67\% (8/12) \\
 
 从实践角度看，L1$\rightarrow$L2是最大的跃升点（GPT-5.4上从75\%跃升至92\%），表明即使是最基础的编译错误反馈也具有极高的修复价值。L2 Compile-only在两个模型上均为最优或并列最优，是最稳健的通用选择。L4 Rich反馈包含多达80行仿真输出和分析提示，其通过率反而低于L2和L3，可能的原因是：过于冗长的仿真日志稀释了关键错误信息的信噪比，使模型难以从中提取修复所需的核心线索。这一``信息过载''现象与信息论中的有限注意力模型一致。
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figure/fig_granularity_matrix.png}
-\caption{反馈粒度逐题结果矩阵}
-\label{fig:granularity_matrix}
-\end{figure}
+各题目在不同粒度下的逐题结果详见附录B图\ref{fig:granularity_matrix}。
 
 \section{多轮对话反馈实验}
 
@@ -244,12 +229,7 @@ C: CO $k$=3 & 33\% (2/6) \\
 \label{fig:multiturn_comparison}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figure/fig_multiturn_matrix_v2.png}
-\caption{多轮对话反馈v2逐题矩阵}
-\label{fig:multiturn_matrix}
-\end{figure}
+多轮对话实验的逐题结果详见附录B图\ref{fig:multiturn_matrix}。
 
 \section{提示词策略实验}
 
@@ -282,12 +262,7 @@ P3: Few-shot+CoT & 58\% (7/12) & 92\% (11/12) & +34pp \\
 
 然而引入反馈后，四种策略全部收敛至92\%（11/12），仅freq\_divbyfrac在所有策略下均未通过。这一``拉平效应''说明，反馈循环是决定最终代码质量的主导因素，初始提示词策略更多影响零样本起点而非经过反馈修复后的最终上限。从实践角度看，这意味着在配备了反馈循环的系统中，精细的提示词工程的边际收益有限，系统设计者可以将更多精力投入到反馈信息的构建上。
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figure/fig_prompt_strategy_matrix.png}
-\caption{提示词策略逐题结果矩阵}
-\label{fig:prompt_strategy_matrix}
-\end{figure}
+各策略的逐题结果详见附录B图\ref{fig:prompt_strategy_matrix}。
 
 \section{典型案例分析}
 
