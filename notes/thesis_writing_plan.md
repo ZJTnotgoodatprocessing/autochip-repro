@@ -282,10 +282,11 @@
 | **总计** | — | **57 页** | — | — |
 | 工作量表述轻量修订 v6-lite | ✅ 已生成（57页） | — | 2026-05-09 | 2026-05-09 | `report/thesis/latex/thesis_workload_revised_v6_lite.pdf` |
 | 导师意见修订 v7 | ✅ 已生成（58页） | — | 2026-05-11 | 2026-05-11 | `report/thesis/latex/thesis_supervisor_revision_v7.pdf` |
+| 导师意见修订 v8 | ✅ 已生成（59页） | — | 2026-05-13 | 2026-05-13 | `report/thesis/latex/thesis_supervisor_revision_v8.pdf` |
 
 > **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >
-> **下一步建议**：v7 可发给导师查阅。待导师确认后可定版。
+> **下一步建议**：v8 可发给导师查阅。Ch3已按问题驱动重组，Ch4已按层层递进重写，参考文献27条。
 
 ---
 

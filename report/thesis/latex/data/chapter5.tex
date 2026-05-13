@@ -1,11 +1,11 @@
 % !Mode:: "TeX:UTF-8"
 \chapter{实验结果与分析}
 
-本章依次呈现七组实验的结果并进行分析。所有数据以权威实验索引为准。
+本章依次呈现七组实验的结果并进行分析。所有数据以实验结果索引为准。
 
 \section{VerilogEval-Human基线实验}
 
-本节报告中期阶段在VerilogEval-Human 20题子集上使用Haiku模型的基线实验。反馈循环将通过率从80\%提升至90\%，具体结果如表\ref{tab:verilogeval_baseline}所示。在4道零样本未通过的题目中，反馈成功修复了2道（50\%）。
+本节报告在VerilogEval-Human 20题子集上使用Haiku模型进行的基线实验。反馈循环将通过率从80\%提升至90\%，具体结果如表\ref{tab:verilogeval_baseline}所示。在4道零样本未通过的题目中，反馈成功修复了2道（50\%）。
 
 \begin{table}[htbp]
 \centering
@@ -306,7 +306,7 @@ sequence\_detector在正式实验中所有模型和条件均编译失败，freq\
 反馈收益归因 & 关注总体提升 & Zero-shot / Retry-only / Feedback消融 \\
 反馈策略 & 单一反馈模式 & L0--L4五级粒度 + 多轮对话 \\
 结论可靠性 & 较少重复验证 & 4轮独立重复实验 \\
-实验管理 & 结果记录 & 元数据 + 权威索引 + 审计脚本 \\
+实验管理 & 结果记录 & 元数据 + 结果索引 + 审计脚本 \\
 \bottomrule
 \end{tabular}
 \end{table}
