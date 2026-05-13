@@ -103,4 +103,4 @@ RTLLM\cite{rtllm}是香港科技大学发布的RTL设计生成评估基准，发
 
 \section{本章小结}
 
-本章从Verilog语言标准\cite{ieee1364}和RTL设计基本概念出发，介绍了Transformer架构\cite{transformer}、代码生成预训练\cite{codex}和指令对齐\cite{instructgpt}等大语言模型技术基础，梳理了基于Icarus Verilog\cite{iverilog}和Yosys\cite{yosys}等开源工具的EDA编译仿真流程，阐述了AutoChip\cite{autochip}方法的核心闭环思想以及Self-Refine\cite{selfrefine}、Reflexion\cite{reflexion}等迭代反馈方法在代码生成领域的进展，并分别介绍了VerilogEval\cite{verilogeval}和RTLLM\cite{rtllm}两个评估基准的设计与选题策略。上述技术基础为下一章的系统设计与实现奠定了必要背景。
+本章介绍了本文工作所涉及的技术背景。从RTL设计和EDA工具链出发，说明了Verilog代码正确性验证的基本流程；随后介绍了大语言模型在代码生成方面的技术基础，包括预训练和指令对齐机制；在此基础上，梳理了AutoChip等工作提出的反馈闭环思想，以及VerilogEval和RTLLM两个评估基准。这些技术背景构成了下一章系统设计的出发点：如何将LLM的生成能力和EDA工具的验证能力结合成一个可用的自动化系统。
