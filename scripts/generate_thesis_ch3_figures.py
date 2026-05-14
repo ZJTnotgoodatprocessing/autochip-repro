@@ -322,8 +322,7 @@ def generate_task_normalization():
                    color="#F0F0F5", fontsize=9)
         _arrow(ax, (x + cons_w / 2, task_y), (x + cons_w / 2, cons_y + cons_h))
 
-    ax.set_title("图 3.3  多源 benchmark 到统一 Task 接口的转换流程",
-                 fontsize=12, pad=10)
+    # NOTE: 图题交由 LaTeX \caption 自动编号，不在图内烘入图号
     plt.tight_layout()
     _save(fig, "fig_task_normalization_v1", also_pdf=True)
 
@@ -394,8 +393,7 @@ def generate_llm_code_extraction():
             "无需为不同策略维护专用解析器。",
             fontsize=9, color="#444444", fontstyle="italic")
 
-    ax.set_title("图 3.4  LLM 回复到可编译 Verilog 的提取流程",
-                 fontsize=12, pad=10)
+    # NOTE: 图题交由 LaTeX \caption 自动编号，不在图内烘入图号
     plt.tight_layout()
     _save(fig, "fig_llm_code_extraction_v1", also_pdf=True)
 
@@ -472,12 +470,11 @@ def generate_feedback_decision():
 
     # Bottom note (centered, below all level boxes)
     ax.text(5.5, 0.15,
-            "三种粒度对应的反馈文本将拼入下一轮 prompt，参见表 3.3",
+            "三种粒度对应的反馈文本将拼入下一轮 prompt，详细定义见反馈粒度级别表",
             fontsize=9, color="#444444", fontstyle="italic",
             ha="center", va="center")
 
-    ax.set_title("图 3.5  EDA 验证结果到反馈提示词的转换逻辑",
-                 fontsize=12, pad=10)
+    # NOTE: 图题交由 LaTeX \caption 自动编号，不在图内烘入图号
     plt.tight_layout()
     _save(fig, "fig_feedback_decision_v1", also_pdf=True)
 

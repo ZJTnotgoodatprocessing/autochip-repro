@@ -255,3 +255,56 @@ f92389d  appendix: split figures into Appendix B to match ch5 cross-references
 - 未改摘要、致谢、结论、参考文献
 - 未删除任何历史 PDF（v1--v9 全部保留）
 - 未提交 `check/`、字体、`__pycache__/`
+
+---
+
+## 附录 A：v10 内部修复记录（2026-05-15）
+
+v10 首版交付后发现两个低级错误，已就地修复，PDF 重新生成。修复**仅影响 v10 PDF**，v9 PDF 保留不动。
+
+### A.1 图内烧入图号与 LaTeX 自动编号脱节（主要问题）
+
+**症状**：matplotlib 在三张新图顶部用 `ax.set_title()` 烧入了固定字符串，例如：
+
+- `fig_task_normalization_v1` 图内顶部写"图 3.3  多源 benchmark 到统一 Task 接口的转换流程"，但 LaTeX 自动编号将其渲染为**图 3.2**
+- `fig_llm_code_extraction_v1` 图内顶部写"图 3.4 ..."，LaTeX 自动编号为**图 3.3**
+- `fig_feedback_decision_v1` 图内顶部写"图 3.5 ..."，LaTeX 自动编号恰为图 3.5（巧合一致但仍冗余）
+
+**根因**：原始脚本对每张新图都调用了 `ax.set_title("图 3.X  ...")`，按手写编号烧入。LaTeX 中各章节插入新图后所有 `\caption{...}` 的自动编号整体后移，但烧入图像里的编号无法跟随。
+
+**修复**：移除 `@c:/Users/17819/autochip-repro/scripts/generate_thesis_ch3_figures.py` 中三个图函数（`generate_task_normalization` / `generate_llm_code_extraction` / `generate_feedback_decision`）里的 `ax.set_title(...)` 调用，图题完全交由 LaTeX `\caption{...}` 处理。
+
+### A.2 图 3.5 底部 annotation 硬编码"表 3.3"
+
+**症状**：`fig_feedback_decision_v1` 底部说明文字含"参见表 3.3"，是另一处烧入图像的硬编码数字。当前 `tab:feedback_levels` 恰为表 3.3，但若未来新增表格会发生与 A.1 同样的脱节。
+
+**修复**：改为"详细定义见反馈粒度级别表"（语义化引用，不依赖编号）。
+
+### A.3 chapter3.tex 中"第5章第X.X节"措辞冗余（次要问题）
+
+**症状**：§3.4 和 §3.6 引用第 5 章对应小节时写成 `第5章第\ref{sec:prompt_strategy}节`，LaTeX 渲染为"第5章第5.7节"——"5"前缀重复。
+
+**修复**：改为 `第\ref{sec:prompt_strategy}节`，渲染为"第5.7节"，章号已隐含在节号中。同样修复 §3.6 中对 `sec:granularity` 的引用。
+
+### A.4 修复后编译结果
+
+| 项 | 值 |
+|---|---|
+| PDF 页数 | 63 页（与首版相同） |
+| Undefined citation | 0 |
+| Undefined reference | 0 |
+| Overfull \\hbox / \\vbox | 0 |
+| LaTeX Warning | 0 |
+| BibTeX warning | 0 |
+| v10 PDF 大小 | 2131.9 KB（首版 2142.9 KB，去除图内标题后略小） |
+| v9 PDF | **未触碰**（仍为 1970.6 KB / 58 页 AutoChip 修订快照） |
+
+### A.5 视觉效果
+
+三张图修复后均无顶部图号字符串，由 LaTeX `\caption{...}` 自动编号正确渲染为：
+
+- `fig:task_normalization` → 图 3.2（caption: "多源benchmark到统一Task接口的转换流程"）
+- `fig:llm_code_extraction` → 图 3.3（caption: "LLM回复到可编译Verilog文件的提取流程"）
+- `fig:feedback_decision` → 图 3.5（caption: "EDA验证结果到反馈提示词的转换逻辑"）
+
+图 3.1 是 `fig:system_architecture`、图 3.4 是 `fig:feedback_loop`（两者均未变动）。
