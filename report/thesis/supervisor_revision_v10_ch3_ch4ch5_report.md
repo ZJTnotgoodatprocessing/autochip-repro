@@ -2,8 +2,8 @@
 
 > 日期：2026-05-14
 > 关联 PDF：
-> - `report/thesis/latex/thesis_supervisor_revision_v9.pdf`（覆盖更新到 v10 内容）
-> - `report/thesis/latex/thesis_supervisor_revision_v10_ch3_ch4ch5.pdf`（同源副本）
+> - `report/thesis/latex/thesis_supervisor_revision_v9.pdf`（保留为 AutoChip 定位修订后的 58 页快照，本轮未覆盖）
+> - `report/thesis/latex/thesis_supervisor_revision_v10_ch3_ch4ch5.pdf`（本轮生成的 v10 独立 PDF，63 页）
 >
 > 上一版基线：HEAD `a077172`（v9 + AutoChip 定位修订）
 
@@ -184,10 +184,10 @@ f92389d  appendix: split figures into Appendix B to match ch5 cross-references
 
 ## 八、PDF 页数
 
-| 版本 | 页数 |
-|------|------|
-| v9（AutoChip 定位修订） | 58 |
-| **v10（本轮）** | **63** |
+| 版本 | 页数 | 文件 |
+|------|------|------|
+| v9（AutoChip 定位修订，本轮保留不动） | 58 | `thesis_supervisor_revision_v9.pdf` |
+| **v10（本轮独立生成）** | **63** | `thesis_supervisor_revision_v10_ch3_ch4ch5.pdf` |
 
 页数增加 5 页，主要来自：
 
@@ -240,7 +240,9 @@ f92389d  appendix: split figures into Appendix B to match ch5 cross-references
 
 实验数据、AutoChip 定位、致谢、参考文献、摘要均未改动；编译告警与上一版完全一致；PDF 体积合理（2.1 MB / 63 页）。
 
-可直接将 `report/thesis/latex/thesis_supervisor_revision_v9.pdf`（覆盖更新版）或 `thesis_supervisor_revision_v10_ch3_ch4ch5.pdf`（同源副本）发给导师。
+**送审 PDF**：`report/thesis/latex/thesis_supervisor_revision_v10_ch3_ch4ch5.pdf`（本轮独立生成，63 页）。
+
+**说明**：`thesis_supervisor_revision_v9.pdf` 保留为 v9 + AutoChip 定位修订的历史快照（58 页），本轮不覆盖该文件。
 
 ---
 

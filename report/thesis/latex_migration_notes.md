@@ -184,7 +184,7 @@ report/thesis/latex/
 | v8 | 2026-05-13 | 59 | 导师意见修订：重组Ch3+重写Ch4+27条文献+降AIGC |
 | v9 | 2026-05-13 | 58 | 精修：Sonnet分析+成本效率+降AIGC+图表小修 |
 | v9（autochip-fix） | 2026-05-14 | 58 | AutoChip 定位表述修订：§2.4.4 首句重写 + §2.6 本文定位重写 + §2 引言措辞调整；AutoChip 改为最接近相关工作和对比对象。覆盖 `thesis_supervisor_revision_v9.pdf`，详见 `report/thesis/autochip_positioning_fix_report.md` |
-| v10 | 2026-05-14 | 63 | 第 3 章扩充 + 第 4/5 章对齐：§3.3/§3.4/§3.6 各新增一段技术解释 + 一张中文图（图 3.3 任务归一化、图 3.4 LLM 代码提取、图 3.5 反馈决策）；§4.4 末尾新增"实验设计与结果章节对应关系"表；第 5 章开头改为承接第 4 章三层设计，§5.1/§5.3/§5.5/§5.8 各新增过渡句，§5.5/§5.7 加 LaTeX label，§5.10 重写小结按三层结构回扣；图脚本 `scripts/generate_thesis_ch3_figures.py` 已扩充，PDF + PNG 双输出；新 PDF 同时输出 `thesis_supervisor_revision_v10_ch3_ch4ch5.pdf` 与覆盖版 `thesis_supervisor_revision_v9.pdf`；详见 `report/thesis/supervisor_revision_v10_ch3_ch4ch5_report.md` |
+| v10 | 2026-05-14 | 63 | 第 3 章扩充 + 第 4/5 章对齐：§3.3/§3.4/§3.6 各新增一段技术解释 + 一张中文图（图 3.3 任务归一化、图 3.4 LLM 代码提取、图 3.5 反馈决策）；§4.4 末尾新增"实验设计与结果章节对应关系"表；第 5 章开头改为承接第 4 章三层设计，§5.1/§5.3/§5.5/§5.8 各新增过渡句，§5.5/§5.7 加 LaTeX label，§5.10 重写小结按三层结构回扣；图脚本 `scripts/generate_thesis_ch3_figures.py` 已扩充，PDF + PNG 双输出；独立 PDF：`thesis_supervisor_revision_v10_ch3_ch4ch5.pdf`，**`thesis_supervisor_revision_v9.pdf` 保留为 AutoChip 定位修订后的 58 页快照，未被本轮覆盖**；详见 `report/thesis/supervisor_revision_v10_ch3_ch4ch5_report.md` |
 
 ### 编译命令
 
