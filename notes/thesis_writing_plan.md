@@ -284,10 +284,11 @@
 | 导师意见修订 v7 | ✅ 已生成（58页） | — | 2026-05-11 | 2026-05-11 | `report/thesis/latex/thesis_supervisor_revision_v7.pdf` |
 | 导师意见修订 v8 | ✅ 已生成（59页） | — | 2026-05-13 | 2026-05-13 | `report/thesis/latex/thesis_supervisor_revision_v8.pdf` |
 | 导师意见精修 v9 | ✅ 已生成（58页） | — | 2026-05-13 | 2026-05-13 | `report/thesis/latex/thesis_supervisor_revision_v9.pdf` |
+| AutoChip定位表述修订 | ✅ 已完成 | — | 2026-05-14 | 2026-05-14 | 将AutoChip重新定位为最接近相关工作和对比对象，消除"单纯复现"观感；覆盖 `report/thesis/latex/thesis_supervisor_revision_v9.pdf`；详见 `report/thesis/autochip_positioning_fix_report.md` |
 
 > **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >
-> **下一步建议**：v9 可发给导师。补充了 Sonnet 负面结果分析、成本效率分析、AIGC 风格降低和图表小修。
+> **下一步建议**：v9（含 AutoChip 定位表述修订）可发给导师。本轮针对 §2.4.4 首句和 §2.6 本文定位，将 AutoChip 重新框定为最接近的相关工作和对比对象，AutoChip 引用与参考文献保持不变。
 
 ---
 

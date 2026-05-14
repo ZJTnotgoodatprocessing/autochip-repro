@@ -183,6 +183,7 @@ report/thesis/latex/
 | v7 | 2026-05-11 | 58 | 导师意见修订：调整立论+Ch5文字增强+致谢重写 |
 | v8 | 2026-05-13 | 59 | 导师意见修订：重组Ch3+重写Ch4+27条文献+降AIGC |
 | v9 | 2026-05-13 | 58 | 精修：Sonnet分析+成本效率+降AIGC+图表小修 |
+| v9（autochip-fix） | 2026-05-14 | 58 | AutoChip 定位表述修订：§2.4.4 首句重写 + §2.6 本文定位重写 + §2 引言措辞调整；AutoChip 改为最接近相关工作和对比对象。覆盖 `thesis_supervisor_revision_v9.pdf`，详见 `report/thesis/autochip_positioning_fix_report.md` |
 
 ### 编译命令
 
