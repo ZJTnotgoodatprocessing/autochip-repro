@@ -285,10 +285,11 @@
 | 导师意见修订 v8 | ✅ 已生成（59页） | — | 2026-05-13 | 2026-05-13 | `report/thesis/latex/thesis_supervisor_revision_v8.pdf` |
 | 导师意见精修 v9 | ✅ 已生成（58页） | — | 2026-05-13 | 2026-05-13 | `report/thesis/latex/thesis_supervisor_revision_v9.pdf` |
 | AutoChip定位表述修订 | ✅ 已完成 | — | 2026-05-14 | 2026-05-14 | 将AutoChip重新定位为最接近相关工作和对比对象，消除"单纯复现"观感；覆盖 `report/thesis/latex/thesis_supervisor_revision_v9.pdf`；详见 `report/thesis/autochip_positioning_fix_report.md` |
+| 导师意见修订 v10 | ✅ 已生成（63页） | — | 2026-05-14 | 2026-05-14 | 增强第3章技术内容与图示，显式对齐第4章实验设计和第5章实验结果；新增 3 张中文技术图、1 张设计-结果对应表、4 处过渡句 + §5.10 小结回扣；`report/thesis/latex/thesis_supervisor_revision_v10_ch3_ch4ch5.pdf` 与覆盖版 `thesis_supervisor_revision_v9.pdf`；详见 `report/thesis/supervisor_revision_v10_ch3_ch4ch5_report.md` |
 
 > **正式论文题目**：基于EDA工具反馈的LLM Verilog生成与自动优化
 >
-> **下一步建议**：v9（含 AutoChip 定位表述修订）可发给导师。本轮针对 §2.4.4 首句和 §2.6 本文定位，将 AutoChip 重新框定为最接近的相关工作和对比对象，AutoChip 引用与参考文献保持不变。
+> **下一步建议**：v10 可发给导师。本轮按导师意见扩充第 3 章技术内容（+3 张技术图 + 约 760 字正文）并显式对齐第 4 章实验设计与第 5 章结果章节（设计-结果对应表 + 三层过渡 + 小结回扣），实验数据、AutoChip 定位、致谢、参考文献全部保持不变。
 
 ---
 
