@@ -236,3 +236,29 @@ xelatex main.tex
 - 编译：xelatex 两次稳定通过；0 undefined ref/cite、0 BibTeX warning、0
   overfull/underfull
 - 历史 v9 / v10 / v11 / v12 PDF 全部保留，未覆盖
+
+---
+
+## 9. v13 状态记录（2026-05-16，第 3 章流程图重绘）
+
+- v13 PDF：`thesis_supervisor_revision_v13_figures.pdf` 64 页 / 0.95 MB
+- 基线：v12 (`b36b081`)
+- 第 3 章 5 张系统设计图（图 3.1–3.5）从 matplotlib `FancyBboxPatch`
+  圆角多色卡片整体重绘为黑白直角线框风格，仅保留单一深蓝
+  `#1F3A5F` 用于决策菱形和反馈虚线
+- 新图文件：
+  `figure/fig_system_architecture_v13.pdf`
+  `figure/fig_task_normalization_v13.pdf`
+  `figure/fig_llm_code_extraction_v13.pdf`
+  `figure/fig_feedback_loop_v13.pdf`
+  `figure/fig_feedback_decision_v13.pdf`
+  （旧 v1 / v2 PDF 保留未删除，便于回溯历史）
+- `chapter3.tex` 5 处 `\includegraphics` 全部切到 `_v13.pdf`，图 3.1
+  caption 重写为不依赖颜色的描述
+- `chapter3.tex` §3.7 删除"共 24 个独立断言"细节，仅保留"4 项核心
+  检查"；LaTeX 正文 0 处 "24 项 / 24 个独立断言"
+- 生成脚本：`scripts/generate_thesis_ch3_figures_v13.py`（可重复运行）
+- 详细修订报告：`report/thesis/supervisor_revision_v13_figures_report.md`
+- 编译：xelatex 两次稳定通过；0 undefined ref/cite；BibTeX 0 warning；
+  Overfull 仅 2 处 < 2 pt
+- 历史 v7 / v8 / v9 / v10 / v11 / v12 / v13 PDF 全部保留

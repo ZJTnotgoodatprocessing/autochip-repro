@@ -321,3 +321,26 @@
 6. 编译：xelatex 两次稳定通过，0 undefined ref/cite、0 BibTeX warning
 
 **实验数据零修改**。v9 / v10 / v11 / v12 历史 PDF 全部保留。
+
+---
+
+## 九、v13 状态（2026-05-16，第 3 章流程图重绘）
+
+> **送审 PDF**：`report/thesis/latex/thesis_supervisor_revision_v13_figures.pdf` 64 页 0.95 MB
+> **基线**：v12 (`b36b081`)
+> **修订报告**：`report/thesis/supervisor_revision_v13_figures_report.md`
+
+承接 v12 自检中"流程图本体仍带 AI 生成感"的遗留：
+
+1. 第 3 章 5 张系统设计图（图 3.1–3.5）整体重绘为正式论文黑白线框风格：
+   - 直角矩形（`Rectangle`，非 `FancyBboxPatch`）；
+   - 白底，统一近黑边框 `#1A1A1A`；
+   - 单一深蓝 `#1F3A5F` 强调色，仅用于决策菱形和反馈虚线；
+   - 移除多色卡片、Start/End 圆点、彩色斜体等装饰；
+   - 输出 PDF 矢量，`chapter3.tex` 5 处 `\includegraphics` 切到 `_v13.pdf`；
+   - 图 3.1 caption 同步去掉旧版彩色配色描述。
+2. §3.7 文本删去"共 24 个独立断言"细节，仅保留"4 项核心检查"，
+   `grep "24 项|24 个独立断言"` 在 LaTeX 正文 0 命中。
+
+**生成脚本**：`scripts/generate_thesis_ch3_figures_v13.py`（可重复运行）
+**实验数据零修改**。v7 / v8 / v9 / v10 / v11 / v12 / v13 历史 PDF 全部保留。
