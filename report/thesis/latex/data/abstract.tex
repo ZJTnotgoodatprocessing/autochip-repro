@@ -4,7 +4,7 @@
 \begin{cabstract}
 当前大语言模型已经能够根据自然语言描述生成Verilog代码，但在零样本条件下，生成结果在涉及复杂状态机、精确位宽操作和算法型RTL设计时仍容易出现编译错误或仿真不匹配。本文关注的问题是：能否利用EDA工具已经给出的编译和仿真结果，引导模型对错误代码进行有针对性的修复，从而提升RTL代码的自动生成质量。
 
-围绕这一问题，本文构建了一个基于EDA工具反馈的Verilog生成与自动优化系统。系统以Icarus Verilog作为编译仿真后端，将编译器和仿真器的输出解析为结构化反馈信号，引导大语言模型在``生成—编译—仿真—反馈—修复''的迭代闭环中定向修复代码错误。系统支持VerilogEval-Human与RTLLM双benchmark接入，可通过统一API网关切换不同模型，并提供五级反馈粒度和四种提示词策略的灵活配置。
+围绕这一问题，本文构建了一个基于EDA工具反馈的Verilog生成与自动优化系统。系统以Icarus Verilog作为编译仿真后端，将编译器和仿真器的输出解析为结构化反馈信号，引导大语言模型在``生成—编译—仿真—反馈—修复''的反馈循环中定向修复代码错误。系统支持VerilogEval-Human与RTLLM双benchmark接入，可通过统一API网关切换不同模型，并提供五级反馈粒度和四种提示策略的灵活配置。
 
 在三个不同能力等级的模型上执行了七组递进式对照实验。在VerilogEval-Human 20题子集上，Haiku的通过率从80\%提升至90\%；在难度更高的RTLLM\_STUDY\_12上，GPT-5.4从50\%提升至83\%。消融实验将反馈收益分解为两个来源：错误反馈信息贡献约57\%，多采样贡献约43\%。部分设计题目在15次独立重试中均未通过，但在反馈条件下2--3轮即可修复。
 
@@ -12,11 +12,11 @@
 \end{cabstract}
 
 \begin{eabstract}
-Large Language Models can now generate Verilog code from natural language descriptions, yet their zero-shot outputs frequently contain compilation errors or simulation mismatches on complex designs involving finite state machines, precise bit-width operations, and algorithmic RTL.  This thesis asks whether EDA tool outputs---compilation and simulation results already available in the design flow---can guide models toward targeted repair of such errors.
+Large Language Models can now generate Verilog code from natural language descriptions, yet their zero-shot outputs frequently contain compilation errors or simulation mismatches on complex designs involving finite state machines, precise bit-width operations, and algorithmic RTL designs.  This thesis asks whether EDA tool outputs---compilation and simulation results already available in the design flow---can guide models toward targeted repair of such errors.
 
 A prototype system was built that parses Icarus Verilog compiler and VVP simulator outputs into structured feedback signals, driving the LLM through an iterative generate--compile--simulate--feedback--repair loop.  The system supports two public benchmarks (VerilogEval-Human and RTLLM), multi-model switching via a unified API gateway, five levels of feedback granularity, and four prompt engineering strategies.
 
 Seven progressive experiments were conducted across three models spanning different capability levels.  On VerilogEval-Human (20-problem subset), Haiku's pass rate improved from 80\% to 90\%.  On the more demanding RTLLM\_STUDY\_12 (12 curated designs), GPT-5.4 rose from 50\% to 83\%.  Ablation experiments decomposed the improvement: error feedback contributed roughly 57\%, while multi-sampling accounted for 43\%.  Some designs could not be solved by 15 independent retry attempts but were repaired within 2--3 feedback rounds.
 
-Four independent repetitions supported the reproducibility of the core findings.  A granularity sweep showed that compile-only and succinct feedback were the most robust, while excessively detailed feedback risked degrading repair reasoning.  Feedback effectiveness was model-dependent: on Sonnet 4.6, feedback did not outperform pure retry, showing that the benefit of feedback loops is not universally guaranteed.
+Four independent repetitions supported the reproducibility of the core findings.  A granularity sweep showed that compile-only and succinct feedback proved the more robust choices, while excessively detailed feedback risked degrading repair reasoning.  Feedback effectiveness was model-dependent: on Sonnet 4.6, feedback did not outperform pure retry, showing that the benefit of feedback loops does not generalize to all models we tested.
 \end{eabstract}

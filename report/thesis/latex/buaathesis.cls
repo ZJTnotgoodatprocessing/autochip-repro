@@ -1053,7 +1053,7 @@ The LaTeX template for thesis of BUAA]
     \hfill
     \begin{tabular}{cl}
         作者：&\buaa@thesisauthor\\
-        签字：&~~~~\\
+        签字：&\hspace*{-13pt}\raisebox{-0.45\height}{\includegraphics[width=2.8cm]{figure/signature.png}}\\
         时间：& \buaa@thesisdateyear~年~\buaa@thesisdatemonth ~月
     \end{tabular}
 }
