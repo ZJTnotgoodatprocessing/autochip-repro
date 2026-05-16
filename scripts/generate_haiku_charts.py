@@ -73,13 +73,14 @@ def main():
                 f"{val}/{total} ({val/total*100:.0f}%)", ha="center", fontsize=11)
 
     ax.set_ylabel("通过率 (%)", fontsize=12)
-    ax.set_title("Haiku 模型在 VerilogEval-Human 子集上的表现", fontsize=13)
+    # 图标题改由 LaTeX caption 提供
     ax.set_ylim(0, 105)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     fig.tight_layout()
     fig.savefig(out_dir / "haiku_pass_rate_bar.png", dpi=150)
-    print(f"Saved: {out_dir / 'haiku_pass_rate_bar.png'}")
+    fig.savefig(out_dir / "haiku_pass_rate_bar.pdf")
+    print(f"Saved: {out_dir / 'haiku_pass_rate_bar.png'} (+ pdf)")
 
     # ── Per-problem detail chart ──
     fig2, ax2 = plt.subplots(figsize=(14, 5))
@@ -95,7 +96,7 @@ def main():
     ax2.set_xticks(list(x))
     ax2.set_xticklabels(names, rotation=45, ha="right", fontsize=8)
     ax2.set_ylabel("Rank 得分", fontsize=11)
-    ax2.set_title("各题目零样本 vs 反馈循环 Rank 对比 (Haiku)", fontsize=12)
+    # 图标题改由 LaTeX caption 提供
     ax2.legend(fontsize=10)
     ax2.set_ylim(0, 1.1)
     ax2.axhline(y=1.0, color="green", linestyle="--", alpha=0.3, linewidth=0.8)
@@ -103,7 +104,8 @@ def main():
     ax2.spines["right"].set_visible(False)
     fig2.tight_layout()
     fig2.savefig(out_dir / "haiku_per_problem_rank.png", dpi=150)
-    print(f"Saved: {out_dir / 'haiku_per_problem_rank.png'}")
+    fig2.savefig(out_dir / "haiku_per_problem_rank.pdf")
+    print(f"Saved: {out_dir / 'haiku_per_problem_rank.png'} (+ pdf)")
 
     plt.close("all")
     print(f"Loaded input: {input_path}")

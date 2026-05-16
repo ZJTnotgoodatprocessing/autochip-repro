@@ -60,8 +60,7 @@ def chart_ablation_errorbars():
                     fontsize=10, fontweight="bold")
     
     ax.set_ylabel("Pass Rate (%)", fontsize=12)
-    ax.set_title("Repeated Ablation Experiment (n=4 runs per model)\nMean ± Std on RTLLM STUDY_12",
-                 fontsize=13, fontweight="bold", pad=10)
+    # 图标题改由 LaTeX caption 提供
     ax.set_xticks(x)
     ax.set_xticklabels(models, fontsize=12)
     ax.set_ylim(0, 100)
@@ -78,7 +77,8 @@ def chart_ablation_errorbars():
     fig.tight_layout(rect=[0, 0.03, 1, 1])
     out = OUT_DIR / "fig_stability_ablation.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[A] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[A] {out} (+ pdf)")
     plt.close()
 
 
@@ -135,8 +135,7 @@ def chart_formal_errorbars():
     
     axes[0].set_ylabel("Pass Rate (%)", fontsize=12)
     
-    fig.suptitle("Repeated Experiment: Zero-shot vs Feedback (n=4)\nRTLLM STUDY_12",
-                fontsize=14, fontweight="bold", y=1.02)
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
     fig.text(0.5, -0.02,
              "Black dots = individual runs. Error bars = 1 SD.",
              ha="center", fontsize=8, color="gray", style="italic")
@@ -144,7 +143,8 @@ def chart_formal_errorbars():
     fig.tight_layout()
     out = OUT_DIR / "fig_stability_formal.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[B] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[B] {out} (+ pdf)")
     plt.close()
 
 

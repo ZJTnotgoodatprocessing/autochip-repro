@@ -71,7 +71,7 @@ def chart_a_passrate():
                     ha="center", color="#C44E52", fontweight="bold")
     
     ax.set_ylabel("Pass Rate (%)", fontsize=12)
-    ax.set_title("RTLLM STUDY_12: Zero-shot vs Feedback Pass Rate", fontsize=13, fontweight="bold", pad=15)
+    # 图标题改由 LaTeX caption 提供
     ax.set_xticks(x)
     ax.set_xticklabels(MODELS, fontsize=11)
     ax.set_ylim(0, 100)
@@ -87,7 +87,8 @@ def chart_a_passrate():
     fig.tight_layout(rect=[0, 0.03, 1, 1])
     out = OUT_DIR / "fig_passrate_comparison.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[A] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[A] {out} (+ pdf)")
     plt.close()
 
 
@@ -147,7 +148,7 @@ def chart_b_per_problem():
     ax.set_xticklabels(PROBLEMS, rotation=45, ha="right", fontsize=9)
     ax.set_yticks([i * cell_h + cell_h * 0.42 for i in range(n_model)])
     ax.set_yticklabels(list(reversed(MODELS)), fontsize=11)
-    ax.set_title("Per-Problem Result Matrix (RTLLM STUDY_12)", fontsize=13, fontweight="bold", pad=15)
+    # 图标题改由 LaTeX caption 提供
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["bottom"].set_visible(False)
@@ -168,7 +169,8 @@ def chart_b_per_problem():
     fig.tight_layout()
     out = OUT_DIR / "fig_per_problem_matrix.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[B] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[B] {out} (+ pdf)")
     plt.close()
 
 
@@ -189,7 +191,7 @@ def chart_c_feedback_gain():
     ax.set_yticks(y)
     ax.set_yticklabels(MODELS, fontsize=11)
     ax.set_xlabel("Feedback Gain (percentage points)", fontsize=11)
-    ax.set_title("Feedback Improvement by Model", fontsize=13, fontweight="bold", pad=10)
+    # 图标题改由 LaTeX caption 提供
     ax.set_xlim(0, max(gains) + 15)
     ax.grid(axis="x", alpha=0.3, linestyle="--")
     ax.spines["top"].set_visible(False)
@@ -199,7 +201,8 @@ def chart_c_feedback_gain():
     fig.tight_layout()
     out = OUT_DIR / "fig_feedback_gain.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[C] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[C] {out} (+ pdf)")
     plt.close()
 
 

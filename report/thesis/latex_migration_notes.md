@@ -217,3 +217,22 @@ xelatex main.tex
 - [ ] 图片大小和位置微调
 - [ ] 参考文献 DOI/页码补全（RTLCoder 等）
 - [ ] 行溢出警告修复（ch2、ch5 共 2 处）
+
+---
+
+## 8. v12 状态记录（2026-05-16）
+
+- v12 PDF：`thesis_supervisor_revision_v12.pdf` 63 页 / 0.94 MB
+- 基于 v11 (`086fcd2`) 落实导师 6 条意见
+- 全部 13 张数据图（chapter 5 + 附录 B）+ 2 张流程图（图 3.1/3.2）已删除
+  图内英文 banner，由 LaTeX `\caption{}` 提供图题
+- 全部数据图增加 PDF 矢量输出；`\includegraphics` 切换 `.pdf` 引用
+  （PDF 体积从 2.21 MB 降到 0.94 MB）
+- 表 4.3 删除"难度"星级列，改为"设计特征与选入理由"
+- 第 5.8 / 5.9 段首 `\noindent\textbf{...}` 与 `\paragraph{...}` 统一
+  改为 `\subsubsection*{...}`（不入目录）
+- "24 项自动化检查" → "4 项自动化检查"（chapter 3 §3.7、chapter 4 §4.6）
+- 详细修订报告：`report/thesis/supervisor_revision_v12_report.md`
+- 编译：xelatex 两次稳定通过；0 undefined ref/cite、0 BibTeX warning、0
+  overfull/underfull
+- 历史 v9 / v10 / v11 / v12 PDF 全部保留，未覆盖

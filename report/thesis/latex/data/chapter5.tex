@@ -48,7 +48,7 @@ GPT-5.4 & 6/12 (50\%) & 10/12 (83\%) & +33pp & 4 \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figure/fig_passrate_comparison.png}
+\includegraphics[width=0.7\textwidth]{figure/fig_passrate_comparison.pdf}
 \caption{RTLLM\_STUDY\_12三模型通过率对比}
 \label{fig:passrate_comparison}
 \end{figure}
@@ -70,7 +70,7 @@ GPT-5.4的单轮消融结果为：Zero-shot 50\%（6/12），Retry-only 67\%（8
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figure/fig_ablation_comparison.png}
+\includegraphics[width=0.7\textwidth]{figure/fig_ablation_comparison.pdf}
 \caption{零样本/重试/反馈三条件对比}
 \label{fig:ablation_comparison}
 \end{figure}
@@ -80,7 +80,7 @@ GPT-5.4的单轮消融结果为：Zero-shot 50\%（6/12），Retry-only 67\%（8
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figure/fig_ablation_decomposition.png}
+\includegraphics[width=0.7\textwidth]{figure/fig_ablation_decomposition.pdf}
 \caption{GPT-5.4反馈收益来源分解（基于单轮消融实验数据，对应§\ref{sec:stability}节的4轮稳定性实验给出修正后的57\%占比）}
 \label{fig:ablation_decomposition}
 \end{figure}
@@ -113,7 +113,7 @@ FB>RO轮次 & — & — & 4/4 \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figure/fig_stability_ablation.png}
+\includegraphics[width=0.7\textwidth]{figure/fig_stability_ablation.pdf}
 \caption{稳定性实验三条件均值与标准差}
 \label{fig:stability_ablation}
 \end{figure}
@@ -138,7 +138,7 @@ FB>RO轮次 & — & — & 0/4 \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figure/fig_stability_formal.png}
+\includegraphics[width=0.7\textwidth]{figure/fig_stability_formal.pdf}
 \caption{正式实验重复结果对比}
 \label{fig:stability_formal}
 \end{figure}
@@ -173,7 +173,7 @@ L4 Rich & 83\% (10/12) & 67\% (8/12) \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figure/fig_granularity_curve.png}
+\includegraphics[width=0.7\textwidth]{figure/fig_granularity_curve.pdf}
 \caption{反馈粒度通过率曲线}
 \label{fig:granularity_curve}
 \end{figure}
@@ -224,7 +224,7 @@ C: CO $k$=3 & 33\% (2/6) \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figure/fig_multiturn_comparison_v2.png}
+\includegraphics[width=0.7\textwidth]{figure/fig_multiturn_comparison_v2.pdf}
 \caption{多轮对话反馈v2条件对比（公平对比对为ST $k$=1与MT $k$=1，候选数相同；ST $k$=3和CO $k$=3列因候选数不同仅作参考）}
 \label{fig:multiturn_comparison}
 \end{figure}
@@ -254,7 +254,7 @@ P3: Few-shot+CoT & 58\% (7/12) & 92\% (11/12) & +34pp \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figure/fig_prompt_strategy_comparison.png}
+\includegraphics[width=0.7\textwidth]{figure/fig_prompt_strategy_comparison.pdf}
 \caption{提示策略零样本与反馈对比}
 \label{fig:prompt_strategy_comparison}
 \end{figure}
@@ -269,16 +269,16 @@ P3: Few-shot+CoT & 58\% (7/12) & 92\% (11/12) & +34pp \\
 
 前述结果给出了三层实验的整体统计结论，本节选取典型题目进一步解释反馈循环在具体任务上的作用方式，覆盖反馈修复成功、反馈弥补模型差距、反馈稳定收益与天花板题四类场景。
 
-\noindent\textbf{float\_multi：反馈修复最高难度设计。}
+\subsubsection*{float\_multi：反馈修复最高难度设计}
 float\_multi（IEEE 754浮点乘法器）是STUDY\_12中难度最高的题目，要求实现符号位处理、指数加法、尾数乘法和规格化等多个步骤。三个模型在零样本下全部失败，典型的错误模式包括指数偏移计算错误和尾数乘积截断方式不正确。然而，Sonnet和GPT-5.4均在反馈的第1轮迭代中成功修复——编译错误信息准确指出了语法问题，仿真反馈则帮助模型定位了具体的数值计算偏差。Haiku即使有反馈仍无法修复，表明该题的修复需要模型具备一定的浮点运算先验知识，反馈信息本身不足以弥补基础能力的差距。
 
-\noindent\textbf{LIFObuffer：反馈弥补模型差距。}
+\subsubsection*{LIFObuffer：反馈弥补模型差距}
 LIFObuffer（后进先出缓冲区）展示了反馈机制的另一种价值。GPT-5.4零样本即通过，说明该题对强模型不构成挑战。但Haiku在零样本下生成的代码存在读写指针管理错误，反馈循环在第1轮提供了仿真输出中的指针越界信息，Haiku据此成功修复，追平了GPT-5.4的零样本水平。这一案例说明反馈机制在资源受限场景下提供了"以计算换准确度"的可行路径——使用较弱但成本更低的模型配合反馈循环，可以达到与强模型零样本相当的效果。
 
-\noindent\textbf{adder\_bcd与div\_16bit：反馈的稳定收益。}
+\subsubsection*{adder\_bcd与div\_16bit：反馈的稳定收益}
 adder\_bcd（BCD加法器）和div\_16bit（16位除法器）是两道中等难度的算术题目。在正式实验中，这两道题在多个模型上呈现出一致的规律：零样本下编译通过但仿真部分失败，反馈1--2轮后成功修复。仿真反馈中的不匹配样本数为模型提供了明确的修复方向，这类"功能接近正确但存在边界错误"的场景是反馈循环最典型的应用场景。
 
-\noindent\textbf{天花板题分析。}
+\subsubsection*{天花板题分析}
 sequence\_detector在正式实验中所有模型和条件均编译失败，freq\_divbyfrac在所有条件下均未通过仿真。对sequence\_detector的错误日志分析表明，模型生成的代码在模块接口上与测试平台不匹配，且多轮反馈未能纠正这一结构性问题。然而，sequence\_detector在后续的消融稳定性实验和提示策略实验中被成功修复，说明该题并非绝对不可解，而是对初始生成路径高度敏感——不同的随机种子或提示词可能导致截然不同的初始代码结构。freq\_divbyfrac（分数分频器）则涉及精确的小数分频算法，属于当前框架难以仅通过反馈解决的领域知识缺口问题。
 
 \section{综合讨论}
@@ -287,19 +287,19 @@ sequence\_detector在正式实验中所有模型和条件均编译失败，freq\
 
 消融实验揭示了反馈收益的双重来源：约43\%来自多次采样机会，约57\%来自错误反馈信息本身。后者的独立价值通过仅反馈可解的题目得到了直接验证——这些题目在15次独立重试中从未通过，但在2--3轮反馈后成功修复。
 
-\paragraph{Sonnet反馈退化的具体表现。}
+\subsubsection*{Sonnet反馈退化的具体表现}
 对Sonnet 4.6的4轮消融实验逐题分析发现，反馈退化集中在特定题目上。div\_16bit在4轮中Retry-only全部通过（4/4），但Feedback只通过了1轮（1/4）——这意味着反馈信息反而干扰了Sonnet对该题的修复。LIFObuffer呈现类似的模式：Retry-only通过了2轮（2/4），Feedback通过了0轮（0/4）。这两道题目的共同特征是涉及较复杂的数据路径操作（16位除法和读写指针管理），Sonnet在零样本或重试中能够偶尔生成正确实现，但在接收到L3反馈信息后倾向于过度修改已接近正确的代码结构。
 
 结合粒度实验的数据，Sonnet在L2（仅编译反馈）条件下的通过率为75\%，高于L1 Retry-only的67\%，而L3和L4均回落至67\%。这一对比表明：Sonnet并非完全无法利用反馈，而是对反馈信息量敏感——编译错误这类简短、明确的反馈对Sonnet仍有帮助，但包含仿真输出摘要的L3反馈可能引入了额外的噪声，导致模型偏离已接近正确的修复方向。这一发现对实际部署有直接启示：在使用中等能力模型时，应优先尝试L2反馈而非默认使用L3。
 
-\paragraph{成本与收益的权衡。}
+\subsubsection*{成本与收益的权衡}
 反馈循环需要比零样本更多的API调用。零样本每题1次调用，反馈条件下每题最多$k \times N = 3 \times 5 = 15$次调用。Retry-only的调用上限与Feedback相同。从已有实验记录来看，在GPT-5.4的正式实验中，10道通过题中有8道在第1轮（3次调用）内收敛，仅2道需要多轮迭代。4轮重复实验的统计显示，GPT-5.4的Feedback平均迭代轮数为2.0轮（平均约6次调用），远低于15次的理论上限。
 
 从成本效益角度看，反馈循环的价值在高难度任务上最大：GPT-5.4在RTLLM\_STUDY\_12上从50\%提升到83\%，额外的API调用换来了+33个百分点的通过率增益。但对于零样本通过率已较高的简单任务（如VerilogEval-Human的80\%基线），反馈的边际收益仅为+10个百分点，此时额外成本的性价比较低。一个更经济的策略是：先对全部题目运行零样本，仅对未通过的题目启用反馈循环。
 
 在粒度和策略方面，编译反馈（L2）是最稳健的通用选择。反馈信息量过多时可能干扰模型对关键错误的定位，反而不如简洁的编译错误信息有效。多轮对话和提示策略可作为补充优化方向。
 
-\noindent\textbf{与已有工作的关系。}
+\subsubsection*{与已有工作的关系}
 本文的反馈循环机制受到AutoChip\cite{autochip}等已有工作的启发。与AutoChip侧重于验证反馈循环的可行性不同，本文更关注该机制在更难基准、不同能力模型和不同反馈策略下的表现。需要说明的是，由于本文使用的模型（Claude-Haiku-4-5、Sonnet-4-6、GPT-5.4）与AutoChip原文（GPT-3.5等）在发布时间和能力等级上差异较大，且评估子集与提示词模板不完全一致，直接的数值对比意义有限，表\ref{tab:autochip_compare}因此仅从六个维度做定性对照，总结本文工作相对已有feedback-in-the-loop思路的扩展。
 
 \begin{table}[htbp]
@@ -343,7 +343,7 @@ sequence\_detector在正式实验中所有模型和条件均编译失败，freq\
 \end{tabular}
 \end{table}
 
-\noindent\textbf{局限性。}
+\subsubsection*{局限性}
 RTLLM\_STUDY\_12为12题子集，虽然覆盖了四大类别和多个难度梯度，但不能完全代表所有类型的RTL设计任务。部分实验（多轮对话、提示策略）为单次运行或在小子集上进行，统计效力有限。Sonnet上反馈无效的深层原因尚未完全明确，可能需要更细粒度的错误分析来回答。天花板题暴露了当前框架对涉及精确算法知识的设计任务的局限。此外，实验仅使用Icarus Verilog作为仿真工具，商业EDA工具可能提供更丰富的诊断信息。
 
 \section{本章小结}

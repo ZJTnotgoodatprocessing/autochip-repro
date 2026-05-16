@@ -72,9 +72,7 @@ def generate_system_architecture():
     ax.axis("off")
     ax.set_aspect("equal")
 
-    # Title
-    ax.text(5.25, 7.1, "System Module Architecture & Data Flow",
-            ha="center", fontsize=13, fontweight="bold", fontfamily="sans-serif")
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
 
     # --- Modules ---
     bw, bh = 2.0, 0.7  # box width, height
@@ -142,7 +140,7 @@ def generate_system_architecture():
     _arrow(ax, (9.2, 1.9), (9.2, 1.4))
 
     plt.tight_layout()
-    _save(fig, "fig_system_architecture_v2")
+    _save(fig, "fig_system_architecture_v2", also_pdf=True)
 
 
 def generate_feedback_loop_flow():
@@ -152,8 +150,7 @@ def generate_feedback_loop_flow():
     ax.axis("off")
     ax.set_aspect("equal")
 
-    ax.text(4, 11.5, "Feedback Loop Control Flow",
-            ha="center", fontsize=13, fontweight="bold", fontfamily="sans-serif")
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
 
     bw, bh = 3.0, 0.6
     dw, dh = 2.4, 0.8  # diamond
@@ -240,7 +237,7 @@ def generate_feedback_loop_flow():
             fontstyle="italic", ha="center", fontfamily="sans-serif")
 
     plt.tight_layout()
-    _save(fig, "fig_feedback_loop_v2")
+    _save(fig, "fig_feedback_loop_v2", also_pdf=True)
 
 
 # ----------------------------------------------------------------------

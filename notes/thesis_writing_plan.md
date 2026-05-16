@@ -301,3 +301,23 @@
 4. **图表一致性**：同一论文中的图表风格应统一（配色、字体、坐标轴格式）
 5. **术语一致性**：全文应统一使用"反馈循环"（feedback loop）、"零样本"（zero-shot）、"重试"（retry-only）等术语
 6. **不虚构数据**：如果某个实验方向未实施，只能在"展望"中提及，不能写成已完成
+
+---
+
+## 八、v12 状态（2026-05-16，导师 v11 反馈后）
+
+> **送审 PDF**：`report/thesis/latex/thesis_supervisor_revision_v12.pdf` 63 页 0.94 MB
+> **基线**：v11 (`086fcd2`)
+> **修订报告**：`report/thesis/supervisor_revision_v12_report.md`
+
+导师对 v11 的 6 条意见全部落实：
+
+1. 图表风格：全部数据图（13 张）+ 流程图（图 3.1/3.2）删除图内英文 banner，
+   增加 PDF 矢量输出，`\includegraphics` 切换 `.pdf` 引用；PDF 体积 2.21 MB → 0.94 MB
+2. "24 项自动化检查" → "4 项自动化检查"（chapter 3 §3.7 + chapter 4 §4.6）
+3. 表 4.3 删除"难度"星级列，改为"设计特征与选入理由"
+4. 图 5.6 顶部英文 `Feedback Granularity Curve / RTLLM STUDY_12 ...` 标题已清除
+5. 第 5.8 / 5.9 段首加粗格式统一改为 `\subsubsection*{}`（不入目录）
+6. 编译：xelatex 两次稳定通过，0 undefined ref/cite、0 BibTeX warning
+
+**实验数据零修改**。v9 / v10 / v11 / v12 历史 PDF 全部保留。

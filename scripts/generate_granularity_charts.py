@@ -95,8 +95,7 @@ def chart_granularity_curve():
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    ax.set_title("Feedback Granularity Curve\nRTLLM STUDY_12 (12 problems, k=3, iter=5)",
-                 fontsize=13, fontweight="bold", pad=10)
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
 
     # Add arrow annotation for "information overload"
     ax.annotate("Information\noverload?",
@@ -112,7 +111,8 @@ def chart_granularity_curve():
     fig.tight_layout(rect=[0, 0.03, 1, 1])
     out = OUT_DIR / "fig_granularity_curve.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[A] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[A] {out} (+ pdf)")
     plt.close()
 
 
@@ -163,13 +163,13 @@ def chart_granularity_matrix():
     fig.legend(handles=[pass_patch, fail_patch], loc="lower center",
                ncol=2, fontsize=10, frameon=False)
 
-    fig.suptitle("Feedback Granularity Matrix\nRTLLM STUDY_12 — Per-Problem Results",
-                 fontsize=14, fontweight="bold", y=1.02)
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
 
     fig.tight_layout(rect=[0, 0.04, 1, 1])
     out = OUT_DIR / "fig_granularity_matrix.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[B] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[B] {out} (+ pdf)")
     plt.close()
 
 

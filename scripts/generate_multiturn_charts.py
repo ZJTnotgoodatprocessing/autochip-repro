@@ -78,9 +78,7 @@ def chart_comparison():
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    ax.set_title("Single-turn vs Multi-turn Feedback (v2, bug-fixed)\n"
-                 "Multiturn-6 Subset · 4 conditions · iter=5",
-                 fontsize=13, fontweight="bold", pad=10)
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
 
     # Annotate Sonnet MT advantage
     ax.annotate("MT helps\nSonnet +33pp",
@@ -97,7 +95,8 @@ def chart_comparison():
     fig.tight_layout()
     out = OUT_DIR / "fig_multiturn_comparison_v2.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[A] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[A] {out} (+ pdf)")
     plt.close()
 
 
@@ -147,12 +146,12 @@ def chart_matrix():
     fig.legend(handles=[pass_p, fail_p, err_p], loc="lower center",
                ncol=3, fontsize=10, frameon=False)
 
-    fig.suptitle("Multi-turn Experiment Matrix (v2, bug-fixed)\nPer-Problem Results",
-                 fontsize=14, fontweight="bold", y=1.02)
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
     fig.tight_layout(rect=[0, 0.05, 1, 1])
     out = OUT_DIR / "fig_multiturn_matrix_v2.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[B] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[B] {out} (+ pdf)")
     plt.close()
 
 

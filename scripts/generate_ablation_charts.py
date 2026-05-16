@@ -50,8 +50,7 @@ def chart_ablation_comparison():
                     fontsize=11, fontweight="bold")
     
     ax.set_ylabel("Pass Rate (%)", fontsize=12)
-    ax.set_title("Ablation Study: Zero-shot vs Retry-only vs Feedback\n(RTLLM STUDY_12)",
-                 fontsize=13, fontweight="bold", pad=10)
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
     ax.set_xticks(x)
     ax.set_xticklabels(MODELS, fontsize=12)
     ax.set_ylim(0, 100)
@@ -67,7 +66,8 @@ def chart_ablation_comparison():
     fig.tight_layout(rect=[0, 0.03, 1, 1])
     out = OUT_DIR / "fig_ablation_comparison.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[A] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[A] {out} (+ pdf)")
     plt.close()
 
 
@@ -109,8 +109,7 @@ def chart_improvement_decomposition():
     ax.set_yticks(x)
     ax.set_yticklabels(labels, fontsize=12)
     ax.set_xlabel("Pass Rate (%)", fontsize=11)
-    ax.set_title("Improvement Decomposition: Multi-sampling vs Feedback Signal\n(GPT-5.4 on RTLLM STUDY_12)",
-                 fontsize=12, fontweight="bold", pad=10)
+    # 图标题改由 LaTeX caption 提供，图内不再保留英文 banner
     ax.legend(fontsize=9, loc="lower right")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
@@ -124,7 +123,8 @@ def chart_improvement_decomposition():
     fig.tight_layout()
     out = OUT_DIR / "fig_ablation_decomposition.png"
     fig.savefig(out, dpi=200, bbox_inches="tight")
-    print(f"[B] {out}")
+    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
+    print(f"[B] {out} (+ pdf)")
     plt.close()
 
 
