@@ -284,7 +284,11 @@ def fig_task_normalization():
 # ===========================================================================
 
 def fig_llm_code_extraction():
-    # v14: figsize reduced from (9.0, 10.5); LaTeX width tightened to 0.65.
+    # v14b: keep figsize (6.0, 7.0) -- shrinking it makes the in-figure
+    # text (whose size is in pt, independent of figsize) overflow the
+    # axes-unit-sized boxes (the LLM raw response box would have its
+    # monospace lines overlapping the right-side annotations).  Use the
+    # LaTeX width below (0.55, was 0.65) to control the printed size.
     fig, ax = plt.subplots(figsize=(6.0, 7.0))
     ax.set_xlim(0, 9)
     ax.set_ylim(0, 12)
@@ -451,7 +455,9 @@ def fig_feedback_loop():
 # ===========================================================================
 
 def fig_feedback_decision():
-    # v14: figsize reduced from (11.0, 9.0); LaTeX width tightened to 0.85.
+    # v14b: keep figsize (8.5, 6.95) -- the L2/L3/L4 sub-boxes carry text
+    # that, sized in pt, overlaps neighbours if figsize is shrunk.  Page-
+    # area control is delegated to the LaTeX width below (0.70, was 0.85).
     fig, ax = plt.subplots(figsize=(8.5, 6.95))
     ax.set_xlim(0, 11)
     ax.set_ylim(0, 9.5)

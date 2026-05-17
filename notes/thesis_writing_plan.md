@@ -400,3 +400,39 @@
 
 **实验数据零修改**。v7 / v8 / v9 / v10 / v11 / v12 / v13 / v14 / v14a
 历史 PDF 全部保留。第 4、5、6 章正文未触。
+
+---
+
+## 十二、v14b 状态（2026-05-17，进一步缩小图 3.3 / 图 3.5）
+
+> **送审 PDF**：`report/thesis/latex/thesis_supervisor_revision_v14b_ch3_figshrink.pdf` 64 页 0.97 MB
+> **基线**：v14a (`92a01df`)
+> **修订报告**：`report/thesis/supervisor_revision_v14b_ch3_figshrink_report.md`
+
+导师在 v14a PDF 上仍然观察到图 3.3 和图 3.5 占满一整页。复核确认：
+v14a 中三张图独占页面（Fig 3.1 在 p23 / Fig 3.3 在 p26 / Fig 3.5 在
+p31），用户只点名 3.3 和 3.5。本轮把这两张的 LaTeX width 进一步收紧：
+
+- Fig 3.3：`width=0.65\textwidth` → `width=0.55\textwidth`
+- Fig 3.5：`width=0.85\textwidth` → `width=0.70\textwidth`
+
+**关键技术决定**：figsize 维持不变（v14a 的 (6.0, 7.0) / (8.5, 6.95)），
+仅靠 LaTeX width 控制纸面尺寸。最初尝试同时缩 figsize 和 width，但
+matplotlib 的 fontsize 是 pt 绝对单位、box 宽高是 axes 单位（相对
+figsize），缩 figsize 会让文字相对 box 变大、撑爆边界——Fig 3.3 的
+monospace 代码与右侧标注重叠，Fig 3.5 的 L2/L3/L4 三联文字互压。维持
+figsize 后，box 与 fontsize 同步缩放，纸面字号偏小但内容不溢出。
+
+修复后：v14b 64 页（v14a 66 页，−2 页）；Fig 3.3 现在 p26 chars=886、
+Fig 3.5 现在 p30 chars=924，均与正文段落同页，不再独占。Fig 3.1 仍在
+p23 独占（chars=414），用户未要求修改，本轮保留。
+
+并新增了一个图独占检测脚本 `scripts/check_v14a_figures.py`，按
+caption "图3.x" 直接定位每张图的所在页和该页字符数（取代之前 200 字
+阈值的近似检测，那个阈值漏判了 414/364/299 三种"中等密度但仍以图为主"
+的页面）。
+
+**实验数据零修改**。v7 / v8 / v9 / v10 / v11 / v12 / v13 / v14 / v14a
+/ v14b 历史 PDF 全部保留。第 4、5、6 章正文未触。第 3 章只动了 2 个
+includegraphics 的 width 数字（0.65→0.55、0.85→0.70），正文段落
+完全未变。

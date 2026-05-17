@@ -329,3 +329,36 @@ xelatex main.tex
 - 编译：xelatex 两次稳定通过；0 undefined ref/cite；0 错误；
   Overfull 仅 2 处 < 2pt（与 v13 / v14 完全一致，非本轮新增）
 - 历史 v7 / v8 / v9 / v10 / v11 / v12 / v13 / v14 / v14a PDF 全部保留
+
+---
+
+## 12. v14b 状态记录（2026-05-17，进一步缩小图 3.3 / 图 3.5）
+
+- v14b PDF：`thesis_supervisor_revision_v14b_ch3_figshrink.pdf`
+  **64 页** / 0.97 MB（v14a 是 66 页，−2 页）
+- 基线：v14a (`92a01df`)
+- 复核 v14a：原 200 字阈值漏判了三个图独占页面（Fig 3.1 p23 chars=414、
+  Fig 3.3 p26 chars=364、Fig 3.5 p31 chars=299）。导师只点名 3.3 / 3.5
+  仍占整页，本轮处理这两张
+- 改动仅 2 行：`chapter3.tex` 中
+  - Fig 3.3 `width=0.65\textwidth` → `width=0.55\textwidth`
+  - Fig 3.5 `width=0.85\textwidth` → `width=0.70\textwidth`
+- figsize 维持 v14a 不变。原本试过同时缩 figsize 和 width，但 fontsize
+  是 pt 绝对单位、box 是 axes 单位（相对 figsize），缩 figsize 会让
+  文字相对 box 变大、撑爆边界（Fig 3.3 的 monospace 代码与右侧标注重叠；
+  Fig 3.5 的 L2/L3/L4 三联文字互压）。维持 figsize 后图内布局与 v14a
+  完全一致，仅靠 LaTeX width 控制纸面尺寸
+- 验证：
+  - v14b 中 Fig 3.3 在 p26 chars=886、Fig 3.5 在 p30 chars=924，均与
+    正文段落同页（不再图独占）
+  - Fig 3.1 在 p23 chars=414 仍独占，用户未要求修改，本轮保留。如需
+    后续修复，按相同方法改 width=0.78 → 0.65
+- 渲染字号估算：textwidth ≈ 13cm 时，Fig 3.3 中 10pt 文本渲染为
+  ~4.7pt、Fig 3.5 中 ~4.2pt。偏小但主信息（bold 框头与算法关键词）
+  仍可读；3.5 中 L2/L3/L4 三联在正文（line 196 起）有完整复述
+- 配套：新增 `scripts/check_v14a_figures.py`，按 caption "图3.x" 直接
+  定位每张图所在页和该页字符数，替代旧阈值近似检测
+- 编译：xelatex 两次稳定通过；0 undefined ref/cite；0 错误；
+  Overfull 仅 2 处 < 2pt（与 v13 / v14 / v14a 完全一致）
+- 历史 v7 / v8 / v9 / v10 / v11 / v12 / v13 / v14 / v14a / v14b PDF
+  全部保留
