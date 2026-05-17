@@ -295,3 +295,37 @@ xelatex main.tex
 - 编译：xelatex 两次稳定通过；0 undefined ref/cite；0 错误；
   Overfull 仅 2 处 < 2pt（与 v13 一致，非本轮新增）
 - 历史 v7 / v8 / v9 / v10 / v11 / v12 / v13 / v14 PDF 全部保留
+
+---
+
+## 11. v14a 状态记录（2026-05-17，第 3 章图微调 + v14 自查）
+
+- v14a PDF：`thesis_supervisor_revision_v14a_ch3_figrefine.pdf` 66 页 /
+  0.97 MB
+- 基线：v14 (`140c5c0`)
+- 第 3 章 3 张图按导师对 v14 的具体反馈做局部微调（仅图，正文未触）：
+  - 图 3.2：删除右侧蓝色斜体 _label（"加载器屏蔽数据来源差异 /
+    下游模块仅依赖该接口"）。该内容已在 §3.3 正文 line 76 与 line 80
+    完整覆盖
+  - 图 3.3：iverilog 方框宽度从 4.0 加宽到 6.0 axes units（中心
+    保持 x=4.5 与上方对齐），删除底部灰色斜体 _label（"兼容
+    Base / CoT / Few-shot / Few-shot+CoT 四种提示策略"）。该内容已在
+    §3.4 line 99 末尾覆盖
+  - 图 3.4：把 `构造反馈 Prompt（附编译/仿真信息）` 方框拆为两行
+    （"构造反馈 Prompt" + "（附编译 / 仿真信息）"），方框高度
+    从 bh=0.85 增到 fb_h=1.3，同步调整上下箭头端点
+- 几何验证：决策菱形底端 y=4.15 → 方框新上沿 y=3.35，箭头长 0.8；
+  方框新下沿 y=2.05 → iter 方框上沿 y=1.425，箭头长 0.625，全部不
+  重叠
+- 用 PyMuPDF 提取每页字符数验证：v14a 中 figure-only pages = 0
+  （与 v14 一致），仅有的低字符页是封面 / 声明 / 摘要 / §3.8 小结尾
+- 同步完成 v14 任务自查：图尺寸优化、§3.1 难点段 + 表 3.2、§3.2 闭环
+  vs zero-shot、§3.3–§3.6 设计取舍段（4 节均覆盖）、§3.8 难点→方案
+  回扣，5 项要求均完成质量符合预期
+- 第 3 章正文未触；第 4 / 5 / 6 章正文未触；实验数据零修改
+- 生成脚本：`scripts/generate_thesis_ch3_figures_v13.py`（修改 3 处图
+  函数，旧 _label 删除位置以注释标记保留可读性）
+- 详细修订报告：`report/thesis/supervisor_revision_v14a_ch3_figrefine_report.md`
+- 编译：xelatex 两次稳定通过；0 undefined ref/cite；0 错误；
+  Overfull 仅 2 处 < 2pt（与 v13 / v14 完全一致，非本轮新增）
+- 历史 v7 / v8 / v9 / v10 / v11 / v12 / v13 / v14 / v14a PDF 全部保留

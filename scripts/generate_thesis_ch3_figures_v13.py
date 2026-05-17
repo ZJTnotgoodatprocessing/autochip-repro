@@ -259,10 +259,10 @@ def fig_task_normalization():
     _arrow(ax, (rt_x + src_w / 2, ld_y),
             (task_x + task_w * 0.75, task_y + task_h))
 
-    # Side annotation
-    _label(ax, (10.55, task_y + task_h / 2),
-           "加载器屏蔽数据来源差异\n下游模块仅依赖该接口",
-           color=ACCENT, ha="left", va="center", style="italic")
+    # v14a: side annotation removed; content is already covered in §3.3
+    # prose ("下游模块仅依赖 name/description/module_header/testbench_path
+    # 四个字段"). Removing it eliminates a coloured in-figure annotation
+    # that the supervisor flagged as distracting.
 
     # Downstream consumers
     cons_w, cons_h = 2.6, 0.95
@@ -337,8 +337,10 @@ def fig_llm_code_extraction():
           "阶段 3：写入 candidate.v  (仅保留可编译的 Verilog 代码)",
           fontsize=10)
 
-    # Compiler
-    iv_x, iv_w = 2.5, 4.0
+    # Compiler -- v14a: widened (iv_w 4.0 -> 6.0) so the bold Chinese text
+    # "iverilog -g2012 编译 + vvp 仿真" no longer crowds the box edges.
+    # Centre stays at x=4.5 to line up with the upstream stages.
+    iv_x, iv_w = 1.5, 6.0
     iv_y, iv_h = 1.1, 1.0
     _arrow(ax, (raw_x + raw_w / 2, 2.9),
             (iv_x + iv_w / 2, iv_y + iv_h))
@@ -346,11 +348,9 @@ def fig_llm_code_extraction():
           "iverilog -g2012 编译  +  vvp 仿真",
           fontsize=10, weight="bold")
 
-    # Footer note
-    _label(ax, (4.5, 0.45),
-           "该提取流程兼容 Base / CoT / Few-shot / Few-shot+CoT 四种提示策略，"
-           "无需为不同策略维护专用解析器。",
-           ha="center", style="italic", fontsize=9)
+    # v14a: footer note removed; content ("兼容 Base / CoT / Few-shot /
+    # Few-shot+CoT 四种提示策略") is already covered in §3.4 prose, so the
+    # in-figure annotation only added visual noise after the figsize cut.
 
     _save(fig, "fig_llm_code_extraction_v13")
 
@@ -404,19 +404,24 @@ def fig_feedback_loop():
     _label(ax, ((cx + 2.2 + pass_x) / 2, diam_cy + 0.22),
            "是", color=ACCENT, ha="center", style="normal", fontsize=10)
 
-    # NO branch -> feedback prompt builder (below)
+    # NO branch -> feedback prompt builder (below).  v14a: the original
+    # single-line bold label "构造反馈 Prompt  (附编译/仿真信息)" was
+    # crowding the right edge of its box after the figsize shrink; split
+    # into two lines and raise the box height accordingly so the text has
+    # vertical breathing room.
     fb_y = 2.7
-    _box(ax, (bx, fb_y - bh / 2), bw, bh,
-          "构造反馈 Prompt  (附编译/仿真信息)", weight="bold")
-    _arrow(ax, (cx, diam_cy - 0.85), (cx, fb_y + bh / 2))
-    _label(ax, (cx + 0.25, (diam_cy - 0.85 + fb_y + bh / 2) / 2 + 0.1),
+    fb_h = 1.3
+    _box(ax, (bx, fb_y - fb_h / 2), bw, fb_h,
+          "构造反馈 Prompt\n（附编译 / 仿真信息）", weight="bold")
+    _arrow(ax, (cx, diam_cy - 0.85), (cx, fb_y + fb_h / 2))
+    _label(ax, (cx + 0.25, (diam_cy - 0.85 + fb_y + fb_h / 2) / 2 + 0.1),
            "否", color=ACCENT, ha="left", fontsize=10)
 
     # Iteration counter / End on the side
     end_y = 1.0
     _box(ax, (bx, end_y - bh / 2), bw, bh,
           "iter += 1   (iter ≤ max_iter)", fontsize=9.5)
-    _arrow(ax, (cx, fb_y - bh / 2), (cx, end_y + bh / 2))
+    _arrow(ax, (cx, fb_y - fb_h / 2), (cx, end_y + bh / 2))
 
     # Feedback return path: bend right, go up, re-enter at "LLM 生成"
     return_x = bx + bw + 0.6
