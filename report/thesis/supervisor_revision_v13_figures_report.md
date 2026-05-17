@@ -214,3 +214,21 @@ xelatex -interaction=nonstopmode main.tex
 - `outputs/runs/**`（实验数据）
 - `report/thesis/latex/figure/fig_*_v1.pdf` / `fig_*_v2.pdf`（v12 旧图保留）
 - 任何历史 PDF 快照
+
+---
+
+## 11. v13 修订（2026-05-17，图 3.5 L2/L4 箭头连接修复）
+
+**问题**：用户审阅 v13 PDF 时发现图 3.5 中 Feedback Builder 框指向 L2 / L4 的箭头起点未与 FB 框底边相连。
+
+**根因**：原代码三条箭头起点 x 均设为 L2/L3/L4 框中心 x（2.0 / 5.5 / 9.0），但 FB 框 x 范围为 [2.8, 8.2]——L2 起点 2.0 在 FB 框左侧空中、L4 起点 9.0 在 FB 框右侧空中，仅 L3 起点 5.5 正好与 FB 框底边相连。
+
+**修复**：让三条箭头从 FB 框底部 1/6、3/6、5/6 等距点（即 x = 3.7 / 5.5 / 7.3，全部位于 FB 框内）出发，斜向 L2/L3/L4 框顶部中心：L3 仍为垂直，L2 / L4 改为约 24° 斜线，形成自然的"漏斗状"分流。
+
+**改动文件**：
+
+- `scripts/generate_thesis_ch3_figures_v13.py`：`fig_feedback_decision()` 内 L2/L3/L4 箭头循环新增 `fb_anchor_xs` 列表，箭头起点改用 anchor x（约 6 行改动）
+- `report/thesis/latex/figure/fig_feedback_decision_v13.{pdf,png}`：重新生成
+- `report/thesis/latex/main.pdf`、`thesis_supervisor_revision_v13_figures.pdf`：xelatex × 2 重编后覆盖（页数仍为 64，编译质量与首版 v13 一致）
+
+**未改动**：脚本中其余 4 张图（3.1–3.4）的代码、`chapter3.tex`、其余章节、实验数据。

@@ -495,7 +495,11 @@ def fig_feedback_decision():
     _label(ax, (dec_cx + 0.3, (dec_cy - 0.73 + fb_y + fb_h) / 2 + 0.05),
            "否", color=ACCENT, ha="left", fontsize=10)
 
-    # Three granularity options at the bottom
+    # Three granularity options at the bottom.  Arrows fan out from the
+    # bottom edge of the Feedback Builder box at 1/6, 3/6, 5/6 of its width
+    # so that L2 and L4 arrows clearly originate inside the FB box rather
+    # than from empty space outside it; L3 stays vertical, L2/L4 are mild
+    # diagonals (~24 deg).
     lvl_w, lvl_h = 3.2, 0.95
     lvl_y = 0.7
     lvl_xs = [0.4, 3.9, 7.4]
@@ -504,9 +508,12 @@ def fig_feedback_decision():
         "L3  Succinct\n编译错误 + 不匹配数 + 输出前 40 行",
         "L4  Rich\n编译错误 + 输出前 80 行 + 分析提示",
     ]
-    for x, lab in zip(lvl_xs, lvl_labels):
+    fb_anchor_xs = [fb_x + fb_w * 1 / 6,
+                    fb_x + fb_w * 3 / 6,
+                    fb_x + fb_w * 5 / 6]
+    for anchor_x, x, lab in zip(fb_anchor_xs, lvl_xs, lvl_labels):
         _box(ax, (x, lvl_y), lvl_w, lvl_h, lab, fontsize=9.5)
-        _arrow(ax, (x + lvl_w / 2, fb_y), (x + lvl_w / 2, lvl_y + lvl_h))
+        _arrow(ax, (anchor_x, fb_y), (x + lvl_w / 2, lvl_y + lvl_h))
 
     _save(fig, "fig_feedback_decision_v13")
 
