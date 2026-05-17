@@ -262,3 +262,36 @@ xelatex main.tex
 - 编译：xelatex 两次稳定通过；0 undefined ref/cite；BibTeX 0 warning；
   Overfull 仅 2 处 < 2 pt
 - 历史 v7 / v8 / v9 / v10 / v11 / v12 / v13 PDF 全部保留
+
+---
+
+## 10. v14 状态记录（2026-05-17，第 3 章图尺寸 + 正文加强）
+
+- v14 PDF：`thesis_supervisor_revision_v14_ch3_refine.pdf` 65 页 / 1.02 MB
+- 基线：v13
+- 第 3 章 5 张图缩小：figsize 与 LaTeX width 联合缩放
+  - 图 3.1：figsize (11.5×11.0) → (8.0×7.65)，width 0.92 → 0.78
+  - 图 3.3：figsize (9.0×10.5) → (6.0×7.0)，width 0.85 → 0.65
+  - 图 3.4：figsize (9.0×11.5) → (4.5×5.75)，width 0.85 → 0.50
+  - 图 3.5：figsize (11.0×9.0) → (8.5×6.95)，width 0.95 → 0.85
+  - 图 3.2 形状较扁本就不独占页面，未动
+  - 缩放原则：缩放比 0.6–0.7（视觉字号 ≥ 6pt，A4 打印可读）
+- 图 3.5 L3 / L4 标签紧凑化（"编译错误+不匹配数+前40行输出"等），
+  避免 figsize 缩小后溢出框右边界；详细描述仍由表 3.4 提供
+- 用 PyMuPDF 提取每页字符数验证：v14 中 figure-only pages = 0
+  （v13 中图 3.4 在 p.29 独占）
+- 第 3 章正文加强（共净增约 1700 字）：
+  - §3.1 新增技术难点本质段 + 表 3.2（5 行难点—表现—思路对照）
+  - §3.2 新增"闭环 vs zero-shot"段引出框架复用性
+  - §3.3–§3.6 各新增一段设计取舍：加载器层封装 / 提取流程解耦 /
+    rank 标量 vs pass/fail / 反馈粒度可切换 vs 固定
+  - §3.8 本章小结改写为两段：难点→方案回扣 + 论文结构定位 + 主动
+    说明本科毕设范围内贡献的边界
+- 第 4、5、6 章正文未触；实验数据零修改
+- 生成脚本：`scripts/generate_thesis_ch3_figures_v13.py`（修改 4 处 figsize
+  + 图 3.5 L3/L4 标签紧凑化，可重复运行）
+- 一次性自检脚本：`scripts/check_v14_pages.py`（PyMuPDF 提取每页字符数）
+- 详细修订报告：`report/thesis/supervisor_revision_v14_ch3_refine_report.md`
+- 编译：xelatex 两次稳定通过；0 undefined ref/cite；0 错误；
+  Overfull 仅 2 处 < 2pt（与 v13 一致，非本轮新增）
+- 历史 v7 / v8 / v9 / v10 / v11 / v12 / v13 / v14 PDF 全部保留

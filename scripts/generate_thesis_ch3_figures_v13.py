@@ -126,7 +126,9 @@ def _label(ax, xy, text, *, fontsize=8.5, color=MUTED, ha="center",
 # ===========================================================================
 
 def fig_system_architecture():
-    fig, ax = plt.subplots(figsize=(11.5, 11.0))
+    # v14: figsize reduced from (11.5, 11.0) so that LaTeX width 0.78 keeps
+    # the visual font size around 6pt and the figure no longer fills a page.
+    fig, ax = plt.subplots(figsize=(8.0, 7.65))
     ax.set_xlim(0, 12)
     ax.set_ylim(0, 13)
     ax.axis("off")
@@ -282,7 +284,8 @@ def fig_task_normalization():
 # ===========================================================================
 
 def fig_llm_code_extraction():
-    fig, ax = plt.subplots(figsize=(9.0, 10.5))
+    # v14: figsize reduced from (9.0, 10.5); LaTeX width tightened to 0.65.
+    fig, ax = plt.subplots(figsize=(6.0, 7.0))
     ax.set_xlim(0, 9)
     ax.set_ylim(0, 12)
     ax.axis("off")
@@ -357,7 +360,10 @@ def fig_llm_code_extraction():
 # ===========================================================================
 
 def fig_feedback_loop():
-    fig, ax = plt.subplots(figsize=(9.0, 11.5))
+    # v14: figsize reduced from (9.0, 11.5) -> (4.5, 5.75); paired with LaTeX
+    # width=0.50 so the figure occupies only ~45% of textheight and stops
+    # claiming a dedicated page next to algorithm 1.
+    fig, ax = plt.subplots(figsize=(4.5, 5.75))
     ax.set_xlim(0, 9)
     ax.set_ylim(0, 13)
     ax.axis("off")
@@ -440,7 +446,8 @@ def fig_feedback_loop():
 # ===========================================================================
 
 def fig_feedback_decision():
-    fig, ax = plt.subplots(figsize=(11.0, 9.0))
+    # v14: figsize reduced from (11.0, 9.0); LaTeX width tightened to 0.85.
+    fig, ax = plt.subplots(figsize=(8.5, 6.95))
     ax.set_xlim(0, 11)
     ax.set_ylim(0, 9.5)
     ax.axis("off")
@@ -503,16 +510,19 @@ def fig_feedback_decision():
     lvl_w, lvl_h = 3.2, 0.95
     lvl_y = 0.7
     lvl_xs = [0.4, 3.9, 7.4]
+    # v14: tightened L3/L4 wording (dropped spaces around "+") so the labels
+    # fit inside the boxes after the figsize shrink; the full descriptions
+    # remain in the L0-L4 table 3.4 (feedback_levels).
     lvl_labels = [
         "L2  Compile-only\n仅编译错误信息",
-        "L3  Succinct\n编译错误 + 不匹配数 + 输出前 40 行",
-        "L4  Rich\n编译错误 + 输出前 80 行 + 分析提示",
+        "L3  Succinct\n编译错误+不匹配数+前40行输出",
+        "L4  Rich\n编译错误+前80行输出+分析提示",
     ]
     fb_anchor_xs = [fb_x + fb_w * 1 / 6,
                     fb_x + fb_w * 3 / 6,
                     fb_x + fb_w * 5 / 6]
     for anchor_x, x, lab in zip(fb_anchor_xs, lvl_xs, lvl_labels):
-        _box(ax, (x, lvl_y), lvl_w, lvl_h, lab, fontsize=9.5)
+        _box(ax, (x, lvl_y), lvl_w, lvl_h, lab, fontsize=8.5)
         _arrow(ax, (anchor_x, fb_y), (x + lvl_w / 2, lvl_y + lvl_h))
 
     _save(fig, "fig_feedback_decision_v13")

@@ -344,3 +344,30 @@
 
 **生成脚本**：`scripts/generate_thesis_ch3_figures_v13.py`（可重复运行）
 **实验数据零修改**。v7 / v8 / v9 / v10 / v11 / v12 / v13 历史 PDF 全部保留。
+
+---
+
+## 十、v14 状态（2026-05-17，第 3 章图尺寸 + 正文加强）
+
+> **送审 PDF**：`report/thesis/latex/thesis_supervisor_revision_v14_ch3_refine.pdf` 65 页 1.02 MB
+> **基线**：v13
+> **修订报告**：`report/thesis/supervisor_revision_v14_ch3_refine_report.md`
+
+针对导师对 v13 的两条意见：
+
+1. **5 张图缩小**：图 3.1 / 3.3 / 3.4 / 3.5 的 matplotlib `figsize` 与 LaTeX
+   `\includegraphics width` 联合缩放，使图加上 caption 后均不再独占整页
+   （v13 中图 3.4 独占 p.29）。PyMuPDF 自检显示 v14 中 figure-only pages = 0。
+   缩放原则：缩放比保持在 0.6–0.7（视觉字号 ≥ 6pt，A4 打印可读）。
+   图 3.2 形状较扁本就不独占页面，未动。
+   图 3.5 中 L3 / L4 标签紧凑化（去掉 `+` 旁空格）以避免溢出框。
+2. **正文加强**：
+   - §3.1 新增技术难点本质段（~280 字）+ 表 3.2（5 行难点—表现—思路对照）；
+   - §3.2 新增"闭环 vs zero-shot"段（~180 字）引出框架复用性；
+   - §3.3–§3.6 各新增一段设计取舍（~180–230 字）：加载器层封装、提取流程
+     解耦、rank 标量 vs pass/fail、反馈粒度可切换 vs 固定；
+   - §3.8 本章小结改写为两段：难点→方案回扣 + 本章在论文结构中的位置 +
+     主动说明本科毕设范围内贡献的边界。
+
+**实验数据零修改**。v7 / v8 / v9 / v10 / v11 / v12 / v13 / v14 历史 PDF
+全部保留。第 4、5、6 章正文未触。
